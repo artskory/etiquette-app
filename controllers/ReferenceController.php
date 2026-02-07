@@ -27,11 +27,21 @@ class ReferenceController {
             $this->reference->reference = $_POST['reference'] ?? '';
             $this->reference->designation = $_POST['designation'] ?? '';
 
-            if($this->reference->create()) {
-                header("Location: index.php?page=sartorius");
-                exit();
-            } else {
-                $error = "Erreur lors de la création de la référence.";
+            try {
+                if($this->reference->create()) {
+                    header("Location: index.php?page=sartorius&success=reference_created");
+                    exit();
+                } else {
+                    $error = "Erreur lors de la création de la référence.";
+                    require_once 'views/references/ajout.php';
+                }
+            } catch(PDOException $e) {
+                // Vérifier si c'est une erreur de doublon
+                if($e->getCode() == 23000) {
+                    $error = "Cette référence existe déjà dans la base de données.";
+                } else {
+                    $error = "Erreur lors de la création de la référence : " . $e->getMessage();
+                }
                 require_once 'views/references/ajout.php';
             }
         }

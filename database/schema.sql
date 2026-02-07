@@ -1,12 +1,12 @@
 -- Base de données pour l'application Étiquettes
--- Version 0.0.1
+-- Version 0.0.2
 
 CREATE DATABASE IF NOT EXISTS etiquette_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE etiquette_db;
 
 -- Table des références
-CREATE TABLE IF NOT EXISTS references (
+CREATE TABLE IF NOT EXISTS `references` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     reference VARCHAR(100) NOT NULL UNIQUE,
     designation TEXT NOT NULL,

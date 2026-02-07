@@ -4,7 +4,7 @@
  */
 class Reference {
     private $conn;
-    private $table_name = "references";
+    private $table_name = "`references`";
 
     public $id;
     public $reference;

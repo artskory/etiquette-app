@@ -1,8 +1,16 @@
-# Application Étiquettes - Version 0.0.1
+# Application Étiquettes - Version 0.0.3
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.0.3
+- Amélioration de la gestion des erreurs (try-catch pour PDOException)
+- Messages de succès après création/modification/suppression
+- Message d'erreur convivial pour les doublons de référence
+
+### Version 0.0.2
+- Correction du schéma de base de données (mot réservé SQL 'references')
 
 ### Version 0.0.1
 - Page d'accueil avec navigation vers Sartorius et Latitude

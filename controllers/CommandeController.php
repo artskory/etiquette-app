@@ -41,12 +41,19 @@ class CommandeController {
             $this->commande->numero_lot = $_POST['numero_lot'] ?? '';
             $this->commande->quantite_etiquettes = $_POST['quantite_etiquettes'] ?? '';
 
-            if($this->commande->create()) {
-                // TODO: Générer le PDF ici plus tard
-                header("Location: index.php?page=sartorius");
-                exit();
-            } else {
-                $error = "Erreur lors de la création de la commande.";
+            try {
+                if($this->commande->create()) {
+                    // TODO: Générer le PDF ici plus tard
+                    header("Location: index.php?page=sartorius&success=commande_created");
+                    exit();
+                } else {
+                    $error = "Erreur lors de la création de la commande.";
+                    $referenceController = new ReferenceController();
+                    $references = $referenceController->getAll();
+                    require_once 'views/commandes/nouvelle.php';
+                }
+            } catch(PDOException $e) {
+                $error = "Erreur lors de la création de la commande : " . $e->getMessage();
                 $referenceController = new ReferenceController();
                 $references = $referenceController->getAll();
                 require_once 'views/commandes/nouvelle.php';
@@ -85,11 +92,19 @@ class CommandeController {
             $this->commande->numero_lot = $_POST['numero_lot'] ?? '';
             $this->commande->quantite_etiquettes = $_POST['quantite_etiquettes'] ?? '';
 
-            if($this->commande->update()) {
-                header("Location: index.php?page=sartorius");
-                exit();
-            } else {
-                $error = "Erreur lors de la modification de la commande.";
+            try {
+                if($this->commande->update()) {
+                    header("Location: index.php?page=sartorius&success=commande_updated");
+                    exit();
+                } else {
+                    $error = "Erreur lors de la modification de la commande.";
+                    $commandeData = $this->commande->readOne();
+                    $referenceController = new ReferenceController();
+                    $references = $referenceController->getAll();
+                    require_once 'views/commandes/edition.php';
+                }
+            } catch(PDOException $e) {
+                $error = "Erreur lors de la modification de la commande : " . $e->getMessage();
                 $commandeData = $this->commande->readOne();
                 $referenceController = new ReferenceController();
                 $references = $referenceController->getAll();
@@ -105,10 +120,15 @@ class CommandeController {
         $id = $_POST['id'] ?? 0;
         $this->commande->id = $id;
 
-        if($this->commande->delete()) {
-            header("Location: index.php?page=sartorius");
-            exit();
-        } else {
+        try {
+            if($this->commande->delete()) {
+                header("Location: index.php?page=sartorius&success=commande_deleted");
+                exit();
+            } else {
+                header("Location: index.php?page=sartorius&error=delete");
+                exit();
+            }
+        } catch(PDOException $e) {
             header("Location: index.php?page=sartorius&error=delete");
             exit();
         }
