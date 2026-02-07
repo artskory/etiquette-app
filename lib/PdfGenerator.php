@@ -9,6 +9,11 @@ require_once 'lib/fpdf/fpdf.php';
 class PdfGenerator extends FPDF {
     
     /**
+     * Chemin vers l'icône d'usine
+     */
+    private $factoryIconPath = 'assets/factory-icon.png';
+    
+    /**
      * Générer un PDF d'étiquettes
      * 
      * @param array $data Données de la commande
@@ -82,60 +87,61 @@ class PdfGenerator extends FPDF {
      */
     private function dessinerEtiquette($x, $y, $width, $height, $data) {
         // PAS de bordure autour de l'étiquette
-        // $this->Rect($x, $y, $width, $height);
         
         // Position Y courante pour le texte
         $currentY = $y + 3;
         
-        // REF
-        $this->SetFont('Arial', 'B', 11);
+        // REF - Roboto Bold (mappé sur Helvetica-Bold)
+        $this->SetFont('Helvetica', 'B', 11);
         $this->SetXY($x + 2, $currentY);
         $this->Cell(0, 5, 'REF : ' . utf8_decode($data['reference']), 0, 1);
         $currentY += 7;
         
-        // QUANTITE avec "ex" au lieu de "e" et icône usine
-        $this->SetFont('Arial', '', 10);
+        // QUANTITE - Roboto Regular (mappé sur Helvetica)
+        $this->SetFont('Helvetica', '', 10);
         $this->SetXY($x + 2, $currentY);
-        // Symbole usine (factory): ⚙ ou utiliser un symbole simple
         $this->Cell(0, 5, 'QUANTITE : 1 CARTON DE ' . $data['quantite_par_carton'] . ' ex', 0, 1);
         $currentY += 8;
         
-        // Désignation (en gras)
-        $this->SetFont('Arial', 'B', 12);
+        // Désignation - Roboto Bold (mappé sur Helvetica-Bold)
+        $this->SetFont('Helvetica', 'B', 12);
         $this->SetXY($x + 2, $currentY);
         $this->MultiCell($width - 4, 5, utf8_decode($data['designation']), 0, 'L');
         $currentY = $this->GetY() + 2;
         
-        // Icône usine + Date de production (en bleu)
-        $this->SetFont('Arial', 'B', 11);
+        // Icône usine (PNG) + Date de production (en bleu) - Roboto Bold
         $this->SetTextColor(41, 128, 185); // Bleu
-        $this->SetXY($x + 2, $currentY);
-        // Symbole d'usine/fabrication
-        $this->SetFont('ZapfDingbats', '', 12);
-        $this->Cell(6, 6, chr(110), 0, 0); // Symbole usine
-        $this->SetFont('Arial', 'B', 11);
-        $this->Cell(0, 6, ' ' . utf8_decode($data['date_production']), 0, 1);
+        
+        // Insérer l'icône d'usine (PNG)
+        if(file_exists($this->factoryIconPath)) {
+            $this->Image($this->factoryIconPath, $x + 2, $currentY - 0.5, 4, 4);
+        }
+        
+        // Date de production à côté de l'icône
+        $this->SetFont('Helvetica', 'B', 11);
+        $this->SetXY($x + 7, $currentY);
+        $this->Cell(0, 6, utf8_decode($data['date_production']), 0, 1);
         $this->SetTextColor(0, 0, 0); // Retour au noir
         $currentY += 8;
         
-        // CDE
-        $this->SetFont('Arial', '', 10);
+        // CDE - Roboto Regular
+        $this->SetFont('Helvetica', '', 10);
         $this->SetXY($x + 2, $currentY);
         $this->Cell(0, 4, 'CDE : ' . utf8_decode($data['numero_commande']), 0, 1);
         $currentY += 5;
         
-        // LOT
+        // LOT - Roboto Regular
         $this->SetXY($x + 2, $currentY);
         $this->Cell(0, 4, 'LOT : ' . utf8_decode($data['numero_lot']), 0, 1);
         $currentY += 6;
         
-        // GUIFLEX
-        $this->SetFont('Arial', '', 10);
+        // GUIFLEX - Roboto Regular
+        $this->SetFont('Helvetica', '', 10);
         $this->SetXY($x + 2, $currentY);
         $this->Cell(0, 4, 'GUIFLEX', 0, 1);
         $currentY += 5;
         
-        // MADE IN FRANCE
+        // MADE IN FRANCE - Roboto Regular
         $this->SetXY($x + 2, $currentY);
         $this->Cell(0, 4, 'MADE IN FRANCE', 0, 1);
     }

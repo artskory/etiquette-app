@@ -1,8 +1,15 @@
-# Application Étiquettes - Version 0.1.1
+# Application Étiquettes - Version 0.1.2
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.2
+- **Police Roboto** : Utilisation de Helvetica (police standard PDF) qui ressemble beaucoup à Roboto
+  - Roboto Regular → Helvetica
+  - Roboto Bold → Helvetica-Bold
+- **Icône d'usine PNG** : Remplacement de la police ZapfDingbats par une véritable icône d'usine (16x16 px)
+- **Meilleure lisibilité** : Icône plus claire et professionnelle
 
 ### Version 0.1.1
 - **Format A4 paysage** pour les PDFs d'étiquettes

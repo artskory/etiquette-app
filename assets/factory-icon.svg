@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2980b9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Usine/Factory icon -->
+  <rect x="2" y="9" width="4" height="12"/>
+  <rect x="6" y="9" width="4" height="12"/>
+  <polygon points="10 9 10 21 14 21 14 13 10 9"/>
+  <rect x="14" y="13" width="4" height="8"/>
+  <rect x="18" y="13" width="4" height="8"/>
+  <line x1="2" y1="21" x2="22" y2="21"/>
+  <!-- Cheminée avec fumée -->
+  <rect x="11" y="3" width="2" height="6"/>
+  <path d="M 11 3 Q 10 1 9 2 Q 8 3 9 4" stroke-width="1.5" fill="none"/>
+</svg>
