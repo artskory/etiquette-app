@@ -1,0 +1,4 @@
+# Protection du dossier PDFs
+# Empêcher l'accès direct
+Order Deny,Allow
+Deny from all

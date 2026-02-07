@@ -1,8 +1,15 @@
-# Application Étiquettes - Version 0.0.3
+# Application Étiquettes - Version 0.1.0
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.0
+- **Génération de PDF d'étiquettes** avec FPDF
+- Téléchargement automatique du PDF lors de la création d'une commande
+- Bouton de téléchargement PDF dans la liste des commandes
+- Format d'étiquette personnalisé (4 étiquettes par page A4)
+- Dossier pdfs protégé pour stocker les fichiers générés
 
 ### Version 0.0.3
 - Amélioration de la gestion des erreurs (try-catch pour PDOException)

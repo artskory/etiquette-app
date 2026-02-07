@@ -43,7 +43,9 @@ class CommandeController {
 
             try {
                 if($this->commande->create()) {
-                    // TODO: Générer le PDF ici plus tard
+                    // Générer le PDF
+                    $this->genererPDF($this->commande->id);
+                    
                     header("Location: index.php?page=sartorius&success=commande_created");
                     exit();
                 } else {
@@ -139,7 +141,51 @@ class CommandeController {
      */
     public function telecharger() {
         $id = $_GET['id'] ?? 0;
-        // TODO: Implémenter la génération et le téléchargement du PDF
-        echo "Téléchargement du PDF pour la commande " . $id;
+        $this->commande->id = $id;
+        $commandeData = $this->commande->readOne();
+        
+        if($commandeData) {
+            $this->genererPDF($id, true);
+        } else {
+            header("Location: index.php?page=sartorius&error=not_found");
+            exit();
+        }
+    }
+    
+    /**
+     * Générer le PDF pour une commande
+     */
+    private function genererPDF($commandeId, $download = false) {
+        require_once 'lib/PdfGenerator.php';
+        
+        // Récupérer les données de la commande
+        $this->commande->id = $commandeId;
+        $commandeData = $this->commande->readOne();
+        
+        if(!$commandeData) {
+            return false;
+        }
+        
+        // Créer le générateur PDF
+        $pdfGen = new PdfGenerator();
+        
+        // Générer le PDF
+        try {
+            $filename = $pdfGen->genererEtiquettes($commandeData, $commandeData['quantite_etiquettes']);
+            
+            if($download) {
+                // Forcer le téléchargement
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="etiquette_' . $commandeData['numero_commande'] . '.pdf"');
+                header('Content-Length: ' . filesize($filename));
+                readfile($filename);
+                exit();
+            }
+            
+            return $filename;
+        } catch(Exception $e) {
+            error_log("Erreur génération PDF: " . $e->getMessage());
+            return false;
+        }
     }
 }
