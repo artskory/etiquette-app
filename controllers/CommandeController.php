@@ -174,9 +174,14 @@ class CommandeController {
             $filename = $pdfGen->genererEtiquettes($commandeData, $commandeData['quantite_etiquettes']);
             
             if($download) {
+                // Formater la date pour le nom de téléchargement
+                $dateParts = explode('/', $commandeData['date_production']);
+                $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
+                $downloadName = $commandeData['reference'] . '-' . $dateFormatted . '.pdf';
+                
                 // Forcer le téléchargement
                 header('Content-Type: application/pdf');
-                header('Content-Disposition: attachment; filename="etiquette_' . $commandeData['numero_commande'] . '.pdf"');
+                header('Content-Disposition: attachment; filename="' . $downloadName . '"');
                 header('Content-Length: ' . filesize($filename));
                 readfile($filename);
                 exit();
