@@ -193,4 +193,66 @@ class CommandeController {
             return false;
         }
     }
+    
+    /**
+     * Vider tous les fichiers PDF
+     */
+    public function viderPdf() {
+        try {
+            $pdfDir = 'pdfs/';
+            $count = 0;
+            
+            // Vérifier si le dossier existe
+            if(is_dir($pdfDir)) {
+                // Parcourir tous les fichiers du dossier
+                $files = glob($pdfDir . '*.pdf');
+                
+                foreach($files as $file) {
+                    if(is_file($file)) {
+                        unlink($file);
+                        $count++;
+                    }
+                }
+            }
+            
+            header("Location: index.php?page=sartorius&success=pdf_cleared&count=" . $count);
+            exit();
+        } catch(Exception $e) {
+            header("Location: index.php?page=sartorius&error=pdf_clear_failed");
+            exit();
+        }
+    }
+    
+    /**
+     * Supprimer toutes les commandes
+     */
+    public function supprimerTout() {
+        try {
+            // Supprimer toutes les commandes de la base de données
+            $query = "DELETE FROM commandes";
+            $stmt = $this->db->prepare($query);
+            
+            if($stmt->execute()) {
+                // Optionnel : aussi supprimer les PDF
+                $pdfDir = 'pdfs/';
+                if(is_dir($pdfDir)) {
+                    $files = glob($pdfDir . '*.pdf');
+                    foreach($files as $file) {
+                        if(is_file($file)) {
+                            unlink($file);
+                        }
+                    }
+                }
+                
+                header("Location: index.php?page=sartorius&success=all_deleted");
+                exit();
+            } else {
+                header("Location: index.php?page=sartorius&error=delete_all_failed");
+                exit();
+            }
+        } catch(Exception $e) {
+            header("Location: index.php?page=sartorius&error=delete_all_failed");
+            exit();
+        }
+    }
 }

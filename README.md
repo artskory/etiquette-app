@@ -1,8 +1,15 @@
-# Application Étiquettes - Version 0.1.2
+# Application Étiquettes - Version 0.1.3
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.3
+- **Bouton "Vider PDF"** : Supprime tous les fichiers PDF du dossier pdfs (conserve les commandes)
+- **Bouton "Supprimer tout"** : Supprime toutes les commandes de la base de données et leurs PDF associés
+- **Modales de confirmation** avec Bootstrap pour confirmer les actions destructives
+- **Messages de retour** : Affichage du nombre de PDF supprimés et messages d'erreur appropriés
+- **Sécurité** : Confirmations obligatoires avant suppression pour éviter les erreurs
 
 ### Version 0.1.2
 - **Police Roboto** : Utilisation de Helvetica (police standard PDF) qui ressemble beaucoup à Roboto
