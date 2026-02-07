@@ -1,8 +1,22 @@
-# Application Étiquettes - Version 0.1.3
+# Application Étiquettes - Version 0.1.4
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.4
+- **Alertes personnalisées** : Nouveau système d'alertes avec animation depuis la gauche
+- **Design moderne** : Alertes avec dégradés de couleurs et ombres portées
+- **Animation fluide** : Apparition depuis la gauche (slideIn) avec transition douce
+- **Couleurs par type** :
+  - 🟢 Succès : Vert (#10b981 → #059669)
+  - 🔴 Erreur : Rouge (#ef4444 → #dc2626)
+  - 🟠 Warning : Orange (#f97316 → #ea580c)
+  - 🔵 Info : Bleu (#3b82f6 → #2563eb)
+- **Fermeture automatique** : Les alertes disparaissent après 5 secondes
+- **Bouton de fermeture** : Possibilité de fermer manuellement
+- **URL nettoyage** : Les paramètres success/error sont supprimés de l'URL après affichage
+- **Responsive** : Adaptation aux petits écrans
 
 ### Version 0.1.3
 - **Bouton "Vider PDF"** : Supprime tous les fichiers PDF du dossier pdfs (conserve les commandes)

@@ -19,57 +19,6 @@
         </div>
     </div>
 
-    <?php if(isset($_GET['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php 
-                switch($_GET['success']) {
-                    case 'reference_created':
-                        echo '<i class="bi bi-check-circle me-2"></i>La référence a été créée avec succès.';
-                        break;
-                    case 'commande_created':
-                        echo '<i class="bi bi-check-circle me-2"></i>La commande a été créée avec succès.';
-                        break;
-                    case 'commande_updated':
-                        echo '<i class="bi bi-check-circle me-2"></i>La commande a été modifiée avec succès.';
-                        break;
-                    case 'commande_deleted':
-                        echo '<i class="bi bi-check-circle me-2"></i>La commande a été supprimée avec succès.';
-                        break;
-                    case 'pdf_cleared':
-                        $count = $_GET['count'] ?? 0;
-                        echo '<i class="bi bi-check-circle me-2"></i>' . $count . ' fichier(s) PDF supprimé(s) avec succès.';
-                        break;
-                    case 'all_deleted':
-                        echo '<i class="bi bi-check-circle me-2"></i>Toutes les commandes ont été supprimées avec succès.';
-                        break;
-                }
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if(isset($_GET['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php 
-                switch($_GET['error']) {
-                    case 'delete':
-                        echo '<i class="bi bi-exclamation-triangle me-2"></i>Erreur lors de la suppression de la commande.';
-                        break;
-                    case 'not_found':
-                        echo '<i class="bi bi-exclamation-triangle me-2"></i>Commande introuvable.';
-                        break;
-                    case 'pdf_clear_failed':
-                        echo '<i class="bi bi-exclamation-triangle me-2"></i>Erreur lors de la suppression des fichiers PDF.';
-                        break;
-                    case 'delete_all_failed':
-                        echo '<i class="bi bi-exclamation-triangle me-2"></i>Erreur lors de la suppression des commandes.';
-                        break;
-                }
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
