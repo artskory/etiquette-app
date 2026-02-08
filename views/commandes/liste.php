@@ -1,21 +1,30 @@
 <?php require_once 'views/layouts/header.php'; ?>
 
-<div class="container mt-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">
+            <i class="bi bi-tags-fill me-2"></i>
+            Étiquettes App
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-4 col-md-9">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="bi bi-tags-fill me-2"></i>Étiquettes Sartorius</h1>
+        <h1>Étiquettes Sartorius</h1>
         <div>
-            <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#viderPdfModal">
-                <i class="bi bi-trash me-1"></i>Vider PDF
-            </button>
-            <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#supprimerToutModal">
-                <i class="bi bi-exclamation-triangle me-1"></i>Supprimer tout
-            </button>
             <a href="index.php?page=ajout-reference" class="btn btn-success me-2">
                 <i class="bi bi-bookmark-plus me-1"></i>Référence
             </a>
-            <a href="index.php?page=nouvelle-commande" class="btn btn-primary">
+            <a href="index.php?page=nouvelle-commande" class="btn btn-primary me-2">
                 <i class="bi bi-plus-circle me-1"></i>Nouveau
             </a>
+            <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#viderPdfModal">
+                <i class="bi bi-trash me-1"></i>Vider PDF
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#supprimerToutModal">
+                <i class="bi bi-exclamation-triangle me-1"></i>Supprimer tout
+            </button>
         </div>
     </div>
 
@@ -45,17 +54,17 @@
                                 <td><?php echo htmlspecialchars($row['designation']); ?></td>
                                 <td class="text-center">
                                     <a href="index.php?page=edition-commande&id=<?php echo $row['id']; ?>" 
-                                       class="btn btn-sm btn-outline-primary" 
+                                       class="btn btn-sm btn-outline-primary me-2" 
                                        title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <a href="index.php?page=telecharger-pdf&id=<?php echo $row['id']; ?>" 
-                                       class="btn btn-sm btn-outline-success" 
+                                       class="btn btn-sm btn-outline-success me-2" 
                                        title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
                                     <button onclick="confirmerSuppression(<?php echo $row['id']; ?>)" 
-                                            class="btn btn-sm btn-outline-danger" 
+                                            class="btn btn-sm btn-outline-danger me-2" 
                                             title="Supprimer">
                                         <i class="bi bi-trash"></i>
                                     </button>

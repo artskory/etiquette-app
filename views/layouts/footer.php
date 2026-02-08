@@ -1,6 +1,6 @@
     </div>
     
-    <footer class="bg-light text-center py-3 mt-5">
+    <footer class="text-center py-3 mt-5">
         <div class="container">
             <p class="text-muted mb-0">
                 <small>Version <?php echo APP_VERSION; ?></small>

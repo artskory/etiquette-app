@@ -4,23 +4,22 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center mb-5">
-                <h1 class="display-4 mb-4">Application Étiquettes</h1>
+                <h1 class="display-4 mb-4">Étiquettes de colisages</h1>
                 <p class="lead text-muted">Gestion des étiquettes Sartorius et Latitude</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm hover-shadow">
-                        <div class="card-body text-center p-5">
-                            <div class="mb-4">
-                                <i class="bi bi-tag-fill text-primary" style="font-size: 4rem;"></i>
+                        <a href="index.php?page=sartorius" class="card-link">    
+                            <div class="card-body text-center p-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-tag-fill text-primary" style="font-size: 4rem;"></i>
+                                </div>
+                                <h3 class="card-title mb-3">Sartorius</h3>
+                                <p class="card-text text-muted mb-4">Gestion des étiquettes Sartorius</p>
                             </div>
-                            <h3 class="card-title mb-3">Sartorius</h3>
-                            <p class="card-text text-muted mb-4">Gestion des étiquettes Sartorius</p>
-                            <a href="index.php?page=sartorius" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
-                            </a>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
