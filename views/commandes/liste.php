@@ -1,6 +1,6 @@
 <?php require_once 'views/layouts/header.php'; ?>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
     <div class="container">
         <a class="navbar-brand" href="index.php">
             <i class="bi bi-tags-fill me-2"></i>

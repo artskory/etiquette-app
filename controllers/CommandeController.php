@@ -49,16 +49,12 @@ class CommandeController {
                     header("Location: index.php?page=sartorius&success=commande_created");
                     exit();
                 } else {
-                    $error = "Erreur lors de la création de la commande.";
-                    $referenceController = new ReferenceController();
-                    $references = $referenceController->getAll();
-                    require_once 'views/commandes/nouvelle.php';
+                    header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                    exit();
                 }
             } catch(PDOException $e) {
-                $error = "Erreur lors de la création de la commande : " . $e->getMessage();
-                $referenceController = new ReferenceController();
-                $references = $referenceController->getAll();
-                require_once 'views/commandes/nouvelle.php';
+                header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                exit();
             }
         }
     }
@@ -99,18 +95,12 @@ class CommandeController {
                     header("Location: index.php?page=sartorius&success=commande_updated");
                     exit();
                 } else {
-                    $error = "Erreur lors de la modification de la commande.";
-                    $commandeData = $this->commande->readOne();
-                    $referenceController = new ReferenceController();
-                    $references = $referenceController->getAll();
-                    require_once 'views/commandes/edition.php';
+                    header("Location: index.php?page=edition-commande&id=" . $this->commande->id . "&error=update_failed");
+                    exit();
                 }
             } catch(PDOException $e) {
-                $error = "Erreur lors de la modification de la commande : " . $e->getMessage();
-                $commandeData = $this->commande->readOne();
-                $referenceController = new ReferenceController();
-                $references = $referenceController->getAll();
-                require_once 'views/commandes/edition.php';
+                header("Location: index.php?page=edition-commande&id=" . $this->commande->id . "&error=update_failed");
+                exit();
             }
         }
     }

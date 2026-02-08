@@ -32,17 +32,18 @@ class ReferenceController {
                     header("Location: index.php?page=sartorius&success=reference_created");
                     exit();
                 } else {
-                    $error = "Erreur lors de la création de la référence.";
-                    require_once 'views/references/ajout.php';
+                    header("Location: index.php?page=ajout-reference&error=create_failed");
+                    exit();
                 }
             } catch(PDOException $e) {
                 // Vérifier si c'est une erreur de doublon
                 if($e->getCode() == 23000) {
-                    $error = "Cette référence existe déjà dans la base de données.";
+                    header("Location: index.php?page=ajout-reference&error=duplicate_reference");
+                    exit();
                 } else {
-                    $error = "Erreur lors de la création de la référence : " . $e->getMessage();
+                    header("Location: index.php?page=ajout-reference&error=create_failed");
+                    exit();
                 }
-                require_once 'views/references/ajout.php';
             }
         }
     }

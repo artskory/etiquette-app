@@ -1,8 +1,20 @@
-# Application Étiquettes - Version 0.1.5
+# Application Étiquettes - Version 0.1.6
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.6
+- **Navbar avec dégradé** : Ajout d'une navbar bleue avec dégradé (#0061f2 → rgba(105, 0, 199, 0.8))
+- **Organisation des boutons** : Réorganisation des boutons dans la page liste (Référence et Nouveau en premier)
+- **Icône factory agrandie** : Taille doublée de l'icône factory dans le PDF (4mm → 8mm)
+- **Alertes unifiées** : Suppression de toutes les alertes Bootstrap, utilisation exclusive du système d'alertes personnalisé
+- **Gestion d'erreurs améliorée** : Les erreurs de création/modification redirigent maintenant avec des paramètres URL
+- **Nouveaux codes d'erreur** :
+  - `duplicate_reference` : Référence déjà existante
+  - `create_failed` : Erreur de création
+  - `update_failed` : Erreur de modification
+- **Alertes sur toutes les pages** : Le système d'alertes fonctionne maintenant sur les pages Ajout Référence, Nouvelle étiquette et Édition
 
 ### Version 0.1.5
 - **Nouveau titre** : "Étiquettes de colisages" au lieu de "Application Étiquettes"

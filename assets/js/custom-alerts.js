@@ -118,6 +118,15 @@ function showAlertsFromURL() {
             case 'delete_all_failed':
                 message = 'Erreur lors de la suppression des commandes.';
                 break;
+            case 'duplicate_reference':
+                message = 'Cette référence existe déjà dans la base de données.';
+                break;
+            case 'create_failed':
+                message = 'Erreur lors de la création.';
+                break;
+            case 'update_failed':
+                message = 'Erreur lors de la modification.';
+                break;
             default:
                 message = 'Une erreur est survenue.';
         }

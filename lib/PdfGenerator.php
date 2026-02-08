@@ -112,14 +112,14 @@ class PdfGenerator extends FPDF {
         // Icône usine (PNG) + Date de production (en bleu) - Roboto Bold
         $this->SetTextColor(41, 128, 185); // Bleu
         
-        // Insérer l'icône d'usine (PNG)
+        // Insérer l'icône d'usine (PNG) - Taille doublée : 8mm x 8mm
         if(file_exists($this->factoryIconPath)) {
-            $this->Image($this->factoryIconPath, $x + 2, $currentY - 0.5, 4, 4,);
+            $this->Image($this->factoryIconPath, $x + 2, $currentY - 0.5, 8, 8);
         }
         
         // Date de production à côté de l'icône
         $this->SetFont('Helvetica', 'B', 18);
-        $this->SetXY($x + 7, $currentY);
+        $this->SetXY($x + 11, $currentY);
         $this->Cell(0, 6, utf8_decode($data['date_production']), 0, 1);
         $this->SetTextColor(0, 0, 0); // Retour au noir
         $currentY += 8;

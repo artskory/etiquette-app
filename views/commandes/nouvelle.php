@@ -13,13 +13,6 @@
         </div>
     </div>
 
-    <?php if(isset($error)): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php echo $error; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-
     <div class="card shadow-sm">
         <div class="card-body">
             <form id="commandeForm" action="index.php?page=creer-commande" method="POST">
