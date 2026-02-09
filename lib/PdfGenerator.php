@@ -21,65 +21,87 @@ class PdfGenerator extends FPDF {
      * @return string Chemin du fichier PDF généré
      */
     public function genererEtiquettes($data, $quantite) {
-        // Format A4 paysage (297 x 210 mm)
-        $this->AddPage('L', 'A4');
-        $this->SetAutoPageBreak(false);
-        
-        // Dimensions d'une étiquette (environ 148,5mm x 105mm pour 4 par page)
-        $etiquetteWidth = 148.5;
-        $etiquetteHeight = 105;
-        $marginLeft = 8.5;
-        $marginTop = 10;
-        $espaceEntreColonnes = 0;
-        $espaceEntreLignes = 0;
-        
-        // Positions de départ
-        $posX = $marginLeft;
-        $posY = $marginTop;
-        $col = 0;
-        $row = 0;
-        
-        // Générer le nombre d'étiquettes demandé
-        for($i = 0; $i < $quantite; $i++) {
-            // Calculer la position
-            $posX = $marginLeft + ($col * ($etiquetteWidth + $espaceEntreColonnes));
-            $posY = $marginTop + ($row * ($etiquetteHeight + $espaceEntreLignes));
+        try {
+            // Format A4 paysage (297 x 210 mm)
+            $this->AddPage('L', 'A4');
+            $this->SetAutoPageBreak(false);
             
-            // Dessiner une étiquette (sans bordure)
-            $this->dessinerEtiquette($posX, $posY, $etiquetteWidth, $etiquetteHeight, $data);
+            // Dimensions d'une étiquette (environ 148,5mm x 105mm pour 4 par page)
+            $etiquetteWidth = 148.5;
+            $etiquetteHeight = 105;
+            $marginLeft = 8.5;
+            $marginTop = 10;
+            $espaceEntreColonnes = 0;
+            $espaceEntreLignes = 0;
             
-            // Passer à la colonne suivante
-            $col++;
+            // Positions de départ
+            $posX = $marginLeft;
+            $posY = $marginTop;
+            $col = 0;
+            $row = 0;
             
-            // Si on a atteint 2 colonnes, passer à la ligne suivante
-            if($col >= 2) {
-                $col = 0;
-                $row++;
+            // Générer le nombre d'étiquettes demandé
+            for($i = 0; $i < $quantite; $i++) {
+                // Calculer la position
+                $posX = $marginLeft + ($col * ($etiquetteWidth + $espaceEntreColonnes));
+                $posY = $marginTop + ($row * ($etiquetteHeight + $espaceEntreLignes));
                 
-                // Si on a rempli la page (4 étiquettes), nouvelle page
-                if($row >= 2) {
-                    $this->AddPage('L', 'A4');
-                    $row = 0;
+                // Dessiner une étiquette (sans bordure)
+                $this->dessinerEtiquette($posX, $posY, $etiquetteWidth, $etiquetteHeight, $data);
+                
+                // Passer à la colonne suivante
+                $col++;
+                
+                // Si on a atteint 2 colonnes, passer à la ligne suivante
+                if($col >= 2) {
+                    $col = 0;
+                    $row++;
+                    
+                    // Si on a rempli la page (4 étiquettes), nouvelle page
+                    if($row >= 2) {
+                        $this->AddPage('L', 'A4');
+                        $row = 0;
+                    }
                 }
             }
+            
+            // Créer le dossier pdfs s'il n'existe pas
+            $pdfDir = dirname(__FILE__) . '/../pdfs';
+            if(!is_dir($pdfDir)) {
+                if(!mkdir($pdfDir, 0777, true)) {
+                    throw new Exception("Impossible de créer le dossier pdfs. Vérifiez les permissions.");
+                }
+                chmod($pdfDir, 0777); // Permissions maximales pour Mac
+            }
+            
+            // Formater la date pour le nom du fichier (MM_AAAA)
+            $dateParts = explode('/', $data['date_production']);
+            $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
+            
+            // Nettoyer le nom de référence pour éviter les caractères spéciaux
+            $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $data['reference']);
+            
+            // Nom du fichier avec chemin absolu
+            $filename = $pdfDir . '/' . $refClean . '-' . $dateFormatted . '.pdf';
+            
+            // Sauvegarder le PDF
+            $this->Output('F', $filename);
+            
+            // Vérifier que le fichier a bien été créé
+            if(!file_exists($filename)) {
+                throw new Exception("Le fichier PDF n'a pas été créé. Chemin: " . $filename);
+            }
+            
+            // Changer les permissions du fichier pour qu'il soit accessible
+            chmod($filename, 0666);
+            
+            // Retourner le chemin relatif pour l'application
+            return 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+            
+        } catch(Exception $e) {
+            error_log("Erreur PdfGenerator: " . $e->getMessage());
+            throw $e;
         }
-        
-        // Créer le dossier pdfs s'il n'existe pas
-        if(!is_dir('pdfs')) {
-            mkdir('pdfs', 0755, true);
-        }
-        
-        // Formater la date pour le nom du fichier (MM_AAAA)
-        $dateParts = explode('/', $data['date_production']);
-        $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
-        
-        // Nom du fichier : REF-MM_AAAA.pdf
-        $filename = 'pdfs/' . $data['reference'] . '-' . $dateFormatted . '.pdf';
-        
-        // Sauvegarder le PDF
-        $this->Output('F', $filename);
-        
-        return $filename;
     }
     
     /**

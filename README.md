@@ -1,8 +1,18 @@
-# Application Étiquettes - Version 0.1.6
+# Application Étiquettes - Version 0.1.7
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.7
+- **Compatibilité Mac améliorée** : Correction de la génération PDF sur Mac avec XAMPP
+- **Chemins absolus** : Utilisation de chemins absolus pour la création du dossier pdfs
+- **Permissions renforcées** : Création automatique avec chmod 777 pour Mac
+- **Gestion d'erreurs** : Try-catch complet dans PdfGenerator avec messages détaillés
+- **Nettoyage des noms** : Les caractères spéciaux dans les références sont remplacés par "_"
+- **Diagnostic PDF** : Nouveau fichier `diagnostic_pdf.php` pour identifier les problèmes
+- **Guide Mac** : Nouveau fichier `INSTALL_MAC.md` avec instructions détaillées
+- **Logs améliorés** : error_log() pour tracer les erreurs de génération PDF
 
 ### Version 0.1.6
 - **Navbar avec dégradé** : Ajout d'une navbar bleue avec dégradé (#0061f2 → rgba(105, 0, 199, 0.8))
