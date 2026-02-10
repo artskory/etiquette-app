@@ -130,6 +130,12 @@ function showAlertsFromURL() {
             case 'update_failed':
                 message = 'Erreur lors de la modification.';
                 break;
+            case 'pdf_not_found':
+                message = 'Le fichier PDF est introuvable.';
+                break;
+            case 'pdf_generation_failed':
+                message = 'Erreur lors de la génération du PDF.';
+                break;
             default:
                 message = 'Une erreur est survenue.';
         }

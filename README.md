@@ -1,4 +1,4 @@
-# Application Étiquettes - Version 0.2.1
+# Application Étiquettes - Version 0.2.2
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
@@ -28,6 +28,16 @@ C:\xampp\mysql\bin\mysql -u root -p etiquette_db < database/latitude_schema.sql
 ```
 
 ## Fonctionnalités
+
+### Version 0.2.2
+- **Liste Latitude améliorée** : Suppression de la colonne "Articles"
+- **Édition de commandes** : Nouveau bouton "Éditer" dans la liste
+- **Page d'édition Latitude** : Modification complète des commandes avec régénération PDF
+- **Boutons + améliorés** : 
+  - Première ligne : bouton + disparaît après le premier clic
+  - Lignes suivantes : bouton + et bouton supprimer côte à côte
+  - Réapparition du bouton + sur la première ligne quand il ne reste qu'une seule ligne
+- **Routes ajoutées** : latitude-edition, latitude-modifier
 
 ### Version 0.2.1
 - **Script d'installation** : Ajout de `install_latitude.php` pour créer la table automatiquement

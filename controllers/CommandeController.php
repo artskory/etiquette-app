@@ -165,9 +165,15 @@ class CommandeController {
     private function genererPDF($commandeId, $download = false) {
         require_once 'lib/PdfGenerator.php';
         
-        // Récupérer les données de la commande
-        $this->commande->id = $commandeId;
-        $commandeData = $this->commande->readOne();
+        // Récupérer les données complètes de la commande avec la référence
+        $query = "SELECT c.*, r.reference, r.designation 
+                  FROM commandes c 
+                  LEFT JOIN `references` r ON c.reference_id = r.id 
+                  WHERE c.id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(1, $commandeId);
+        $stmt->execute();
+        $commandeData = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if(!$commandeData) {
             return false;
@@ -184,7 +190,15 @@ class CommandeController {
                 // Formater la date pour le nom de téléchargement
                 $dateParts = explode('/', $commandeData['date_production']);
                 $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
-                $downloadName = $commandeData['reference'] . '-' . $dateFormatted . '.pdf';
+                $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
+                $downloadName = $refClean . '-' . $dateFormatted . '.pdf';
+                
+                // Vérifier que le fichier existe
+                if(!file_exists($filename)) {
+                    error_log("Fichier PDF introuvable: " . $filename);
+                    header("Location: index.php?page=sartorius&error=pdf_not_found");
+                    exit();
+                }
                 
                 // Forcer le téléchargement
                 header('Content-Type: application/pdf');
@@ -196,7 +210,11 @@ class CommandeController {
             
             return $filename;
         } catch(Exception $e) {
-            error_log("Erreur génération PDF: " . $e->getMessage());
+            error_log("Erreur génération PDF Sartorius: " . $e->getMessage());
+            if($download) {
+                header("Location: index.php?page=sartorius&error=pdf_generation_failed");
+                exit();
+            }
             return false;
         }
     }

@@ -221,6 +221,10 @@ class LatitudeController {
         $commandeData = $this->commande->readOne();
         
         if(!$commandeData) {
+            if($download) {
+                header("Location: index.php?page=latitude&error=not_found");
+                exit();
+            }
             return false;
         }
         
@@ -236,6 +240,13 @@ class LatitudeController {
                 $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
                 $downloadName = $cmdClean . '.pdf';
                 
+                // Vérifier que le fichier existe
+                if(!file_exists($filename)) {
+                    error_log("Fichier PDF Latitude introuvable: " . $filename);
+                    header("Location: index.php?page=latitude&error=pdf_not_found");
+                    exit();
+                }
+                
                 // Forcer le téléchargement
                 header('Content-Type: application/pdf');
                 header('Content-Disposition: attachment; filename="' . $downloadName . '"');
@@ -247,6 +258,10 @@ class LatitudeController {
             return $filename;
         } catch(Exception $e) {
             error_log("Erreur génération PDF Latitude: " . $e->getMessage());
+            if($download) {
+                header("Location: index.php?page=latitude&error=pdf_generation_failed");
+                exit();
+            }
             return false;
         }
     }
