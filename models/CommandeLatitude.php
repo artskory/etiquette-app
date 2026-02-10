@@ -30,7 +30,8 @@ class CommandeLatitude {
         $stmt = $this->conn->prepare($query);
 
         $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
-        $this->articles = htmlspecialchars(strip_tags($this->articles));
+        // Ne pas échapper le JSON - il est déjà valide
+        // $this->articles est déjà encodé en JSON par le contrôleur
 
         $stmt->bindParam(":numero_commande", $this->numero_commande);
         $stmt->bindParam(":articles", $this->articles);
@@ -93,7 +94,7 @@ class CommandeLatitude {
         $stmt = $this->conn->prepare($query);
 
         $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
-        $this->articles = htmlspecialchars(strip_tags($this->articles));
+        // Ne pas échapper le JSON - il est déjà valide
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":numero_commande", $this->numero_commande);
