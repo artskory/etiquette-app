@@ -15,6 +15,9 @@ class LatitudePdfGenerator extends FPDF {
      */
     public function genererEtiquettes($data) {
         try {
+            // Debug: Vérifier les données reçues
+            error_log("LatitudePdfGenerator - Données reçues: " . print_r($data, true));
+            
             // Format A4 paysage (297 x 210 mm)
             $this->AddPage('L', 'A4');
             $this->SetAutoPageBreak(false);
@@ -27,6 +30,15 @@ class LatitudePdfGenerator extends FPDF {
             
             // Décoder les articles JSON
             $articles = json_decode($data['articles'], true);
+            
+            // Debug: Vérifier le décodage JSON
+            error_log("LatitudePdfGenerator - Articles JSON: " . $data['articles']);
+            error_log("LatitudePdfGenerator - Articles décodés: " . print_r($articles, true));
+            error_log("LatitudePdfGenerator - Nombre articles: " . (is_array($articles) ? count($articles) : 0));
+            
+            if(!$articles || !is_array($articles) || count($articles) === 0) {
+                throw new Exception("Aucun article trouvé ou JSON invalide");
+            }
             
             // Compteur global pour les numéros de carton
             $cartonNumero = 1;

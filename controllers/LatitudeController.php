@@ -50,6 +50,9 @@ class LatitudeController {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
             
+            // Debug: Afficher les données POST reçues
+            error_log("LatitudeController::creer - POST data: " . print_r($_POST, true));
+            
             // Récupérer et encoder les articles en JSON
             $articles = [];
             if(isset($_POST['articles']) && is_array($_POST['articles'])) {
@@ -65,6 +68,10 @@ class LatitudeController {
             }
             
             $this->commande->articles = json_encode($articles);
+            
+            // Debug: Afficher le JSON généré
+            error_log("LatitudeController::creer - Articles JSON: " . $this->commande->articles);
+            error_log("LatitudeController::creer - Nombre d'articles: " . count($articles));
 
             try {
                 if($this->commande->create()) {
