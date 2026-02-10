@@ -1,8 +1,16 @@
-# Application Étiquettes - Version 0.1.7
+# Application Étiquettes - Version 0.1.8
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.1.8
+- **Bouton Vider PDF supprimé** : Le bouton "Vider PDF" a été retiré de l'interface
+- **Suppression améliorée** : Le bouton Supprimer supprime maintenant aussi le fichier PDF associé
+- **Validation renforcée** : Impossible de créer une référence + désignation identique
+- **Ordre des boutons** : Boutons Sauvegarder et Annuler intervertis dans la page Édition
+- **Code d'erreur** : Nouveau message `duplicate_combination` pour référence + désignation identiques
+- **Nettoyage du code** : Suppression de la méthode `viderPdf()` et de sa route
 
 ### Version 0.1.7
 - **Compatibilité Mac améliorée** : Correction de la génération PDF sur Mac avec XAMPP

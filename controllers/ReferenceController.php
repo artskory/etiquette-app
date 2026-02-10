@@ -28,6 +28,12 @@ class ReferenceController {
             $this->reference->designation = $_POST['designation'] ?? '';
 
             try {
+                // Vérifier si la combinaison référence + désignation existe déjà
+                if($this->reference->exists()) {
+                    header("Location: index.php?page=ajout-reference&error=duplicate_combination");
+                    exit();
+                }
+                
                 if($this->reference->create()) {
                     header("Location: index.php?page=sartorius&success=reference_created");
                     exit();
@@ -36,7 +42,7 @@ class ReferenceController {
                     exit();
                 }
             } catch(PDOException $e) {
-                // Vérifier si c'est une erreur de doublon
+                // Vérifier si c'est une erreur de doublon de référence uniquement
                 if($e->getCode() == 23000) {
                     header("Location: index.php?page=ajout-reference&error=duplicate_reference");
                     exit();

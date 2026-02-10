@@ -19,9 +19,6 @@
             <a href="index.php?page=nouvelle-commande" class="btn btn-primary me-2">
                 <i class="bi bi-plus-circle me-1"></i>Nouveau
             </a>
-            <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#viderPdfModal">
-                <i class="bi bi-trash me-1"></i>Vider PDF
-            </button>
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#supprimerToutModal">
                 <i class="bi bi-exclamation-triangle me-1"></i>Supprimer tout
             </button>
@@ -89,35 +86,6 @@
                         <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Vider PDF -->
-<div class="modal fade" id="viderPdfModal" tabindex="-1" aria-labelledby="viderPdfModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="viderPdfModalLabel">
-                    <i class="bi bi-trash me-2"></i>Vider les fichiers PDF
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer <strong>tous les fichiers PDF</strong> du dossier pdfs ?</p>
-                <p class="text-muted mb-0">
-                    <i class="bi bi-info-circle me-1"></i>
-                    Cette action supprimera uniquement les fichiers PDF. Les commandes en base de données seront conservées.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form action="index.php?page=vider-pdf" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-warning">
-                        <i class="bi bi-trash me-1"></i>Vider les PDF
-                    </button>
-                </form>
             </div>
         </div>
     </div>

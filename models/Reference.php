@@ -113,4 +113,24 @@ class Reference {
 
         return false;
     }
+    
+    /**
+     * Vérifier si une référence avec la même désignation existe déjà
+     */
+    public function exists() {
+        $query = "SELECT id FROM " . $this->table_name . " 
+                  WHERE reference = :reference AND designation = :designation 
+                  LIMIT 0,1";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $this->reference = htmlspecialchars(strip_tags($this->reference));
+        $this->designation = htmlspecialchars(strip_tags($this->designation));
+        
+        $stmt->bindParam(":reference", $this->reference);
+        $stmt->bindParam(":designation", $this->designation);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+    }
 }

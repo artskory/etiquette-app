@@ -5,7 +5,7 @@
  */
 
 // Définir la version de l'application
-define('APP_VERSION', '0.1.7');
+define('APP_VERSION', '0.1.8');
 
 // Démarrer la session
 session_start();
@@ -69,11 +69,6 @@ switch($page) {
     case 'telecharger-pdf':
         $controller = new CommandeController();
         $controller->telecharger();
-        break;
-    
-    case 'vider-pdf':
-        $controller = new CommandeController();
-        $controller->viderPdf();
         break;
     
     case 'supprimer-tout':

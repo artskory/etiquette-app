@@ -113,6 +113,23 @@ class CommandeController {
         $this->commande->id = $id;
 
         try {
+            // Récupérer les données de la commande avant suppression pour obtenir le nom du fichier
+            $commandeData = $this->commande->readOne();
+            
+            if($commandeData) {
+                // Construire le nom du fichier PDF
+                $dateParts = explode('/', $commandeData['date_production']);
+                $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
+                $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
+                $pdfFilename = 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+                
+                // Supprimer le PDF s'il existe
+                if(file_exists($pdfFilename)) {
+                    unlink($pdfFilename);
+                }
+            }
+            
+            // Supprimer la commande de la base de données
             if($this->commande->delete()) {
                 header("Location: index.php?page=sartorius&success=commande_deleted");
                 exit();
@@ -181,35 +198,6 @@ class CommandeController {
         } catch(Exception $e) {
             error_log("Erreur génération PDF: " . $e->getMessage());
             return false;
-        }
-    }
-    
-    /**
-     * Vider tous les fichiers PDF
-     */
-    public function viderPdf() {
-        try {
-            $pdfDir = 'pdfs/';
-            $count = 0;
-            
-            // Vérifier si le dossier existe
-            if(is_dir($pdfDir)) {
-                // Parcourir tous les fichiers du dossier
-                $files = glob($pdfDir . '*.pdf');
-                
-                foreach($files as $file) {
-                    if(is_file($file)) {
-                        unlink($file);
-                        $count++;
-                    }
-                }
-            }
-            
-            header("Location: index.php?page=sartorius&success=pdf_cleared&count=" . $count);
-            exit();
-        } catch(Exception $e) {
-            header("Location: index.php?page=sartorius&error=pdf_clear_failed");
-            exit();
         }
     }
     

@@ -4,12 +4,12 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Édition étiquette</h1>
         <div>
-            <a href="index.php?page=sartorius" class="btn btn-secondary me-2">
-                <i class="bi bi-x-circle me-1"></i>Annuler
-            </a>
-            <button type="submit" form="commandeForm" class="btn btn-success">
+            <button type="submit" form="commandeForm" class="btn btn-success me-2">
                 <i class="bi bi-check-circle me-1"></i>Sauvegarder
             </button>
+            <a href="index.php?page=sartorius" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-1"></i>Annuler
+            </a>
         </div>
     </div>
 

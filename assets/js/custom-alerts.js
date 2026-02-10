@@ -121,6 +121,9 @@ function showAlertsFromURL() {
             case 'duplicate_reference':
                 message = 'Cette référence existe déjà dans la base de données.';
                 break;
+            case 'duplicate_combination':
+                message = 'Une référence identique avec la même désignation existe déjà.';
+                break;
             case 'create_failed':
                 message = 'Erreur lors de la création.';
                 break;
