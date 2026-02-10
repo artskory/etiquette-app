@@ -5,7 +5,7 @@
  */
 
 // Définir la version de l'application
-define('APP_VERSION', '0.1.8');
+define('APP_VERSION', '0.2.0');
 
 // Démarrer la session
 session_start();
@@ -73,6 +73,37 @@ switch($page) {
     
     case 'supprimer-tout':
         $controller = new CommandeController();
+        $controller->supprimerTout();
+        break;
+    
+    // Routes Latitude
+    case 'latitude':
+        $controller = new LatitudeController();
+        $controller->liste();
+        break;
+    
+    case 'latitude-nouvelle':
+        $controller = new LatitudeController();
+        $controller->nouvelle();
+        break;
+    
+    case 'latitude-creer':
+        $controller = new LatitudeController();
+        $controller->creer();
+        break;
+    
+    case 'latitude-supprimer':
+        $controller = new LatitudeController();
+        $controller->supprimer();
+        break;
+    
+    case 'latitude-telecharger':
+        $controller = new LatitudeController();
+        $controller->telecharger();
+        break;
+    
+    case 'latitude-supprimer-tout':
+        $controller = new LatitudeController();
         $controller->supprimerTout();
         break;
     

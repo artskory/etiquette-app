@@ -1,8 +1,26 @@
-# Application Étiquettes - Version 0.1.8
+# Application Étiquettes - Version 0.2.0
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
 ## Fonctionnalités
+
+### Version 0.2.0 - MODULE LATITUDE COMPLET 🎉
+- **Bouton Latitude activé** : Page d'accueil avec bouton Latitude fonctionnel
+- **Page Liste Latitude** : Liste des commandes sans bouton Référence
+- **Formulaire dynamique** : Ajout de lignes d'articles avec animation
+  - N° Commande
+  - Article : Carte postale, Carte stickers, Set de table, Livre
+  - Quantité d'article
+  - Nombre d'exemplaire (cartons)
+  - Bouton + pour ajouter des lignes
+  - Animation slide-down et opacité
+- **Génération PDF** : Étiquettes Latitude avec numérotation continue
+  - Format A4 paysage, 4 étiquettes par page
+  - Champs : Carton n°, Fournisseur, Commande n°, Article, Quantité
+  - Numérotation séquentielle : 1-25 (Carte postale), 26-39 (Set de table), etc.
+- **Base de données** : Table `commandes_latitude` avec stockage JSON des articles
+- **Gestion complète** : Créer, lister, télécharger, supprimer
+- **Dossier dédié** : pdfs_latitude/ pour les PDF générés
 
 ### Version 0.1.8
 - **Bouton Vider PDF supprimé** : Le bouton "Vider PDF" a été retiré de l'interface
