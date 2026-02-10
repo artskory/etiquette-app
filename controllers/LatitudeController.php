@@ -26,6 +26,22 @@ class LatitudeController {
     public function nouvelle() {
         require_once 'views/latitude/nouvelle.php';
     }
+    
+    /**
+     * Afficher le formulaire d'édition
+     */
+    public function edition() {
+        $id = $_GET['id'] ?? 0;
+        $this->commande->id = $id;
+        $commandeData = $this->commande->readOne();
+        
+        if($commandeData) {
+            require_once 'views/latitude/edition.php';
+        } else {
+            header("Location: index.php?page=latitude");
+            exit();
+        }
+    }
 
     /**
      * Créer une nouvelle commande
@@ -64,6 +80,49 @@ class LatitudeController {
             } catch(PDOException $e) {
                 error_log("Erreur création commande Latitude: " . $e->getMessage());
                 header("Location: index.php?page=latitude-nouvelle&error=create_failed");
+                exit();
+            }
+        }
+    }
+    
+    /**
+     * Mettre à jour une commande
+     */
+    public function modifier() {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->commande->id = $_POST['id'] ?? '';
+            $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
+            
+            // Récupérer et encoder les articles en JSON
+            $articles = [];
+            if(isset($_POST['articles']) && is_array($_POST['articles'])) {
+                foreach($_POST['articles'] as $article) {
+                    if(!empty($article['type']) && !empty($article['quantite']) && !empty($article['nombre_cartons'])) {
+                        $articles[] = [
+                            'type' => $article['type'],
+                            'quantite' => intval($article['quantite']),
+                            'nombre_cartons' => intval($article['nombre_cartons'])
+                        ];
+                    }
+                }
+            }
+            
+            $this->commande->articles = json_encode($articles);
+
+            try {
+                if($this->commande->update()) {
+                    // Régénérer le PDF
+                    $this->genererPDF($this->commande->id);
+                    
+                    header("Location: index.php?page=latitude&success=commande_updated");
+                    exit();
+                } else {
+                    header("Location: index.php?page=latitude-edition&id=" . $this->commande->id . "&error=update_failed");
+                    exit();
+                }
+            } catch(PDOException $e) {
+                error_log("Erreur modification commande Latitude: " . $e->getMessage());
+                header("Location: index.php?page=latitude-edition&id=" . $this->commande->id . "&error=update_failed");
                 exit();
             }
         }

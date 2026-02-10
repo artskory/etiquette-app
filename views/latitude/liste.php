@@ -30,9 +30,8 @@
                         <tr>
                             <th>ID</th>
                             <th>N° Commande</th>
-                            <th>Articles</th>
                             <th>Total Cartons</th>
-                            <th width="200" class="text-center">Actions</th>
+                            <th width="250" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,21 +41,23 @@
                             $hasCommandes = true;
                             $articles = json_decode($row['articles'], true);
                             $totalCartons = 0;
-                            $articlesText = [];
                             
                             if($articles && is_array($articles)) {
                                 foreach($articles as $article) {
                                     $totalCartons += $article['nombre_cartons'];
-                                    $articlesText[] = $article['type'] . ' (' . $article['nombre_cartons'] . ')';
                                 }
                             }
                         ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['id']); ?></td>
                                 <td><?php echo htmlspecialchars($row['numero_commande']); ?></td>
-                                <td><?php echo htmlspecialchars(implode(', ', $articlesText)); ?></td>
                                 <td><?php echo $totalCartons; ?> cartons</td>
                                 <td class="text-center">
+                                    <a href="index.php?page=latitude-edition&id=<?php echo $row['id']; ?>" 
+                                       class="btn btn-sm btn-outline-primary me-2" 
+                                       title="Éditer">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
                                     <a href="index.php?page=latitude-telecharger&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-outline-success me-2" 
                                        title="Télécharger PDF">
@@ -80,7 +81,7 @@
                         
                         <?php if(!$hasCommandes): ?>
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">
+                                <td colspan="4" class="text-center text-muted py-4">
                                     <i class="bi bi-inbox fs-1"></i>
                                     <p class="mt-2">Aucune commande enregistrée</p>
                                 </td>

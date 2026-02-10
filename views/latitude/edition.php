@@ -2,7 +2,7 @@
 
 <div class="container mt-4 col-md-9">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Nouvelle étiquette Latitude</h1>
+        <h1>Édition étiquette Latitude</h1>
         <div>
             <button type="submit" form="latitudeForm" class="btn btn-success me-2">
                 <i class="bi bi-check-circle me-1"></i>Sauvegarder
@@ -15,49 +15,75 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form id="latitudeForm" action="index.php?page=latitude-creer" method="POST">
+            <form id="latitudeForm" action="index.php?page=latitude-modifier" method="POST">
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
+                
                 <!-- N° Commande -->
                 <div class="mb-4">
                     <label for="numero_commande" class="form-label">
                         <i class="bi bi-hash blue icons"></i>N° Commande <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control" id="numero_commande" name="numero_commande" required 
+                           value="<?php echo htmlspecialchars($commandeData['numero_commande']); ?>"
                            placeholder="Ex: 2510-4028">
                 </div>
 
                 <hr class="my-4">
 
                 <div id="articlesContainer">
-                    <!-- Ligne article initiale -->
-                    <div class="article-row mb-3" data-row-index="0">
+                    <?php
+                    $articles = json_decode($commandeData['articles'], true);
+                    if($articles && is_array($articles)) {
+                        foreach($articles as $index => $article) {
+                            $isFirst = ($index === 0);
+                            $addBtnClass = $isFirst ? 'btn-add-first' : '';
+                            $addBtnStyle = $isFirst && count($articles) > 1 ? 'style="display:none;"' : '';
+                    ?>
+                    <div class="article-row mb-3" data-row-index="<?php echo $index; ?>">
                         <div class="row align-items-end">
                             <div class="col-md-3">
                                 <label class="form-label">Article <span class="text-danger">*</span></label>
-                                <select class="form-select" name="articles[0][type]" required>
+                                <select class="form-select" name="articles[<?php echo $index; ?>][type]" required>
                                     <option value="">Sélectionner...</option>
-                                    <option value="Carte postale">Carte postale</option>
-                                    <option value="Carte stickers">Carte stickers</option>
-                                    <option value="Set de table">Set de table</option>
-                                    <option value="Livre">Livre</option>
+                                    <option value="Carte postale" <?php echo $article['type'] === 'Carte postale' ? 'selected' : ''; ?>>Carte postale</option>
+                                    <option value="Carte stickers" <?php echo $article['type'] === 'Carte stickers' ? 'selected' : ''; ?>>Carte stickers</option>
+                                    <option value="Set de table" <?php echo $article['type'] === 'Set de table' ? 'selected' : ''; ?>>Set de table</option>
+                                    <option value="Livre" <?php echo $article['type'] === 'Livre' ? 'selected' : ''; ?>>Livre</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Quantité d'article <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="articles[0][quantite]" min="1" required 
-                                       placeholder="Ex: 900">
+                                <input type="number" class="form-control" name="articles[<?php echo $index; ?>][quantite]" 
+                                       value="<?php echo htmlspecialchars($article['quantite']); ?>" min="1" required placeholder="Ex: 900">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Nombre d'exemplaire <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="articles[0][nombre_cartons]" min="1" required 
-                                       placeholder="Ex: 25">
+                                <input type="number" class="form-control" name="articles[<?php echo $index; ?>][nombre_cartons]" 
+                                       value="<?php echo htmlspecialchars($article['nombre_cartons']); ?>" min="1" required placeholder="Ex: 25">
                             </div>
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-primary w-100 btn-add-first" onclick="ajouterLigneArticle()">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
+                                <?php if($isFirst): ?>
+                                    <button type="button" class="btn btn-primary w-100 <?php echo $addBtnClass; ?>" 
+                                            onclick="ajouterLigneArticle()" <?php echo $addBtnStyle; ?>>
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
+                    <?php
+                        }
+                    }
+                    ?>
                 </div>
             </form>
         </div>
@@ -98,7 +124,7 @@
 </style>
 
 <script>
-let articleRowIndex = 1;
+let articleRowIndex = <?php echo count($articles); ?>;
 
 function ajouterLigneArticle() {
     const container = document.getElementById('articlesContainer');

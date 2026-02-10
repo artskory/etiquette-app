@@ -5,7 +5,7 @@
  */
 
 // Définir la version de l'application
-define('APP_VERSION', '0.2.0');
+define('APP_VERSION', '0.2.2');
 
 // Démarrer la session
 session_start();
@@ -14,8 +14,10 @@ session_start();
 require_once 'config/database.php';
 require_once 'models/Reference.php';
 require_once 'models/Commande.php';
+require_once 'models/CommandeLatitude.php';
 require_once 'controllers/ReferenceController.php';
 require_once 'controllers/CommandeController.php';
+require_once 'controllers/LatitudeController.php';
 
 // Récupérer la page demandée
 $page = $_GET['page'] ?? 'home';
@@ -87,9 +89,19 @@ switch($page) {
         $controller->nouvelle();
         break;
     
+    case 'latitude-edition':
+        $controller = new LatitudeController();
+        $controller->edition();
+        break;
+    
     case 'latitude-creer':
         $controller = new LatitudeController();
         $controller->creer();
+        break;
+    
+    case 'latitude-modifier':
+        $controller = new LatitudeController();
+        $controller->modifier();
         break;
     
     case 'latitude-supprimer':

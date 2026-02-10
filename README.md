@@ -1,8 +1,37 @@
-# Application Étiquettes - Version 0.2.0
+# Application Étiquettes - Version 0.2.1
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
+## Installation
+
+### 1. Installation classique (Sartorius)
+L'application fonctionne immédiatement après avoir exécuté le script SQL principal `database/schema.sql`.
+
+### 2. Installation du module Latitude
+
+**IMPORTANT** : Le module Latitude nécessite la création de sa table en base de données.
+
+**Option A - Script automatique (recommandé)** :
+1. Accédez à : `http://localhost/etiquette-app/install_latitude.php`
+2. La table sera créée automatiquement
+3. **Supprimez ensuite le fichier** `install_latitude.php` pour des raisons de sécurité
+
+**Option B - Via phpMyAdmin** :
+1. Ouvrez phpMyAdmin : `http://localhost/phpmyadmin`
+2. Sélectionnez la base `etiquette_db`
+3. Cliquez sur l'onglet SQL
+4. Exécutez le contenu du fichier `database/latitude_schema.sql`
+
+**Option C - Ligne de commande** :
+```bash
+C:\xampp\mysql\bin\mysql -u root -p etiquette_db < database/latitude_schema.sql
+```
+
 ## Fonctionnalités
+
+### Version 0.2.1
+- **Script d'installation** : Ajout de `install_latitude.php` pour créer la table automatiquement
+- **Correction** : Ajout des require_once manquants pour le module Latitude
 
 ### Version 0.2.0 - MODULE LATITUDE COMPLET 🎉
 - **Bouton Latitude activé** : Page d'accueil avec bouton Latitude fonctionnel
