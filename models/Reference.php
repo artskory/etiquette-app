@@ -68,7 +68,7 @@ class Reference {
             $this->designation = $row['designation'];
             $this->created_at = $row['created_at'];
             $this->updated_at = $row['updated_at'];
-            return true;
+            return $row; // Retourner le tableau au lieu de true
         }
 
         return false;

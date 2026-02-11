@@ -30,29 +30,53 @@ class CommandeController {
     }
 
     /**
-     * Créer une nouvelle commande
+     * Créer une nouvelle commande (ou plusieurs avec différentes quantités)
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
-            $this->commande->reference_id = $_POST['reference_id'] ?? '';
-            $this->commande->quantite_par_carton = $_POST['quantite_par_carton'] ?? '';
-            $this->commande->date_production = $_POST['date_production'] ?? '';
-            $this->commande->numero_lot = $_POST['numero_lot'] ?? '';
-            $this->commande->quantite_etiquettes = $_POST['quantite_etiquettes'] ?? '';
-
+            // Récupérer les champs communs
+            $reference_id = $_POST['reference_id'] ?? '';
+            $date_production = $_POST['date_production'] ?? '';
+            $numero_commande = $_POST['numero_commande'] ?? '';
+            $numero_lot = $_POST['numero_lot'] ?? '';
+            
+            // Récupérer les lignes de quantités
+            $quantites = $_POST['quantites'] ?? [];
+            
+            if(empty($quantites)) {
+                header("Location: index.php?page=nouvelle-commande&error=no_data");
+                exit();
+            }
+            
+            $createdCount = 0;
+            
             try {
-                if($this->commande->create()) {
-                    // Générer le PDF
-                    $this->genererPDF($this->commande->id);
-                    
-                    header("Location: index.php?page=sartorius&success=commande_created");
+                // Créer une commande pour chaque ligne de quantités
+                foreach($quantites as $qty) {
+                    $this->commande->reference_id = $reference_id;
+                    $this->commande->date_production = $date_production;
+                    $this->commande->numero_commande = $numero_commande;
+                    $this->commande->numero_lot = $numero_lot;
+                    $this->commande->quantite_par_carton = $qty['quantite_par_carton'] ?? '';
+                    $this->commande->quantite_etiquettes = $qty['quantite_etiquettes'] ?? '';
+
+                    if($this->commande->create()) {
+                        // Générer le PDF pour cette commande
+                        $this->genererPDF($this->commande->id);
+                        $createdCount++;
+                    }
+                }
+                
+                if($createdCount > 0) {
+                    $message = $createdCount > 1 ? "commandes_created&count=$createdCount" : "commande_created";
+                    header("Location: index.php?page=sartorius&success=$message");
                     exit();
                 } else {
                     header("Location: index.php?page=nouvelle-commande&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
+                error_log("Erreur création commande(s): " . $e->getMessage());
                 header("Location: index.php?page=nouvelle-commande&error=create_failed");
                 exit();
             }

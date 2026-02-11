@@ -79,8 +79,18 @@ function showAlertsFromURL() {
             case 'reference_created':
                 message = 'La référence a été créée avec succès.';
                 break;
+            case 'reference_updated':
+                message = 'La référence a été modifiée avec succès.';
+                break;
+            case 'reference_deleted':
+                message = 'La référence a été supprimée avec succès.';
+                break;
             case 'commande_created':
                 message = 'La commande a été créée avec succès.';
+                break;
+            case 'commandes_created':
+                const commandesCount = urlParams.get('count') || 0;
+                message = `${commandesCount} commandes ont été créées avec succès.`;
                 break;
             case 'commande_updated':
                 message = 'La commande a été modifiée avec succès.';
@@ -89,8 +99,8 @@ function showAlertsFromURL() {
                 message = 'La commande a été supprimée avec succès.';
                 break;
             case 'pdf_cleared':
-                const count = urlParams.get('count') || 0;
-                message = `${count} fichier(s) PDF supprimé(s) avec succès.`;
+                const pdfCount = urlParams.get('count') || 0;
+                message = `${pdfCount} fichier(s) PDF supprimé(s) avec succès.`;
                 break;
             case 'all_deleted':
                 message = 'Toutes les commandes ont été supprimées avec succès.';

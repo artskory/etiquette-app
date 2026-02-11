@@ -1,4 +1,4 @@
-# Application Étiquettes - Version 0.2.2
+# Application Étiquettes - Version 0.3.1
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
@@ -27,21 +27,68 @@ L'application fonctionne immédiatement après avoir exécuté le script SQL pri
 C:\xampp\mysql\bin\mysql -u root -p etiquette_db < database/latitude_schema.sql
 ```
 
+### 3. Correction des données Latitude corrompues (si nécessaire)
+
+Si vos PDF Latitude sont vides après installation initiale :
+```
+http://localhost/etiquette-app/fix_latitude_json.php
+```
+Puis supprimez le fichier après utilisation.
+
 ## Fonctionnalités
 
+### Version 0.3.1 - CORRECTIONS ET AMÉLIORATIONS UX
+- **Correction erreur JavaScript** : Fix conflit variable `count` dans custom-alerts.js
+- **Page Édition commande Sartorius** : Nouveau layout cohérent avec création
+  - Ligne fixe : Référence, Date, N° Commande, N° Lot
+  - Ligne quantités : Qty par carton, Qty étiquettes
+  - Date picker avec mois en lettres
+- **Correction édition référence** : Fix erreur "array offset on bool"
+  - `Reference::readOne()` retourne maintenant le tableau de données
+
+### Version 0.3.0 - GESTION RÉFÉRENCES ET FORMULAIRE SARTORIUS
+- **Gestion complète des références** :
+  - Tableau des références sur page Ajout Référence
+  - Boutons Éditer et Supprimer pour chaque référence
+  - Page d'édition dédiée
+  - Protection contre les doublons (référence + désignation)
+  - Routes: editer-reference, modifier-reference, supprimer-reference
+
+- **Nouveau formulaire Sartorius** :
+  - **Ligne fixe** : Référence, Date production, N° Commande, N° Lot
+  - **Lignes dynamiques** : Quantité par carton + Quantité d'étiquettes
+  - Date picker avec mois en lettres (Janvier 2026, etc.)
+  - Bouton + ajoute uniquement lignes de quantités
+  - Permet création de variantes (même produit, différentes quantités)
+
+### Version 0.2.5 - FIX JSON LATITUDE
+- **Correction critique** : PDF Latitude vides
+  - Suppression de `htmlspecialchars()` sur champs JSON
+  - Script de réparation : `fix_latitude_json.php`
+  - JSON stocké correctement en base
+
+### Version 0.2.4 - OUTILS DIAGNOSTIC
+- **Scripts de test** :
+  - `test_pdf.php` : Diagnostic Sartorius
+  - `test_pdf_latitude.php` : Diagnostic Latitude
+- Logs de débogage ajoutés
+
+### Version 0.2.3 - FIX GÉNÉRATION PDF
+- **Correction PDF Sartorius et Latitude** :
+  - Requête SQL avec JOIN pour récupérer données complètes
+  - Vérification existence fichiers
+  - Messages d'erreur utilisateur
+  - Gestion d'erreurs améliorée
+
 ### Version 0.2.2
-- **Liste Latitude améliorée** : Suppression de la colonne "Articles"
-- **Édition de commandes** : Nouveau bouton "Éditer" dans la liste
-- **Page d'édition Latitude** : Modification complète des commandes avec régénération PDF
-- **Boutons + améliorés** : 
-  - Première ligne : bouton + disparaît après le premier clic
-  - Lignes suivantes : bouton + et bouton supprimer côte à côte
-  - Réapparition du bouton + sur la première ligne quand il ne reste qu'une seule ligne
-- **Routes ajoutées** : latitude-edition, latitude-modifier
+- **Liste Latitude améliorée** : Suppression colonne "Articles"
+- **Édition Latitude** : Nouveau bouton "Éditer"
+- **Page d'édition Latitude** : Modification complète avec régénération PDF
+- **Boutons + intelligents** : Logique hide/show automatique
 
 ### Version 0.2.1
-- **Script d'installation** : Ajout de `install_latitude.php` pour créer la table automatiquement
-- **Correction** : Ajout des require_once manquants pour le module Latitude
+- **Script d'installation** : `install_latitude.php`
+- **Correction** : require_once manquants pour module Latitude
 
 ### Version 0.2.0 - MODULE LATITUDE COMPLET 🎉
 - **Bouton Latitude activé** : Page d'accueil avec bouton Latitude fonctionnel

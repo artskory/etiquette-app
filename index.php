@@ -5,7 +5,7 @@
  */
 
 // Définir la version de l'application
-define('APP_VERSION', '0.2.5');
+define('APP_VERSION', '0.3.2');
 
 // Démarrer la session
 session_start();
@@ -41,6 +41,21 @@ switch($page) {
     case 'creer-reference':
         $controller = new ReferenceController();
         $controller->creer();
+        break;
+    
+    case 'editer-reference':
+        $controller = new ReferenceController();
+        $controller->edition();
+        break;
+    
+    case 'modifier-reference':
+        $controller = new ReferenceController();
+        $controller->modifier();
+        break;
+    
+    case 'supprimer-reference':
+        $controller = new ReferenceController();
+        $controller->supprimer();
         break;
     
     case 'nouvelle-commande':
