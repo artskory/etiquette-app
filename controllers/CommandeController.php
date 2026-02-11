@@ -49,21 +49,26 @@ class CommandeController {
             }
             
             $createdCount = 0;
+            $createdIds = [];
             
             try {
                 // Créer une commande pour chaque ligne de quantités
                 foreach($quantites as $qty) {
-                    $this->commande->reference_id = $reference_id;
-                    $this->commande->date_production = $date_production;
-                    $this->commande->numero_commande = $numero_commande;
-                    $this->commande->numero_lot = $numero_lot;
-                    $this->commande->quantite_par_carton = $qty['quantite_par_carton'] ?? '';
-                    $this->commande->quantite_etiquettes = $qty['quantite_etiquettes'] ?? '';
+                    // IMPORTANT: Créer une nouvelle instance pour chaque ligne
+                    $nouvelleCommande = new Commande($this->db);
+                    
+                    $nouvelleCommande->reference_id = $reference_id;
+                    $nouvelleCommande->date_production = $date_production;
+                    $nouvelleCommande->numero_commande = $numero_commande;
+                    $nouvelleCommande->numero_lot = $numero_lot;
+                    $nouvelleCommande->quantite_par_carton = $qty['quantite_par_carton'] ?? '';
+                    $nouvelleCommande->quantite_etiquettes = $qty['quantite_etiquettes'] ?? '';
 
-                    if($this->commande->create()) {
+                    if($nouvelleCommande->create()) {
                         // Générer le PDF pour cette commande
-                        $this->genererPDF($this->commande->id);
+                        $this->genererPDF($nouvelleCommande->id);
                         $createdCount++;
+                        $createdIds[] = $nouvelleCommande->id;
                     }
                 }
                 

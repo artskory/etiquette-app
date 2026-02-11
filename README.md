@@ -1,4 +1,4 @@
-# Application Étiquettes - Version 0.3.1
+# Application Étiquettes - Version 0.3.4
 
 Application web de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap.
 
@@ -7,7 +7,23 @@ Application web de gestion d'étiquettes Sartorius et Latitude développée en P
 ### 1. Installation classique (Sartorius)
 L'application fonctionne immédiatement après avoir exécuté le script SQL principal `database/schema.sql`.
 
-### 2. Installation du module Latitude
+### 2. Vérification de la base de données
+
+**Nouveau** : Script de vérification automatique
+```
+http://localhost/etiquette-app/check_database.php
+```
+
+Ce script vérifie :
+- ✓ Structure des tables (references, commandes, commandes_latitude)
+- ✓ Présence de toutes les colonnes nécessaires
+- ✓ Contraintes de clé étrangère
+- ✓ Nombre d'enregistrements
+- ✓ État général de la base de données
+
+**Supprimez le fichier** après vérification.
+
+### 3. Installation du module Latitude
 
 **IMPORTANT** : Le module Latitude nécessite la création de sa table en base de données.
 
@@ -27,7 +43,7 @@ L'application fonctionne immédiatement après avoir exécuté le script SQL pri
 C:\xampp\mysql\bin\mysql -u root -p etiquette_db < database/latitude_schema.sql
 ```
 
-### 3. Correction des données Latitude corrompues (si nécessaire)
+### 4. Correction des données Latitude corrompues (si nécessaire)
 
 Si vos PDF Latitude sont vides après installation initiale :
 ```
@@ -37,7 +53,29 @@ Puis supprimez le fichier après utilisation.
 
 ## Fonctionnalités
 
-### Version 0.3.1 - CORRECTIONS ET AMÉLIORATIONS UX
+### Version 0.3.4 - FIX CRÉATION COMMANDES MULTIPLES 🔧
+- **Correction critique** : Toutes les lignes de quantités sont maintenant enregistrées
+  - Problème : Seule la dernière ligne était sauvegardée
+  - Cause : Réutilisation de la même instance `Commande` avec `bindParam` par référence
+  - Solution : Création d'une nouvelle instance `Commande` pour chaque ligne
+- **Script de test** : `test_create_commande.php`
+  - Teste la création de 3 commandes simultanées
+  - Vérifie que toutes sont bien en base de données
+  - Nettoie automatiquement les données de test
+  - Accès : `http://localhost/etiquette-app/test_create_commande.php`
+
+### Version 0.3.3 - VÉRIFICATION BASE DE DONNÉES
+- **Script de diagnostic** : `check_database.php`
+  - Vérifie la structure complète de la base de données
+  - Affiche les colonnes de chaque table
+  - Compte les enregistrements
+  - Vérifie les contraintes de clé étrangère
+  - Interface web conviviale avec tableaux
+- **Script de mise à jour** : `database/update_schema.sql`
+  - Assure la cohérence de la structure
+  - Modification sans perte de données
+
+### Version 0.3.2 - CORRECTIONS ÉDITION
 - **Correction erreur JavaScript** : Fix conflit variable `count` dans custom-alerts.js
 - **Page Édition commande Sartorius** : Nouveau layout cohérent avec création
   - Ligne fixe : Référence, Date, N° Commande, N° Lot
