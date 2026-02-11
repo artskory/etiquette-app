@@ -5,7 +5,7 @@
  */
 
 // Définir la version de l'application
-define('APP_VERSION', '0.3.2');
+define('APP_VERSION', '0.3.3');
 
 // Démarrer la session
 session_start();
