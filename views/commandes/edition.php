@@ -1,4 +1,11 @@
-<?php require_once 'views/layouts/header.php'; ?>
+<?php require_once 'views/layouts/header.php'; 
+
+// Convertir le PDOStatement en array
+$referencesArray = [];
+while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
+    $referencesArray[] = $ref;
+}
+?>
 
 <div class="container mt-4 col-md-9">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -26,15 +33,12 @@
                         </label>
                         <select class="form-select" name="reference_id" required>
                             <option value="">-- Sélectionnez --</option>
-                            <?php 
-                            $references->execute();
-                            while ($ref = $references->fetch(PDO::FETCH_ASSOC)): 
-                            ?>
+                            <?php foreach($referencesArray as $ref): ?>
                                 <option value="<?php echo $ref['id']; ?>" 
                                     <?php echo ($ref['id'] == $commandeData['reference_id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($ref['reference']) . ' - ' . htmlspecialchars($ref['designation']); ?>
                                 </option>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     
