@@ -17,14 +17,14 @@
                 
                 <div class="row">    
                     <div class="col-md-6">
-                        <i class="bi bi-hash blue icons"></i><label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
+                        <label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="reference" name="reference" required 
                                value="<?php echo htmlspecialchars($referenceData['reference']); ?>"
                                placeholder="Entrez la référence">
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <i class="bi bi-bookmarks blue icons"></i></i><label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
+                        <label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="designation" name="designation" required 
                                value="<?php echo htmlspecialchars($referenceData['designation']); ?>"
                                placeholder="Entrez la désignation">

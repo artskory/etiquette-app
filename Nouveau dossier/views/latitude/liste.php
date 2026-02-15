@@ -28,7 +28,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             </div>
         </div>
 
-        <div class="card mt-5">
+        <div class="card">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead class="table-light">

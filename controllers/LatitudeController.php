@@ -24,6 +24,11 @@ class LatitudeController {
      * Afficher le formulaire de nouvelle commande
      */
     public function nouvelle() {
+        // Charger les articles
+        require_once 'models/ArticleLatitude.php';
+        $articleModel = new ArticleLatitude($this->db);
+        $articles = $articleModel->readAll();
+        
         require_once 'views/latitude/nouvelle.php';
     }
     
@@ -36,6 +41,11 @@ class LatitudeController {
         $commandeData = $this->commande->readOne();
         
         if($commandeData) {
+            // Charger les articles disponibles pour le dropdown
+            require_once 'models/ArticleLatitude.php';
+            $articleModel = new ArticleLatitude($this->db);
+            $articles = $articleModel->readAll();
+            
             require_once 'views/latitude/edition.php';
         } else {
             header("Location: index.php?page=latitude");

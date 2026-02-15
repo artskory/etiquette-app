@@ -9,10 +9,14 @@ class Commande {
     public $id;
     public $numero_commande;
     public $reference_id;
-    public $quantite_par_carton;
+    public $quantites; // JSON: [{quantite_par_carton, quantite_etiquettes}]
     public $date_production;
     public $numero_lot;
+    
+    // Propriétés obsolètes (conservées pour compatibilité)
+    public $quantite_par_carton;
     public $quantite_etiquettes;
+    
     public $created_at;
     public $updated_at;
 
@@ -30,26 +34,23 @@ class Commande {
         $query = "INSERT INTO " . $this->table_name . " 
                   SET numero_commande=:numero_commande, 
                       reference_id=:reference_id,
-                      quantite_par_carton=:quantite_par_carton,
+                      quantites=:quantites,
                       date_production=:date_production,
-                      numero_lot=:numero_lot,
-                      quantite_etiquettes=:quantite_etiquettes";
+                      numero_lot=:numero_lot";
 
         $stmt = $this->conn->prepare($query);
 
         $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
         $this->reference_id = htmlspecialchars(strip_tags($this->reference_id));
-        $this->quantite_par_carton = htmlspecialchars(strip_tags($this->quantite_par_carton));
+        // Ne pas échapper le JSON
         $this->date_production = htmlspecialchars(strip_tags($this->date_production));
         $this->numero_lot = htmlspecialchars(strip_tags($this->numero_lot));
-        $this->quantite_etiquettes = htmlspecialchars(strip_tags($this->quantite_etiquettes));
 
         $stmt->bindParam(":numero_commande", $this->numero_commande);
         $stmt->bindParam(":reference_id", $this->reference_id);
-        $stmt->bindParam(":quantite_par_carton", $this->quantite_par_carton);
+        $stmt->bindParam(":quantites", $this->quantites);
         $stmt->bindParam(":date_production", $this->date_production);
         $stmt->bindParam(":numero_lot", $this->numero_lot);
-        $stmt->bindParam(":quantite_etiquettes", $this->quantite_etiquettes);
 
         if($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
@@ -111,28 +112,25 @@ class Commande {
         $query = "UPDATE " . $this->table_name . " 
                   SET numero_commande=:numero_commande,
                       reference_id=:reference_id,
-                      quantite_par_carton=:quantite_par_carton,
+                      quantites=:quantites,
                       date_production=:date_production,
-                      numero_lot=:numero_lot,
-                      quantite_etiquettes=:quantite_etiquettes
+                      numero_lot=:numero_lot
                   WHERE id=:id";
 
         $stmt = $this->conn->prepare($query);
 
         $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
         $this->reference_id = htmlspecialchars(strip_tags($this->reference_id));
-        $this->quantite_par_carton = htmlspecialchars(strip_tags($this->quantite_par_carton));
+        // Ne pas échapper le JSON
         $this->date_production = htmlspecialchars(strip_tags($this->date_production));
         $this->numero_lot = htmlspecialchars(strip_tags($this->numero_lot));
-        $this->quantite_etiquettes = htmlspecialchars(strip_tags($this->quantite_etiquettes));
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":numero_commande", $this->numero_commande);
         $stmt->bindParam(":reference_id", $this->reference_id);
-        $stmt->bindParam(":quantite_par_carton", $this->quantite_par_carton);
+        $stmt->bindParam(":quantites", $this->quantites);
         $stmt->bindParam(":date_production", $this->date_production);
         $stmt->bindParam(":numero_lot", $this->numero_lot);
-        $stmt->bindParam(":quantite_etiquettes", $this->quantite_etiquettes);
         $stmt->bindParam(":id", $this->id);
 
         if($stmt->execute()) {
@@ -155,5 +153,21 @@ class Commande {
         }
 
         return false;
+    }
+    
+    /**
+     * Calculer le total d'étiquettes pour cette commande
+     */
+    public function getTotalEtiquettes() {
+        $quantitesArray = json_decode($this->quantites, true);
+        $total = 0;
+        
+        if(is_array($quantitesArray)) {
+            foreach($quantitesArray as $qty) {
+                $total += (int)($qty['quantite_etiquettes'] ?? 0);
+            }
+        }
+        
+        return $total;
     }
 }

@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- custom-alerts -->
-    <link rel="stylesheet" href="assets/css/custom-alerts.css">
     <!-- Favicons -->
+    <!-- Favicons -->
+    <link rel="stylesheet" href="assets/css/custom-alerts.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/x-icon" href="image/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
@@ -26,14 +27,17 @@
         <!-- Header Section -->
     <div class="dashboard-header">
         <div class="container-fluid px-4">
-            <nav class="navbar">
+            <nav class="navbar navbar-expand-lg navbar-dark">
                 <div class="container-fluid p-0">
                     <a class="navbar-brand" href="index.php">
-                        <img id="logo" src="image/logo.svg" alt="logo">
+                        <div class="brand-square" style="background: #ff6b6b; animation-delay: 0s;"></div>
+                        <div class="brand-square" style="background: #ffd93d; animation-delay: 0.2s;"></div>
+                        <div class="brand-square" style="background: #6bcf7f; animation-delay: 0.4s;"></div>
+                        <div class="brand-square" style="background: #4d96ff; animation-delay: 0.6s;"></div>
                     </a>
                 </div>
             </nav>
-            <img src="image/34829.svg" alt="image">
+            
         </div>
     </div>
     

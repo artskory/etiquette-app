@@ -30,7 +30,7 @@ class CommandeController {
     }
 
     /**
-     * Créer une nouvelle commande (ou plusieurs avec différentes quantités)
+     * Créer une nouvelle commande avec plusieurs quantités
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,47 +41,54 @@ class CommandeController {
             $numero_lot = $_POST['numero_lot'] ?? '';
             
             // Récupérer les lignes de quantités
-            $quantites = $_POST['quantites'] ?? [];
+            $quantitesPost = $_POST['quantites'] ?? [];
             
-            if(empty($quantites)) {
+            if(empty($quantitesPost)) {
                 header("Location: index.php?page=nouvelle-commande&error=no_data");
                 exit();
             }
             
-            $createdCount = 0;
-            $createdIds = [];
-            
             try {
-                // Créer une commande pour chaque ligne de quantités
-                foreach($quantites as $qty) {
-                    // IMPORTANT: Créer une nouvelle instance pour chaque ligne
-                    $nouvelleCommande = new Commande($this->db);
-                    
-                    $nouvelleCommande->reference_id = $reference_id;
-                    $nouvelleCommande->date_production = $date_production;
-                    $nouvelleCommande->numero_commande = $numero_commande;
-                    $nouvelleCommande->numero_lot = $numero_lot;
-                    $nouvelleCommande->quantite_par_carton = $qty['quantite_par_carton'] ?? '';
-                    $nouvelleCommande->quantite_etiquettes = $qty['quantite_etiquettes'] ?? '';
-
-                    if($nouvelleCommande->create()) {
-                        // Générer le PDF pour cette commande
-                        $this->genererPDF($nouvelleCommande->id);
-                        $createdCount++;
-                        $createdIds[] = $nouvelleCommande->id;
+                // Construire le tableau de quantités
+                $quantites = [];
+                foreach($quantitesPost as $qty) {
+                    if(!empty($qty['quantite_par_carton']) && !empty($qty['quantite_etiquettes'])) {
+                        $quantites[] = [
+                            'quantite_par_carton' => (int)$qty['quantite_par_carton'],
+                            'quantite_etiquettes' => (int)$qty['quantite_etiquettes']
+                        ];
                     }
                 }
                 
-                if($createdCount > 0) {
-                    $message = $createdCount > 1 ? "commandes_created&count=$createdCount" : "commande_created";
-                    header("Location: index.php?page=sartorius&success=$message");
+                // Créer UNE SEULE commande avec toutes les quantités
+                $this->commande->reference_id = $reference_id;
+                $this->commande->date_production = $date_production;
+                $this->commande->numero_commande = $numero_commande;
+                $this->commande->numero_lot = $numero_lot;
+                $this->commande->quantites = json_encode($quantites);
+
+                if($this->commande->create()) {
+                    // Générer le PDF pour cette commande
+                    $this->genererPDF($this->commande->id);
+                    
+                    header("Location: index.php?page=sartorius&success=commande_created");
                     exit();
                 } else {
                     header("Location: index.php?page=nouvelle-commande&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
-                error_log("Erreur création commande(s): " . $e->getMessage());
+                error_log("Erreur création commande: " . $e->getMessage());
+                
+                // Vérifier si l'erreur est due à la colonne manquante
+                if(strpos($e->getMessage(), 'quantites') !== false || strpos($e->getMessage(), 'Unknown column') !== false) {
+                    header("Location: index.php?page=nouvelle-commande&error=migration_required");
+                } else {
+                    header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                }
+                exit();
+            } catch(Exception $e) {
+                error_log("Erreur inattendue: " . $e->getMessage());
                 header("Location: index.php?page=nouvelle-commande&error=create_failed");
                 exit();
             }
@@ -114,13 +121,30 @@ class CommandeController {
             $this->commande->id = $_POST['id'] ?? '';
             $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
             $this->commande->reference_id = $_POST['reference_id'] ?? '';
-            $this->commande->quantite_par_carton = $_POST['quantite_par_carton'] ?? '';
             $this->commande->date_production = $_POST['date_production'] ?? '';
             $this->commande->numero_lot = $_POST['numero_lot'] ?? '';
-            $this->commande->quantite_etiquettes = $_POST['quantite_etiquettes'] ?? '';
+            
+            // Récupérer les lignes de quantités
+            $quantitesPost = $_POST['quantites'] ?? [];
+            
+            // Construire le tableau de quantités
+            $quantites = [];
+            foreach($quantitesPost as $qty) {
+                if(!empty($qty['quantite_par_carton']) && !empty($qty['quantite_etiquettes'])) {
+                    $quantites[] = [
+                        'quantite_par_carton' => (int)$qty['quantite_par_carton'],
+                        'quantite_etiquettes' => (int)$qty['quantite_etiquettes']
+                    ];
+                }
+            }
+            
+            $this->commande->quantites = json_encode($quantites);
 
             try {
                 if($this->commande->update()) {
+                    // Régénérer le PDF
+                    $this->genererPDF($this->commande->id);
+                    
                     header("Location: index.php?page=sartorius&success=commande_updated");
                     exit();
                 } else {
@@ -128,6 +152,7 @@ class CommandeController {
                     exit();
                 }
             } catch(PDOException $e) {
+                error_log("Erreur modification commande: " . $e->getMessage());
                 header("Location: index.php?page=edition-commande&id=" . $this->commande->id . "&error=update_failed");
                 exit();
             }
@@ -213,7 +238,7 @@ class CommandeController {
         
         // Générer le PDF
         try {
-            $filename = $pdfGen->genererEtiquettes($commandeData, $commandeData['quantite_etiquettes']);
+            $filename = $pdfGen->genererEtiquettes($commandeData);
             
             if($download) {
                 // Formater la date pour le nom de téléchargement

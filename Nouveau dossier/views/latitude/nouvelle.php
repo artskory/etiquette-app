@@ -20,7 +20,7 @@ if(isset($articles)) {
                 </div>
             </div>
 
-            <div class="card mt-5">
+            <div class="card">
                 <form id="latitudeForm" action="index.php?page=latitude-creer" method="POST">
                     <!-- N° Commande -->
                     <div class="mb-4">

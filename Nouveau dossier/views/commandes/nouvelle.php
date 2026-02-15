@@ -16,14 +16,14 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
             </a>
         </div>
     </div>
-<div class="card">
- <div class="card-body">
+
+    <div class="card-body">
         <form id="commandeForm" action="index.php?page=creer-commande" method="POST">
             <!-- Ligne fixe en haut : Référence, Date, N° Commande, N° Lot -->
             <div class="row mb-4">
                 <div class="col-md-3">
                     <label class="form-label">
-                        <i class="bi bi-hash blue icons"></i>Référence <span class="text-danger">*</span>
+                        <i class="bi bi-bookmarks blue icons"></i>Référence <span class="text-danger">*</span>
                     </label>
                     <select class="form-select" name="reference_id" id="reference_id" required>
                         <option value="">-- Sélectionnez --</option>
@@ -110,8 +110,6 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
             </div>
         </form>
     </div>
-</div>
-   
 </div>
 
 <style>

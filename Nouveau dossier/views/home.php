@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- custom-alerts -->
-    <link rel="stylesheet" href="assets/css/custom-alerts.css">
     <!-- Favicons -->
+    <!-- Favicons -->
+    <link rel="stylesheet" href="assets/css/custom-alerts.css">
     <link rel="icon" type="image/x-icon" href="image/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">

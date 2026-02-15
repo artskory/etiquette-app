@@ -4,8 +4,13 @@
  * Version 0.0.1
  */
 
+// Désactiver l'affichage des erreurs en production
+// Décommentez les 2 lignes suivantes pour débugger
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
 // Définir la version de l'application
-define('APP_VERSION', '0.3.5');
+define('APP_VERSION', '1.0.2');
 
 // Démarrer la session
 session_start();
@@ -15,9 +20,11 @@ require_once 'config/database.php';
 require_once 'models/Reference.php';
 require_once 'models/Commande.php';
 require_once 'models/CommandeLatitude.php';
+require_once 'models/ArticleLatitude.php';
 require_once 'controllers/ReferenceController.php';
 require_once 'controllers/CommandeController.php';
 require_once 'controllers/LatitudeController.php';
+require_once 'controllers/ArticleLatitudeController.php';
 
 // Récupérer la page demandée
 $page = $_GET['page'] ?? 'home';
@@ -132,6 +139,32 @@ switch($page) {
     case 'latitude-supprimer-tout':
         $controller = new LatitudeController();
         $controller->supprimerTout();
+        break;
+    
+    // Articles Latitude
+    case 'nouveau-article-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->nouveau();
+        break;
+    
+    case 'creer-article-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->creer();
+        break;
+    
+    case 'editer-article-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->edition();
+        break;
+    
+    case 'modifier-article-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->modifier();
+        break;
+    
+    case 'supprimer-article-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->supprimer();
         break;
     
     default:

@@ -85,6 +85,15 @@ function showAlertsFromURL() {
             case 'reference_deleted':
                 message = 'La référence a été supprimée avec succès.';
                 break;
+            case 'article_created':
+                message = 'L\'article a été créé avec succès.';
+                break;
+            case 'article_updated':
+                message = 'L\'article a été modifié avec succès.';
+                break;
+            case 'article_deleted':
+                message = 'L\'article a été supprimé avec succès.';
+                break;
             case 'commande_created':
                 message = 'La commande a été créée avec succès.';
                 break;
@@ -136,6 +145,12 @@ function showAlertsFromURL() {
                 break;
             case 'create_failed':
                 message = 'Erreur lors de la création.';
+                break;
+            case 'migration_required':
+                message = '⚠️ Migration requise ! Exécutez migrate_sartorius.php avant de créer des commandes.';
+                break;
+            case 'article_exists':
+                message = 'Cet article existe déjà.';
                 break;
             case 'update_failed':
                 message = 'Erreur lors de la modification.';

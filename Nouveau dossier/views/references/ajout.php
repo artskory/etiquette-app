@@ -10,18 +10,18 @@
         </div>
     </div>
 
-<div class="card">
+
     <div class="card-body">
         <form id="referenceForm" action="index.php?page=creer-reference" method="POST">
             <div class="row">    
                 <div class="col-md-6">
-                    <i class="bi bi-hash blue icons"></i><label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
+                    <label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="reference" name="reference" required 
                             placeholder="Entrez la référence">
                 </div>
 
                 <div class="col-md-6">
-                    <i class="bi bi-bookmarks blue icons"></i><label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
+                    <label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="designation" name="designation" required 
                             placeholder="Entrez la désignation">
                 </div>
@@ -33,8 +33,6 @@
             </div>
         </form>
     </div>
-</div>
-
 </div>
 
 <div class="container mt-4 col-md-9 card-ref">
