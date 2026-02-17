@@ -17,7 +17,7 @@ class CommandeController {
      */
     public function liste() {
         $stmt = $this->commande->readAll();
-        require_once 'views/commandes/liste.php';
+        require_once 'views/sartorius/liste.php';
     }
 
     /**
@@ -26,7 +26,7 @@ class CommandeController {
     public function nouvelle() {
         $referenceController = new ReferenceController();
         $references = $referenceController->getAll();
-        require_once 'views/commandes/nouvelle.php';
+        require_once 'views/sartorius/nouvelle.php';
     }
 
     /**
@@ -106,7 +106,7 @@ class CommandeController {
         if($commandeData) {
             $referenceController = new ReferenceController();
             $references = $referenceController->getAll();
-            require_once 'views/commandes/edition.php';
+            require_once 'views/sartorius/edition.php';
         } else {
             header("Location: index.php?page=sartorius");
             exit();
@@ -217,7 +217,7 @@ class CommandeController {
      * Générer le PDF pour une commande
      */
     private function genererPDF($commandeId, $download = false) {
-        require_once 'lib/PdfGenerator.php';
+        require_once 'lib/SartoriusPdfGenerator.php';
         
         // Récupérer les données complètes de la commande avec la référence
         $query = "SELECT c.*, r.reference, r.designation 
@@ -234,7 +234,7 @@ class CommandeController {
         }
         
         // Créer le générateur PDF
-        $pdfGen = new PdfGenerator();
+        $pdfGen = new SartoriusPdfGenerator();
         
         // Générer le PDF
         try {
@@ -302,6 +302,38 @@ class CommandeController {
             }
         } catch(Exception $e) {
             header("Location: index.php?page=sartorius&error=delete_all_failed");
+            exit();
+        }
+    }
+
+    /**
+     * Supprimer une sélection de commandes
+     */
+    public function supprimerSelection() {
+        $ids = $_POST['ids'] ?? [];
+        if(empty($ids)) {
+            header("Location: index.php?page=sartorius&error=no_selection");
+            exit();
+        }
+
+        try {
+            foreach($ids as $id) {
+                $id = intval($id);
+                $this->commande->id = $id;
+                $commandeData = $this->commande->readOne();
+                if($commandeData) {
+                    $dateParts = explode('/', $commandeData['date_production']);
+                    $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
+                    $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
+                    $pdfFilename = 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+                    if(file_exists($pdfFilename)) unlink($pdfFilename);
+                    $this->commande->delete();
+                }
+            }
+            header("Location: index.php?page=sartorius&success=selection_deleted");
+            exit();
+        } catch(Exception $e) {
+            header("Location: index.php?page=sartorius&error=delete");
             exit();
         }
     }

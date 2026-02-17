@@ -1,5 +1,5 @@
-<?php
-require_once 'views/layouts/header.php';
+<?php 
+require_once 'views/layouts/header.php'; 
 
 $hasCommandes = false;
 $commandesArray = [];
@@ -12,12 +12,12 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <div class="container-fluid px-4 pb-5">
     <div class="container mt-4 col-md-9 overview-card">
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
-            <h1 class="greeting-title">Étiquettes Latitude</h1>
+            <h1 class="greeting-title">Étiquettes Sartorius</h1>
             <div>
-                <a href="index.php?page=nouveau-article-latitude" class="btn btn-success me-2">
-                    <i class="bi bi-tag me-1"></i><span class="btn-text">Article</span>
+                <a href="index.php?page=ajout-reference" class="btn btn-success me-2">
+                    <i class="bi bi-bookmark-plus me-1"></i><span class="btn-text">Référence</span>
                 </a>
-                <a href="index.php?page=latitude-nouvelle" class="btn btn-primary me-2">
+                <a href="index.php?page=nouvelle-commande" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>
                 <?php if($hasCommandes): ?>
@@ -35,9 +35,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
+                            <th>Référence</th>
+                            <th>Désignation</th>
                             <th>N° Commande</th>
-                            <th>Articles</th>
-                            <th>Date</th>
+                            <th>Cartons</th>
                             <th width="130" class="text-center">Actions</th>
                             <th width="40" class="text-center">
                                 <input type="checkbox" class="form-check-input" id="checkAll" title="Tout sélectionner">
@@ -46,26 +47,23 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     </thead>
                     <tbody>
                         <?php foreach($commandesArray as $row):
-                            $articles = json_decode($row['articles'] ?? '[]', true);
+                            $quantites = json_decode($row['quantites'] ?? '[]', true);
+                            $total = 0;
+                            if(is_array($quantites)) {
+                                foreach($quantites as $qty) $total += (int)($qty['quantite_etiquettes'] ?? 0);
+                            }
                         ?>
                             <tr>
+                                <td><?php echo htmlspecialchars($row['reference']); ?></td>
+                                <td><?php echo htmlspecialchars($row['designation']); ?></td>
                                 <td><?php echo htmlspecialchars($row['numero_commande']); ?></td>
-                                <td>
-                                    <?php if(!empty($articles)): ?>
-                                        <?php foreach($articles as $art): ?>
-                                            <span><?php echo htmlspecialchars($art['type']); ?></span>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($row['created_at']))); ?></td>
+                                <td><?php echo $total; ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=latitude-edition&id=<?php echo $row['id']; ?>"
+                                    <a href="index.php?page=edition-commande&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="index.php?page=latitude-telecharger&id=<?php echo $row['id']; ?>"
+                                    <a href="index.php?page=telecharger-pdf&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -77,7 +75,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         <?php endforeach; ?>
                         <?php if(!$hasCommandes): ?>
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">
+                                <td colspan="6" class="text-center text-muted py-4">
                                     <i class="bi bi-inbox fs-1"></i>
                                     <p class="mt-2">Aucune commande enregistrée</p>
                                 </td>
@@ -106,7 +104,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=latitude-supprimer-selection" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-commandes" method="POST" style="display:inline;">
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>
             </form>

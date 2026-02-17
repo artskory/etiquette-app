@@ -231,6 +231,36 @@ class LatitudeController {
     }
 
     /**
+     * Supprimer une sélection de commandes Latitude
+     */
+    public function supprimerSelection() {
+        $ids = $_POST['ids'] ?? [];
+        if(empty($ids)) {
+            header("Location: index.php?page=latitude&error=no_selection");
+            exit();
+        }
+
+        try {
+            foreach($ids as $id) {
+                $id = intval($id);
+                $this->commande->id = $id;
+                $commandeData = $this->commande->readOne();
+                if($commandeData) {
+                    $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
+                    $pdfFilename = 'pdfs_latitude/' . $cmdClean . '.pdf';
+                    if(file_exists($pdfFilename)) unlink($pdfFilename);
+                    $this->commande->delete();
+                }
+            }
+            header("Location: index.php?page=latitude&success=selection_deleted");
+            exit();
+        } catch(Exception $e) {
+            header("Location: index.php?page=latitude&error=delete");
+            exit();
+        }
+    }
+
+    /**
      * Générer ou télécharger le PDF
      */
     private function genererPDF($id, $download = false) {

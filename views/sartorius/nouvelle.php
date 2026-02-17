@@ -16,14 +16,14 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
             </a>
         </div>
     </div>
-
-    <div class="card-body">
+<div class="card">
+ <div class="card-body">
         <form id="commandeForm" action="index.php?page=creer-commande" method="POST">
             <!-- Ligne fixe en haut : Référence, Date, N° Commande, N° Lot -->
             <div class="row mb-4">
                 <div class="col-md-3">
                     <label class="form-label">
-                        <i class="bi bi-bookmarks blue icons"></i>Référence <span class="text-danger">*</span>
+                        <i class="bi bi-hash blue icons"></i>Référence <span class="text-danger">*</span>
                     </label>
                     <select class="form-select" name="reference_id" id="reference_id" required>
                         <option value="">-- Sélectionnez --</option>
@@ -90,7 +90,7 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
                         
                         <div class="col-md-5">
                             <label class="form-label">
-                                <i class="bi bi-boxes blue icons"></i>Quantité d'étiquettes <span class="text-danger">*</span>
+                                <i class="bi bi-boxes blue icons"></i>Nombre de cartons <span class="text-danger">*</span>
                             </label>
                             <input type="number" class="form-control" name="quantites[0][quantite_etiquettes]" required min="1">
                         </div>
@@ -110,6 +110,8 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
             </div>
         </form>
     </div>
+</div>
+   
 </div>
 
 <style>
@@ -173,7 +175,7 @@ function ajouterLigneQuantite() {
             
             <div class="col-md-5">
                 <label class="form-label">
-                    <i class="bi bi-boxes blue icons"></i>Quantité d'étiquettes <span class="text-danger">*</span>
+                    <i class="bi bi-boxes blue icons"></i>Nombre de cartons <span class="text-danger">*</span>
                 </label>
                 <input type="number" class="form-control" name="quantites[${quantiteRowIndex}][quantite_etiquettes]" required min="1">
             </div>

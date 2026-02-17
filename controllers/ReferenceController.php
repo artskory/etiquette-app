@@ -123,4 +123,27 @@ class ReferenceController {
             }
         }
     }
+
+    /**
+     * Supprimer une sélection de références
+     */
+    public function supprimerSelection() {
+        $ids = $_POST['ids'] ?? [];
+        if(empty($ids)) {
+            header("Location: index.php?page=ajout-reference&error=no_selection");
+            exit();
+        }
+
+        try {
+            foreach($ids as $id) {
+                $this->reference->id = intval($id);
+                $this->reference->delete();
+            }
+            header("Location: index.php?page=ajout-reference&success=selection_deleted");
+            exit();
+        } catch(Exception $e) {
+            header("Location: index.php?page=ajout-reference&error=delete_failed");
+            exit();
+        }
+    }
 }

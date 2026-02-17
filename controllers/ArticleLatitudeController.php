@@ -114,6 +114,29 @@ class ArticleLatitudeController {
     }
 
     /**
+     * Supprimer une sélection d'articles
+     */
+    public function supprimerSelection() {
+        $ids = $_POST['ids'] ?? [];
+        if(empty($ids)) {
+            header("Location: index.php?page=nouveau-article-latitude&error=no_selection");
+            exit();
+        }
+
+        try {
+            foreach($ids as $id) {
+                $this->article->id = intval($id);
+                $this->article->delete();
+            }
+            header("Location: index.php?page=nouveau-article-latitude&success=selection_deleted");
+            exit();
+        } catch(Exception $e) {
+            header("Location: index.php?page=nouveau-article-latitude&error=delete_failed");
+            exit();
+        }
+    }
+
+    /**
      * Récupérer tous les articles
      */
     public function getAll() {

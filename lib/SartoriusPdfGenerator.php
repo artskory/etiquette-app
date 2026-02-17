@@ -1,12 +1,12 @@
 <?php
 /**
- * Générateur de PDF pour les étiquettes
+ * Générateur de PDF pour les étiquettes Sartorius
  * Utilise FPDF pour créer des PDFs d'étiquettes
  */
 
 require_once 'lib/fpdf/fpdf.php';
 
-class PdfGenerator extends FPDF {
+class SartoriusPdfGenerator extends FPDF {
     
     /**
      * Chemin vers l'icône d'usine

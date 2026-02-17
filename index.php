@@ -10,7 +10,7 @@
 // ini_set('display_errors', 1);
 
 // Définir la version de l'application
-define('APP_VERSION', '1.0.2');
+define('APP_VERSION', '1.0.7');
 
 // Démarrer la session
 session_start();
@@ -65,6 +65,11 @@ switch($page) {
         $controller->supprimer();
         break;
     
+    case 'supprimer-selection-references':
+        $controller = new ReferenceController();
+        $controller->supprimerSelection();
+        break;
+    
     case 'nouvelle-commande':
         $controller = new CommandeController();
         $controller->nouvelle();
@@ -88,6 +93,11 @@ switch($page) {
     case 'supprimer-commande':
         $controller = new CommandeController();
         $controller->supprimer();
+        break;
+    
+    case 'supprimer-selection-commandes':
+        $controller = new CommandeController();
+        $controller->supprimerSelection();
         break;
     
     case 'telecharger-pdf':
@@ -131,6 +141,11 @@ switch($page) {
         $controller->supprimer();
         break;
     
+    case 'latitude-supprimer-selection':
+        $controller = new LatitudeController();
+        $controller->supprimerSelection();
+        break;
+    
     case 'latitude-telecharger':
         $controller = new LatitudeController();
         $controller->telecharger();
@@ -165,6 +180,11 @@ switch($page) {
     case 'supprimer-article-latitude':
         $controller = new ArticleLatitudeController();
         $controller->supprimer();
+        break;
+    
+    case 'supprimer-selection-articles-latitude':
+        $controller = new ArticleLatitudeController();
+        $controller->supprimerSelection();
         break;
     
     default:

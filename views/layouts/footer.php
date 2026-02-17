@@ -13,14 +13,5 @@
     
     <!-- Custom Alerts JS -->
     <script src="assets/js/custom-alerts.js"></script>
-    
-    <script>
-        // Confirmation de suppression
-        function confirmerSuppression(id) {
-            if(confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
-                document.getElementById('deleteForm-' + id).submit();
-            }
-        }
-    </script>
 </body>
 </html>
