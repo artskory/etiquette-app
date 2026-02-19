@@ -10,100 +10,102 @@ if(isset($articles)) {
 }
 ?>
 
-<div class="container mt-4 col-md-9 overview-card">
-    <div class="d-flex justify-content-between align-items-center mb-4 header-table">
-        <h1 class="greeting-title">Édition étiquette Latitude</h1>
-        <div>
-            <a href="index.php?page=latitude" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Annuler
-            </a>
+    <div class="container-fluid px-4 pb-5">
+    <div class="container mt-4 col-md-9 overview-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-table">
+            <h1 class="greeting-title">Édition étiquette Latitude</h1>
+            <div>
+                <a href="index.php?page=latitude" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Annuler
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
-            <form id="latitudeForm" action="index.php?page=latitude-modifier" method="POST">
-                <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
-                
-                <!-- N° Commande -->
-                <div class="mb-4">
-                    <label for="numero_commande" class="form-label">
-                        <i class="bi bi-hash blue icons"></i>N° Commande <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="numero_commande" name="numero_commande" required 
-                           value="<?php echo htmlspecialchars($commandeData['numero_commande']); ?>"
-                           placeholder="Ex: 2510-4028">
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <form id="latitudeForm" action="index.php?page=latitude-modifier" method="POST">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
+                    
+                    <!-- N° Commande -->
+                    <div class="mb-4">
+                        <label for="numero_commande" class="form-label">
+                            <i class="bi bi-hash blue icons"></i>N° Commande <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="numero_commande" name="numero_commande" required 
+                            value="<?php echo htmlspecialchars($commandeData['numero_commande']); ?>"
+                            placeholder="Ex: 2510-4028">
+                    </div>
 
-                <hr class="my-4">
+                    <hr class="my-4">
 
-                <div id="articlesContainer">
-                    <?php
-                    $articlesCommande = json_decode($commandeData['articles'], true);
-                    if($articlesCommande && is_array($articlesCommande)) {
-                        foreach($articlesCommande as $index => $article) {
-                            $isFirst = ($index === 0);
-                            $addBtnClass = $isFirst ? 'btn-add-first' : '';
-                            $addBtnStyle = $isFirst && count($articlesCommande) > 1 ? 'style="display:none;"' : '';
-                    ?>
-                    <div class="article-row mb-3" data-row-index="<?php echo $index; ?>">
-                        <div class="row align-items-end">
-                            <div class="col-md-3">
-                                <label class="form-label">Article <span class="text-danger">*</span></label>
-                                <select class="form-select article-select" name="articles[<?php echo $index; ?>][type]" required>
-                                    <option value="">Sélectionner...</option>
-                                    <?php if(!empty($articlesDisponibles)): ?>
-                                        <?php foreach($articlesDisponibles as $art): ?>
-                                            <option value="<?php echo htmlspecialchars($art['nom']); ?>" 
-                                                <?php echo ($article['type'] === $art['nom']) ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($art['nom']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <option value="" disabled>Aucun article - Créez-en un !</option>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Quantité d'article <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="articles[<?php echo $index; ?>][quantite]" 
-                                       value="<?php echo htmlspecialchars($article['quantite']); ?>" min="1" required placeholder="Ex: 900">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Nombre d'exemplaire <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="articles[<?php echo $index; ?>][nombre_cartons]" 
-                                       value="<?php echo htmlspecialchars($article['nombre_cartons']); ?>" min="1" required placeholder="Ex: 25">
-                            </div>
-                            <div class="col-md-3">
-                                <?php if($isFirst): ?>
-                                    <button type="button" class="btn btn-primary w-100 <?php echo $addBtnClass; ?>" 
-                                            onclick="ajouterLigneArticle()" <?php echo $addBtnStyle; ?>>
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                <?php else: ?>
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
+                    <div id="articlesContainer">
+                        <?php
+                        $articlesCommande = json_decode($commandeData['articles'], true);
+                        if($articlesCommande && is_array($articlesCommande)) {
+                            foreach($articlesCommande as $index => $article) {
+                                $isFirst = ($index === 0);
+                                $addBtnClass = $isFirst ? 'btn-add-first' : '';
+                                $addBtnStyle = $isFirst && count($articlesCommande) > 1 ? 'style="display:none;"' : '';
+                        ?>
+                        <div class="article-row mb-3" data-row-index="<?php echo $index; ?>">
+                            <div class="row align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label">Article <span class="text-danger">*</span></label>
+                                    <select class="form-select article-select" name="articles[<?php echo $index; ?>][type]" required>
+                                        <option value="">Sélectionner...</option>
+                                        <?php if(!empty($articlesDisponibles)): ?>
+                                            <?php foreach($articlesDisponibles as $art): ?>
+                                                <option value="<?php echo htmlspecialchars($art['nom']); ?>" 
+                                                    <?php echo ($article['type'] === $art['nom']) ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($art['nom']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <option value="" disabled>Aucun article - Créez-en un !</option>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Quantité d'article <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="articles[<?php echo $index; ?>][quantite]" 
+                                        value="<?php echo htmlspecialchars($article['quantite']); ?>" min="1" required placeholder="Ex: 900">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Nombre d'exemplaire <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="articles[<?php echo $index; ?>][nombre_cartons]" 
+                                        value="<?php echo htmlspecialchars($article['nombre_cartons']); ?>" min="1" required placeholder="Ex: 25">
+                                </div>
+                                <div class="col-md-3">
+                                    <?php if($isFirst): ?>
+                                        <button type="button" class="btn btn-primary w-100 <?php echo $addBtnClass; ?>" 
+                                                onclick="ajouterLigneArticle()" <?php echo $addBtnStyle; ?>>
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-                                        <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php else: ?>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <?php
+                        <?php
+                            }
                         }
-                    }
-                    ?>
-                </div>
-                <div class="text-end">
-                    <button type="submit" form="latitudeForm" class="btn btn-info me-2">
-                        <i class="bi bi-check-circle me-1"></i>Sauvegarder
-                    </button>
-                </div>
-            </form>
+                        ?>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" form="latitudeForm" class="btn btn-info me-2">
+                            <i class="bi bi-check-circle me-1"></i>Sauvegarder
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

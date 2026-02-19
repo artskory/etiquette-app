@@ -24,16 +24,20 @@
 </head>
 <body>
         <!-- Header Section -->
-    <div class="dashboard-header">
-        <div class="container-fluid px-4">
-            <nav class="navbar">
-                <div class="container-fluid p-0">
-                    <a class="navbar-brand" href="index.php">
+    <div class="card dashboard-header">
+        <div class="card-body px-4 py-3">
+            <div class="row">
+                <div class="col-9">
+                    <a href="index.php">
                         <img id="logo" src="image/logo.svg" alt="logo">
                     </a>
                 </div>
-            </nav>
-            <img src="image/34829.svg" alt="image">
+                <div class="col-3">
+                    <div class="text-center mb-n5 mt-5">
+                        <img src="image/34829.svg" alt="image" class="img-fluid mb-n4">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     

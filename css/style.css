@@ -54,7 +54,7 @@ footer {
 body {
     font-family: 'Outfit', sans-serif;
     min-height: 100vh;
-    color: #333;
+    color: #cfc2c2;
 }
 
 /* Header Section */
@@ -63,18 +63,17 @@ body {
     padding: 2rem 0;
     position: relative;
     overflow: hidden;
-    height: 14rem;
+    height: 15rem;
 }
 
 .dashboard-header img {
     width: 155px;
-    margin-left: 65%;
     margin-bottom: -50px;
 }
 
 #logo {
     margin-left: 2rem;
-    width: 8rem;
+    width: 5rem;
 }
 
 .navbar-brand {
@@ -113,7 +112,7 @@ body {
     border-radius: 24px;
     padding: 2.5rem 1.5rem 1.5rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    margin-top: -2rem !important;
+    margin-top: -5rem !important;
     position: relative;
     z-index: 10;
 }
@@ -252,4 +251,20 @@ h3.card-title {
         
 footer {        
     margin-top: auto;
+}
+
+.mb-n4 {
+    margin-bottom: -1.5rem !important;
+}
+
+.mb-n5 {
+    margin-bottom: -3rem !important;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+img, svg {
+    vertical-align: middle;
 }

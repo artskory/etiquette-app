@@ -16,94 +16,98 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $hasReferences = !empty($referencesArray);
 ?>
 
-<div class="container mt-4 col-md-9 overview-card">
-    <div class="d-flex justify-content-between align-items-center mb-4 header-table">
-        <h1 class="greeting-title">Références Sartorius</h1>
-        <div>
-            <?php if($hasReferences): ?>
-            <button type="button" id="btnSupprimerSelection" class="btn btn-warning me-2"
-                    style="display:none;"
-                    data-bs-toggle="modal" data-bs-target="#supprimerSelectionModal">
-                <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
-            </button>
-            <?php endif; ?>
-            <a href="index.php?page=sartorius" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
-            </a>
+    <div class="container-fluid px-4 pb-5">
+    <div class="container mt-4 col-md-9 overview-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-table">
+            <h1 class="greeting-title">Références Sartorius</h1>
+            <div>
+                <?php if($hasReferences): ?>
+                <button type="button" id="btnSupprimerSelection" class="btn btn-warning me-2"
+                        style="display:none;"
+                        data-bs-toggle="modal" data-bs-target="#supprimerSelectionModal">
+                    <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
+                </button>
+                <?php endif; ?>
+                <a href="index.php?page=sartorius" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
-            <form id="referenceForm" action="index.php?page=creer-reference" method="POST">
-                <div class="row">
-                    <div class="col-md-6">
-                        <i class="bi bi-hash blue icons"></i>
-                        <label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="reference" name="reference" required
-                               placeholder="Entrez la référence">
+        <div class="card">
+            <div class="card-body">
+                <form id="referenceForm" action="index.php?page=creer-reference" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <i class="bi bi-hash blue icons"></i>
+                            <label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="reference" name="reference" required
+                                placeholder="Entrez la référence">
+                        </div>
+                        <div class="col-md-6">
+                            <i class="bi bi-bookmarks blue icons"></i>
+                            <label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="designation" name="designation" required
+                                placeholder="Entrez la désignation">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <i class="bi bi-bookmarks blue icons"></i>
-                        <label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="designation" name="designation" required
-                               placeholder="Entrez la désignation">
+                    <div class="text-end mt-4">
+                        <button type="submit" form="referenceForm" class="btn btn-info">
+                            <i class="bi bi-check-circle me-1"></i>Sauvegarder
+                        </button>
                     </div>
-                </div>
-                <div class="text-end mt-4">
-                    <button type="submit" form="referenceForm" class="btn btn-info">
-                        <i class="bi bi-check-circle me-1"></i>Sauvegarder
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="container mt-4 col-md-9 card-ref">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">Références existantes</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Référence</th>
-                            <th>Désignation</th>
-                            <th width="120" class="text-center">Actions</th>
-                            <th width="40" class="text-center">
-                                <input type="checkbox" class="form-check-input" id="checkAll" title="Tout sélectionner">
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($referencesArray as $row): ?>
+    <div class="container-fluid px-4 pb-5">
+    <div class="container mt-4 col-md-9 card-ref">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Références existantes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
                             <tr>
-                                <td><?php echo htmlspecialchars($row['reference']); ?></td>
-                                <td><?php echo htmlspecialchars($row['designation']); ?></td>
-                                <td class="text-center">
-                                    <a href="index.php?page=editer-reference&id=<?php echo $row['id']; ?>"
-                                       class="btn btn-sm btn-outline-primary" title="Éditer">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <input type="checkbox" class="form-check-input row-check" value="<?php echo $row['id']; ?>">
-                                </td>
+                                <th>Référence</th>
+                                <th>Désignation</th>
+                                <th width="120" class="text-center">Actions</th>
+                                <th width="40" class="text-center">
+                                    <input type="checkbox" class="form-check-input" id="checkAll" title="Tout sélectionner">
+                                </th>
                             </tr>
-                        <?php endforeach; ?>
-                        <?php if(!$hasReferences): ?>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
-                                    <i class="bi bi-inbox fs-1"></i>
-                                    <p class="mt-2">Aucune référence enregistrée</p>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach($referencesArray as $row): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['reference']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['designation']); ?></td>
+                                    <td class="text-center">
+                                        <a href="index.php?page=editer-reference&id=<?php echo $row['id']; ?>"
+                                        class="btn btn-sm btn-outline-primary" title="Éditer">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="form-check-input row-check" value="<?php echo $row['id']; ?>">
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if(!$hasReferences): ?>
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-1"></i>
+                                        <p class="mt-2">Aucune référence enregistrée</p>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
