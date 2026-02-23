@@ -133,4 +133,58 @@ class Reference {
         
         return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
     }
+
+    /**
+     * Vérifier si une référence existe déjà (indépendamment de la désignation)
+     */
+    public function referenceExists($excludeId = null) {
+        $query = "SELECT id FROM " . $this->table_name . " 
+                  WHERE reference = :reference";
+        
+        if ($excludeId !== null) {
+            $query .= " AND id != :excludeId";
+        }
+        
+        $query .= " LIMIT 0,1";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $cleanRef = htmlspecialchars(strip_tags($this->reference));
+        $stmt->bindParam(":reference", $cleanRef);
+        
+        if ($excludeId !== null) {
+            $stmt->bindParam(":excludeId", $excludeId);
+        }
+        
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+    }
+
+    /**
+     * Vérifier si une désignation existe déjà (indépendamment de la référence)
+     */
+    public function designationExists($excludeId = null) {
+        $query = "SELECT id FROM " . $this->table_name . " 
+                  WHERE designation = :designation";
+        
+        if ($excludeId !== null) {
+            $query .= " AND id != :excludeId";
+        }
+        
+        $query .= " LIMIT 0,1";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $cleanDes = htmlspecialchars(strip_tags($this->designation));
+        $stmt->bindParam(":designation", $cleanDes);
+        
+        if ($excludeId !== null) {
+            $stmt->bindParam(":excludeId", $excludeId);
+        }
+        
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+    }
 }
