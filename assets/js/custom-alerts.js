@@ -85,6 +85,9 @@ function showAlertsFromURL() {
             case 'reference_deleted':
                 message = 'La référence a été supprimée avec succès.';
                 break;
+            case 'selection_deleted':
+                message = 'Les éléments sélectionnés ont été supprimés avec succès.';
+                break;
             case 'article_created':
                 message = 'L\'article a été créé avec succès.';
                 break;
@@ -138,7 +141,13 @@ function showAlertsFromURL() {
                 message = 'Erreur lors de la suppression des commandes.';
                 break;
             case 'duplicate_reference':
-                message = 'Cette référence existe déjà dans la base de données.';
+                message = 'Cette référence existe déjà.';
+                break;
+            case 'duplicate_designation':
+                message = 'Cette désignation existe déjà.';
+                break;
+            case 'duplicate_both':
+                message = 'Cette référence et cette désignation existent déjà.';
                 break;
             case 'duplicate_combination':
                 message = 'Une référence identique avec la même désignation existe déjà.';
@@ -151,6 +160,12 @@ function showAlertsFromURL() {
                 break;
             case 'article_exists':
                 message = 'Cet article existe déjà.';
+                break;
+            case 'delete_failed':
+                message = 'Erreur lors de la suppression.';
+                break;
+            case 'no_selection':
+                message = 'Aucun élément sélectionné.';
                 break;
             case 'update_failed':
                 message = 'Erreur lors de la modification.';

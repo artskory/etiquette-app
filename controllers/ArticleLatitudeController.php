@@ -25,24 +25,34 @@ class ArticleLatitudeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Démarrer la session si pas déjà fait
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            
             $this->article->nom = $_POST['nom'] ?? '';
 
             // Vérifier si l'article existe déjà
             if($this->article->exists()) {
+                $_SESSION['form_data'] = $_POST;
                 header("Location: index.php?page=nouveau-article-latitude&error=article_exists");
                 exit();
             }
 
             try {
                 if($this->article->create()) {
+                    // Ne PAS stocker en session pour vider les champs
+                    unset($_SESSION['form_data']);
                     header("Location: index.php?page=nouveau-article-latitude&success=article_created");
                     exit();
                 } else {
+                    $_SESSION['form_data'] = $_POST;
                     header("Location: index.php?page=nouveau-article-latitude&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création article: " . $e->getMessage());
+                $_SESSION['form_data'] = $_POST;
                 header("Location: index.php?page=nouveau-article-latitude&error=create_failed");
                 exit();
             }

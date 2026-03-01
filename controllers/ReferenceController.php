@@ -24,31 +24,56 @@ class ReferenceController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Démarrer la session si pas déjà fait
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            
             $this->reference->reference = $_POST['reference'] ?? '';
             $this->reference->designation = $_POST['designation'] ?? '';
 
             try {
                 // Vérifier si la référence existe déjà
-                if($this->reference->referenceExists()) {
+                $refExists = $this->reference->referenceExists();
+                
+                // Vérifier si la désignation existe déjà
+                $desExists = $this->reference->designationExists();
+                
+                // Cas 1 : Les DEUX existent déjà
+                if($refExists && $desExists) {
+                    $_SESSION['form_data'] = $_POST;
+                    header("Location: index.php?page=ajout-reference&error=duplicate_both");
+                    exit();
+                }
+                
+                // Cas 2 : Seulement la référence existe
+                if($refExists) {
+                    $_SESSION['form_data'] = $_POST;
                     header("Location: index.php?page=ajout-reference&error=duplicate_reference");
                     exit();
                 }
                 
-                // Vérifier si la désignation existe déjà
-                if($this->reference->designationExists()) {
+                // Cas 3 : Seulement la désignation existe
+                if($desExists) {
+                    $_SESSION['form_data'] = $_POST;
                     header("Location: index.php?page=ajout-reference&error=duplicate_designation");
                     exit();
                 }
                 
+                // Cas 4 : Tout est OK, créer la référence
                 if($this->reference->create()) {
-                    header("Location: index.php?page=sartorius&success=reference_created");
+                    // Ne PAS stocker en session pour vider les champs
+                    unset($_SESSION['form_data']);
+                    header("Location: index.php?page=ajout-reference&success=reference_created");
                     exit();
                 } else {
+                    $_SESSION['form_data'] = $_POST;
                     header("Location: index.php?page=ajout-reference&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création référence: " . $e->getMessage());
+                $_SESSION['form_data'] = $_POST;
                 header("Location: index.php?page=ajout-reference&error=create_failed");
                 exit();
             }

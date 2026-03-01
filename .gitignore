@@ -1,3 +1,4 @@
 pdfs/*.pdf
 pdfs_latitude/*.pdf
- .installation_complete
+.installation_complete
+config/*.php

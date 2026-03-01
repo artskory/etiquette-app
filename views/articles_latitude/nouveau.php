@@ -1,5 +1,14 @@
 <?php require_once 'views/layouts/header.php'; 
 
+// Démarrer la session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Récupérer les valeurs du formulaire si erreur
+$formData = $_SESSION['form_data'] ?? [];
+$savedNom = htmlspecialchars($formData['nom'] ?? '');
+
 $articlesArray = [];
 while ($art = $articles->fetch(PDO::FETCH_ASSOC)) {
     $articlesArray[] = $art;
@@ -33,6 +42,7 @@ $hasArticles = !empty($articlesArray);
                             <i class="bi bi-tag blue icons"></i>Nom de l'article <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="nom" name="nom" required 
+                               value="<?php echo $savedNom; ?>"
                                placeholder="Ex: Carte postale, Flyer A5, Brochure...">
                     </div>
                     <div class="text-end">
@@ -158,5 +168,10 @@ $hasArticles = !empty($articlesArray);
     rowChecks.forEach(function(cb) { cb.addEventListener('change', update); });
 })();
 </script>
+
+<?php 
+// Nettoyer les données du formulaire de la session après affichage
+unset($_SESSION['form_data']); 
+?>
 
 <?php require_once 'views/layouts/footer.php'; ?>
