@@ -82,18 +82,16 @@ CREATE TABLE IF NOT EXISTS commandes_latitude (
 
 -- Références Sartorius exemple
 INSERT IGNORE INTO `references` (reference, designation) VALUES
-('REF-001', 'Étiquette standard A4'),
-('REF-002', 'Étiquette premium A5'),
-('REF-003', 'Étiquette économique A6');
+('IU1000076404', 'PH SENSOR CALIBRATION AND USE'),
+('IU1000076405', 'USE AND CALIBRATION'),
+('IU114789', 'IU  Flexsafe 3D bag for Palletank 1000 L');
 
 -- Articles Latitude exemple
 INSERT IGNORE INTO articles_latitude (nom) VALUES
 ('Carte postale'),
 ('Carte stickers'),
 ('Set de table'),
-('Livre'),
-('Flyer A5'),
-('Brochure A4');
+('Livre');
 
 -- ============================================================================
 -- INFORMATIONS

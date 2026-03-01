@@ -4,7 +4,7 @@
  */
 class Database {
     private $host = "localhost";
-    private $db_name = "db_colisage";
+    private $db_name = "etiquette_db";
     private $username = "root";
     private $password = "";
     private $conn;
