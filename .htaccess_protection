@@ -1,0 +1,5 @@
+# Protection du fichier d'installation
+<Files ".installation_complete">
+    Order Allow,Deny
+    Deny from all
+</Files>
