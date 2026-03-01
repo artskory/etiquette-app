@@ -371,6 +371,20 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
                             }
                             
                             $sql = file_get_contents($sqlFile);
+                            
+                            // ========================================
+                            // NETTOYER LE SQL : Retirer CREATE DATABASE et USE
+                            // ========================================
+                            // Problème : Le fichier SQL contient CREATE DATABASE et USE qui peuvent pointer vers une autre base
+                            // Solution : On retire ces lignes car on a déjà créé et sélectionné la bonne base
+                            
+                            // Supprimer les lignes CREATE DATABASE
+                            $sql = preg_replace('/CREATE DATABASE.*?;/is', '', $sql);
+                            
+                            // Supprimer les lignes USE
+                            $sql = preg_replace('/USE\s+[`]?[\w]+[`]?\s*;/i', '', $sql);
+                            
+                            // Exécuter le SQL nettoyé
                             $conn->exec($sql);
                             
                             $tables = $conn->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
