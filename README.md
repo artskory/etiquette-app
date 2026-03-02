@@ -1,14 +1,14 @@
-# Application Étiquettes - Version 1.0.0 🎉
+# Application Étiquettes v1.0.11 🏷️
 
 Application web professionnelle de gestion d'étiquettes Sartorius et Latitude développée en PHP POO MVC avec Bootstrap 5.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com)
+[![Version](https://img.shields.io/badge/version-1.0.11-blue.svg)](https://github.com)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
 
-## 🚀 Installation rapide
+## 🚀 Installation rapide (3 minutes)
 
 ```bash
 # 1. Extraire l'archive dans htdocs/
@@ -16,55 +16,66 @@ Application web professionnelle de gestion d'étiquettes Sartorius et Latitude d
 # 3. Ouvrir dans le navigateur
 http://localhost/etiquette-app/install.php
 
-# 4. Suivre l'assistant d'installation
-# 5. Supprimer install.php
+# 4. Choisir le nom de votre base de données
+# 5. Suivre l'assistant d'installation
 # 6. C'est prêt !
 ```
 
-📖 **[Guide d'installation complet](INSTALLATION.md)**
+📖 **[Guide démarrage rapide 2 min](QUICKSTART.md)**
 
 ---
 
-## ✨ Fonctionnalités
+## ✨ Fonctionnalités v1.0.11
 
 ### Module Sartorius 🏷️
-- ✅ Gestion des références produits (CRUD)
-- ✅ Commandes avec quantités multiples (JSON)
-- ✅ Génération PDF automatique (4 étiquettes/page)
-- ✅ Édition et suppression
-- ✅ Dropdown de sélection des dates
+- ✅ **Gestion références** — CRUD complet avec protection doublons avancée
+- ✅ **Commandes multi-quantités** — Format JSON flexible
+- ✅ **Génération PDF** — 8 étiquettes/page (105×74mm, A4 Portrait)
+- ✅ **Édition dynamique** — Modification commandes existantes
+- ✅ **Suppression par sélection** — Cases à cocher + modal confirmation
+- ✅ **UX optimisée** — Reste sur page après création, valeurs conservées en erreur
 
 ### Module Latitude 🌍
-- ✅ Gestion des articles réutilisables (CRUD)
-- ✅ Commandes multi-articles avec quantités
-- ✅ Génération PDF automatique (4 étiquettes/page)
-- ✅ Numérotation séquentielle des cartons
-- ✅ Articles personnalisables
+- ✅ **Gestion articles** — CRUD avec validation doublons
+- ✅ **Commandes multi-articles** — Quantités par type
+- ✅ **Génération PDF** — 8 étiquettes/page avec numérotation séquentielle
+- ✅ **Suppression par sélection** — Workflow moderne
+- ✅ **Articles réutilisables** — Dropdown dynamiques
 
-### Général 🎨
-- ✅ Interface moderne et responsive (Bootstrap 5)
-- ✅ Architecture MVC propre
-- ✅ Base de données unifiée
-- ✅ Validation des formulaires
-- ✅ Alertes et notifications
-- ✅ Protection contre doublons
-- ✅ Compatible PHP 8.2+
+### Interface & UX 🎨
+- ✅ **Custom Alerts** — Notifications modernes (position fixe, animations fluides)
+- ✅ **Responsive Design** — Desktop, tablette, mobile
+- ✅ **Protection doublons** — 3 niveaux (référence, désignation, les deux)
+- ✅ **Conservation valeurs** — En cas d'erreur (pas de re-saisie)
+- ✅ **Architecture MVC** — Code propre et maintenable
+- ✅ **Sessions PHP** — Gestion état utilisateur
+
+### Installation & Sécurité 🔒
+- ✅ **Nom BDD personnalisable** — Formulaire configuration
+- ✅ **Protection réinstallation** — Fichier `.installation_complete`
+- ✅ **Validation entrées** — Sécurité formulaires
+- ✅ **Compatible PHP 8.2+** — Code moderne
 
 ---
 
 ## 🗂️ Structure de la base de données
 
 ```sql
-etiquette_db
-├── references              # Références Sartorius
-├── commandes              # Commandes Sartorius (quantités JSON)
-├── articles_latitude      # Articles Latitude réutilisables
-└── commandes_latitude     # Commandes Latitude (articles JSON)
+[nom_choisi]              # Nom personnalisable à l'installation
+├── references           # Références Sartorius (référence, désignation)
+├── commandes            # Commandes Sartorius (quantités JSON)
+├── articles_latitude    # Articles Latitude réutilisables
+└── commandes_latitude   # Commandes Latitude (articles JSON)
 ```
 
 **Format JSON moderne** pour flexibilité maximale :
-- Sartorius : `[{quantite_par_carton, quantite_etiquettes}]`
-- Latitude : `[{type, quantite, nombre_cartons}]`
+- Sartorius : `[{quantite_par_carton, quantite_etiquettes}, ...]`
+- Latitude : `[{type, quantite, nombre_cartons}, ...]`
+
+**Index optimisés** pour performance :
+- Clés primaires auto-incrémentées
+- Index sur référence, désignation, numéro_commande
+- Foreign keys avec CASCADE
 
 ---
 
@@ -73,551 +84,400 @@ etiquette_db
 - **Serveur** : Apache 2.4+
 - **PHP** : 7.4+ (testé jusqu'à 8.2)
 - **MySQL** : 5.7+ ou MariaDB 10.3+
-- **Extensions PHP** : PDO, mbstring, GD
-- **XAMPP/WAMP/MAMP** recommandé
+- **Extensions PHP** : PDO, PDO_MySQL, mbstring, GD
+- **XAMPP/WAMP/MAMP** recommandé pour développement
 
 ---
 
-## 🛠️ Technologies utilisées
+## 🛠️ Stack technique
 
-| Technologie | Usage |
-|------------|-------|
-| PHP 7.4+ | Backend (POO, MVC) |
-| MySQL | Base de données |
-| Bootstrap 5.3 | Interface UI |
-| FPDF 1.84 | Génération PDF |
-| JavaScript ES6 | Interactions dynamiques |
-| JSON | Stockage données flexibles |
-
----
-
-## 📦 Installation
-
-### Méthode 1 : Assistant d'installation (Recommandé)
-
-1. **Extraire** l'archive dans `htdocs/`
-2. **Naviguer** vers `http://localhost/etiquette-app/install.php`
-3. **Suivre** l'assistant automatique
-4. **Supprimer** `install.php` après installation
-
-### Méthode 2 : Installation manuelle
-
-1. **Créer** la base de données `etiquette_db`
-2. **Importer** `database/schema_complete.sql` via phpMyAdmin
-3. **Configurer** `config/database.php` si nécessaire
-4. **Accéder** à `http://localhost/etiquette-app/`
-
-📖 **[Documentation complète](INSTALLATION.md)**
+| Technologie | Version | Usage |
+|------------|---------|-------|
+| PHP | 7.4 - 8.2 | Backend (POO, MVC) |
+| MySQL | 5.7+ | Base de données |
+| Bootstrap | 5.3.0 | Interface UI responsive |
+| FPDF | 1.84 | Génération PDF |
+| JavaScript | ES6+ | Custom alerts, interactions |
+| JSON | - | Stockage données flexibles |
+| Sessions PHP | - | Gestion état formulaires |
 
 ---
 
-## 🎯 Utilisation
+## 📦 Installation complète
 
-### Sartorius - Créer des étiquettes
+### Étape 1 : Préparer l'environnement
 
-1. **Ajouter une référence** : Cliquer "Référence" → Renseigner code et désignation
-2. **Créer une commande** : Cliquer "Nouveau" → Sélectionner référence, date, etc.
-3. **Quantités multiples** : Cliquer "+" pour ajouter des lignes de quantités
-4. **Générer** : Le PDF est créé automatiquement
-
-### Latitude - Créer des étiquettes
-
-1. **Ajouter un article** : Cliquer "Article" → Renseigner nom (ex: "Flyer A5")
-2. **Créer une commande** : Cliquer "Nouveau" → N° commande
-3. **Articles multiples** : Cliquer "+" pour ajouter des types d'articles
-4. **Générer** : Le PDF est créé avec numérotation séquentielle
-
----
-
-## 🏗️ Architecture
-
-```
-etiquette-app/
-├── config/              # Configuration (database.php)
-├── controllers/         # Contrôleurs MVC
-├── models/             # Modèles (PDO)
-├── views/              # Vues (HTML/PHP)
-│   ├── layouts/        # Header, Footer
-│   ├── commandes/      # Vues Sartorius
-│   ├── latitude/       # Vues Latitude
-│   ├── references/     # Gestion références
-│   └── articles_latitude/ # Gestion articles
-├── lib/                # Bibliothèques
-│   ├── fpdf/          # Générateur PDF
-│   ├── PdfGenerator.php
-│   └── LatitudePdfGenerator.php
-├── assets/             # Ressources
-│   ├── css/           # Styles personnalisés
-│   ├── js/            # Scripts JS
-│   └── images/        # Images, icônes
-├── database/           # Scripts SQL
-│   └── schema_complete.sql
-├── pdfs/              # PDFs Sartorius générés
-└── pdfs_latitude/     # PDFs Latitude générés
-```
-
----
-
-## 🎨 Captures d'écran
-
-### Page d'accueil
-Interface moderne avec choix Sartorius / Latitude
-
-### Liste des commandes
-Tableau avec actions (Éditer, Télécharger, Supprimer)
-
-### Formulaire de création
-Lignes dynamiques avec boutons +/-
-
-### PDF généré
-4 étiquettes par page, format A4 paysage
-
----
-
-## 📝 Changelog
-
-### Version 1.0.0 (Février 2026) - RELEASE STABLE ✨
-- ✅ Base de données unifiée (`etiquette_db`)
-- ✅ Installation automatique via assistant web
-- ✅ Documentation complète (INSTALLATION.md)
-- ✅ Structure JSON pour flexibilité maximale
-- ✅ Gestion articles Latitude
-- ✅ Interface polie et cohérente
-- ✅ Bouton "Supprimer tout" conditionnel
-- ✅ Fix page vide PDF (multiples de 4)
-- ✅ Compatible PHP 8.2+ (mb_convert_encoding)
-
-### Versions antérieures (0.x.x)
-Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique complet.
-
----
-
-## 🔐 Sécurité
-
-### À faire après installation :
-- ✅ Supprimer `install.php`
-- ✅ Supprimer `check_database.php`
-- ✅ Supprimer tous les `test_*.php`
-- ✅ Supprimer `migrate_*.php`
-
-### Bonnes pratiques :
-- Utiliser HTTPS en production
-- Configurer un mot de passe MySQL
-- Limiter les permissions des dossiers
-- Sauvegarder régulièrement la base de données
-
----
-
-## 🐛 Dépannage
-
-### PDF non générés
+**Windows (XAMPP) :**
 ```bash
-chmod 777 pdfs/
-chmod 777 pdfs_latitude/
+1. Télécharger XAMPP : https://www.apachefriends.org
+2. Installer et démarrer Apache + MySQL
+3. Extraire l'archive dans : C:\xampp\htdocs\
 ```
 
-### Erreur MySQL
-Vérifier dans `config/database.php` :
-- Host : `localhost`
-- User : `root`
-- Password : `""` (vide par défaut XAMPP)
+**Mac (MAMP) :**
+```bash
+1. Télécharger MAMP : https://www.mamp.info
+2. Installer et démarrer les serveurs
+3. Extraire l'archive dans : /Applications/MAMP/htdocs/
+```
 
-### Page blanche
-Activer l'affichage des erreurs dans `index.php` :
+**Linux :**
+```bash
+sudo apt install apache2 php php-mysql php-mbstring php-gd
+sudo systemctl start apache2 mysql
+# Extraire dans : /var/www/html/
+```
+
+### Étape 2 : Installation automatique
+
+1. **Accéder à l'installateur**
+   ```
+   http://localhost/etiquette-app/install.php
+   ```
+
+2. **Remplir le formulaire de configuration**
+   - Hôte MySQL : `localhost`
+   - Utilisateur : `root` (par défaut)
+   - Mot de passe : *(vide pour XAMPP)*
+   - **Nom de la base** : `etiquette_db` (ou votre choix)
+
+3. **Lancer l'installation** (6 étapes automatiques)
+   - ✅ Connexion serveur MySQL
+   - ✅ Création base de données
+   - ✅ Connexion à la base
+   - ✅ Création des 4 tables
+   - ✅ Mise à jour configuration
+   - ✅ Vérification finale
+
+4. **Protection activée**
+   - Fichier `.installation_complete` créé automatiquement
+   - Empêche les réinstallations accidentelles
+
+5. **C'est prêt !**
+   ```
+   http://localhost/etiquette-app/
+   ```
+
+### Étape 3 : Nettoyage (optionnel)
+
+**Supprimer fichiers temporaires :**
+```bash
+# Windows
+cleanup_projet.bat
+
+# Linux/Mac
+chmod +x cleanup_projet.sh
+./cleanup_projet.sh
+```
+
+**Économie :** ~40 Ko (fichiers obsolètes, doublons CSS, docs anciennes)
+
+---
+
+## 🎯 Guide d'utilisation
+
+### Workflow Sartorius
+
+**1. Créer une référence**
+```
+Accueil → Étiquettes Sartorius → Référence (header)
+Remplir : Référence + Désignation
+Valider → ✅ Alerte succès (reste sur page)
+```
+
+**2. Créer une commande**
+```
+Étiquettes Sartorius → Nouveau (header)
+Sélectionner : Référence existante
+Remplir : N° commande, date, lot
+Ajouter : Quantités par carton (lignes dynamiques)
+Valider → PDF généré automatiquement
+```
+
+**3. Éditer/Supprimer**
+```
+Liste commandes → ✏️ Éditer ou ☑ Sélection + 🗑️ Supprimer
+```
+
+### Workflow Latitude
+
+**1. Créer un article**
+```
+Accueil → Étiquettes Latitude → Article (header)
+Remplir : Nom de l'article
+Valider → ✅ Alerte succès (reste sur page)
+```
+
+**2. Créer une commande**
+```
+Étiquettes Latitude → Nouveau (header)
+Remplir : N° commande
+Ajouter : Articles avec quantités (lignes dynamiques)
+Valider → PDF généré automatiquement
+```
+
+**3. Éditer/Supprimer**
+```
+Liste commandes → ✏️ Éditer ou ☑ Sélection + 🗑️ Supprimer
+```
+
+### Système d'alertes
+
+**Custom Alerts (v1.0.11) :**
+- 🟢 **Succès** — Position fixe coin droit, auto-close 5s
+- 🔴 **Erreur** — Position fixe, fermeture manuelle
+- 🟡 **Warning** — Pour avertissements
+- 🔵 **Info** — Pour informations
+
+**Gestion intelligente :**
+- ✅ Nettoyage URL automatique (pas de `?success=...` visible)
+- ✅ Animations fluides (slide + fade)
+- ✅ Empilage multiple alertes
+- ✅ Responsive mobile/desktop
+
+---
+
+## 🔧 Configuration avancée
+
+### Changer le nom de la base après installation
+
+**Méthode 1 — Réinstallation :**
+```bash
+1. Supprimer .installation_complete
+2. Supprimer ancienne base (phpMyAdmin)
+3. Relancer install.php avec nouveau nom
+```
+
+**Méthode 2 — Configuration manuelle :**
 ```php
+// Éditer config/database.php
+private $db_name = "nouveau_nom";
+```
+
+### Permissions dossiers PDF
+
+**Linux/Mac :**
+```bash
+chmod 755 pdfs/
+chmod 755 pdfs_latitude/
+```
+
+**Windows :**
+```
+Clic droit dossiers → Propriétés → Sécurité
+Donner contrôle total à "Utilisateurs"
+```
+
+### Mode debug
+
+**Activer les erreurs PHP :**
+```php
+// Dans index.php (uniquement développement)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ```
 
-📖 **[Guide complet](INSTALLATION.md#-dépannage)**
+---
+
+## 📊 Schéma d'architecture
+
+```
+etiquette-app/
+├── 📄 index.php                 # Point d'entrée MVC
+├── 📄 install.php               # Installation automatique
+├── 📄 .installation_complete    # Protection réinstallation
+├── 📄 .htaccess                 # Réécriture URL + sécurité
+│
+├── 📁 config/
+│   └── database.php             # Configuration BDD
+│
+├── 📁 controllers/              # Logique métier
+│   ├── CommandeController.php
+│   ├── LatitudeController.php
+│   ├── ReferenceController.php
+│   └── ArticleLatitudeController.php
+│
+├── 📁 models/                   # Accès données
+│   ├── Commande.php
+│   ├── CommandeLatitude.php
+│   ├── Reference.php
+│   └── ArticleLatitude.php
+│
+├── 📁 views/                    # Interface utilisateur
+│   ├── layouts/
+│   │   ├── header.php
+│   │   └── footer.php
+│   ├── sartorius/
+│   ├── latitude/
+│   ├── references/
+│   └── articles_latitude/
+│
+├── 📁 lib/                      # Bibliothèques
+│   ├── fpdf/                    # Génération PDF
+│   ├── SartoriusPdfGenerator.php
+│   └── LatitudePdfGenerator.php
+│
+├── 📁 assets/                   # Ressources
+│   ├── css/
+│   │   └── custom-alerts.css   # Styles alertes
+│   ├── js/
+│   │   └── custom-alerts.js    # Système alertes
+│   └── image/
+│
+├── 📁 css/
+│   └── style.css                # Styles principaux
+│
+├── 📁 database/
+│   └── schema_complete.sql      # Schéma installation
+│
+├── 📁 pdfs/                     # PDFs Sartorius générés
+└── 📁 pdfs_latitude/            # PDFs Latitude générés
+```
 
 ---
 
-## 🤝 Contribution
+## 🆘 Dépannage
 
-Les contributions sont les bienvenues !
+### Erreur : Table doesn't exist
 
+**Cause :** Installation incomplète ou nom de base incorrect
+
+**Solution :**
+```bash
+1. Vérifier dans phpMyAdmin : quelle base contient les tables ?
+2. Éditer config/database.php avec le bon nom
+3. OU réinstaller avec le bon nom
+```
+
+### Erreur : Connection failed
+
+**Cause :** MySQL non démarré ou identifiants incorrects
+
+**Solution :**
+```bash
+1. XAMPP : Vérifier que MySQL est vert
+2. Vérifier config/database.php (user/pass)
+```
+
+### PDF non générés
+
+**Cause :** Permissions dossiers
+
+**Solution :**
+```bash
+chmod 755 pdfs/
+chmod 755 pdfs_latitude/
+```
+
+### Custom alerts ne s'affichent pas
+
+**Cause :** JavaScript désactivé ou fichier manquant
+
+**Solution :**
+```bash
+1. Vérifier que JavaScript est activé dans le navigateur
+2. Vérifier présence de assets/js/custom-alerts.js
+3. F12 → Console pour voir erreurs JS
+```
+
+### Doublon non détecté
+
+**Cause :** Vérifications PHP correctes, problème d'affichage
+
+**Solution :**
+```bash
+Vider cache navigateur (Ctrl+F5)
+Vérifier présence fichier assets/js/custom-alerts.js
+```
+
+---
+
+## 🔄 Changelog
+
+### v1.0.11 (Mars 2026) — Custom Alerts & UX
+- ✨ Remplacement alertes Bootstrap par custom alerts modernes
+- ✨ Conservation valeurs formulaire en cas d'erreur
+- ✨ Workflow création références optimisé (reste sur page)
+- ✨ Nouveau code erreur "Les deux existent" (référence + désignation)
+- 🔧 Protection doublons améliorée (3 niveaux)
+- 📦 Script nettoyage automatique projet
+
+### v1.0.10 (Mars 2026) — Améliorations UX
+- ✨ Reste sur page après création référence/article
+- ✨ Valeurs conservées en erreur (pas de re-saisie)
+- 🔧 Protection doublons références séparée (référence vs désignation)
+
+### v1.0.9 (Février 2026) — Installation corrigée
+- ✨ Nom de base de données personnalisable
+- 🔒 Protection contre double installation
+- 🐛 Fix : Tables créées dans mauvaise base
+- 🔧 Script réparation automatique
+- 📄 Mise à jour config/database.php automatique
+
+### v1.0.8 (Février 2026) — Protection doublons
+- 🔒 Vérifications séparées référence/désignation
+- ✨ Alertes d'erreur spécifiques
+- 🔧 Méthodes exists() dans modèles
+
+### v1.0.0 à v1.0.7
+- Développement initial modules Sartorius + Latitude
+- Architecture MVC complète
+- Génération PDF 8 étiquettes/page
+- Suppression par sélection (cases à cocher)
+- Modals Bootstrap
+- Base données unifiée
+
+---
+
+## 📞 Support
+
+### Problèmes techniques
+- 📧 Email : support@exemple.com
+- 💬 Issues : GitHub repository
+- 📖 Documentation : [QUICKSTART.md](QUICKSTART.md)
+
+### Contribuer
+Les pull requests sont bienvenues ! Pour des changements majeurs :
 1. Fork le projet
-2. Créer une branche (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Commit (`git commit -m 'Ajout nouvelle fonctionnalité'`)
-4. Push (`git push origin feature/nouvelle-fonctionnalite`)
+2. Créer une branche feature
+3. Commit les changements
+4. Push vers la branche
 5. Ouvrir une Pull Request
 
 ---
 
-## 📄 License
+## 📝 License
 
-Ce projet est sous licence MIT - voir [LICENSE](LICENSE) pour détails.
-
----
-
-## 👤 Auteur
-
-Développé avec ❤️ pour la gestion d'étiquettes professionnelle
+MIT License - Voir [LICENSE](LICENSE) pour détails
 
 ---
 
 ## 🙏 Remerciements
 
-- **Bootstrap** pour le framework UI
-- **FPDF** pour la génération PDF
-- **PHP** pour le backend robuste
-- Tous les utilisateurs pour leurs retours !
+- **Bootstrap** — Framework UI
+- **FPDF** — Génération PDF
+- **PHP Community** — Documentation et support
+- **Anthropic Claude** — Assistance développement
 
 ---
 
-**Version actuelle** : 1.0.0  
-**Statut** : ✅ Stable - Production Ready  
-**Support PHP** : 7.4 → 8.2+
-**CHANGEMENT MAJEUR** : Sartorius utilise maintenant le format JSON comme Latitude
+## 🚀 Roadmap future
 
-- **Structure unifiée** :
-  - Une commande = plusieurs lignes de quantités en JSON
-  - Comme Latitude : `quantites: [{quantite_par_carton, quantite_etiquettes}]`
-  - Plus de commandes séparées pour chaque variation
+### v1.1.0 (À venir)
+- [ ] Export Excel des commandes
+- [ ] Recherche avancée avec filtres
+- [ ] Statistiques et graphiques
+- [ ] Mode sombre
+- [ ] Multi-utilisateurs avec authentification
 
-- **Page création** :
-  - Ligne fixe : Référence, Date, N° Commande, N° Lot
-  - Lignes dynamiques : Quantités (bouton + pour ajouter)
-  - Une seule commande créée avec toutes les lignes
+### v1.2.0 (Futur)
+- [ ] API REST pour intégrations
+- [ ] Templates PDF personnalisables
+- [ ] Historique des modifications
+- [ ] Backup automatique BDD
 
-- **Page édition** :
-  - Formulaire dynamique avec toutes les lignes
-  - Ajout/suppression de lignes
-  - Régénération PDF automatique
+---
 
-- **Page liste** :
-  - Colonne "Quantités" ajoutée
-  - Badge nombre de lignes
-  - Badge total d'étiquettes
-
-- **Générateur PDF** :
-  - Lit le JSON quantites
-  - Génère toutes les étiquettes de toutes les lignes
-  - Un seul PDF par commande
-
-- **Migration automatique** :
-  - Script `migrate_sartorius.php`
-  - Convertit anciennes données vers JSON
-  - Sans perte de données
-  - Rapport détaillé
-
-- **Avantages** :
-  - ✓ Structure cohérente entre Sartorius et Latitude
-  - ✓ Moins de lignes en base de données
-  - ✓ Meilleure organisation
-  - ✓ Édition plus flexible
-  - ✓ Un seul PDF par commande
-
-### Version 0.3.5 - FIX ERREUR 500
-- **Correction critique** : Toutes les lignes de quantités sont maintenant enregistrées
-  - Problème : Seule la dernière ligne était sauvegardée
-  - Cause : Réutilisation de la même instance `Commande` avec `bindParam` par référence
-  - Solution : Création d'une nouvelle instance `Commande` pour chaque ligne
-- **Script de test** : `test_create_commande.php`
-  - Teste la création de 3 commandes simultanées
-  - Vérifie que toutes sont bien en base de données
-  - Nettoie automatiquement les données de test
-  - Accès : `http://localhost/etiquette-app/test_create_commande.php`
-
-### Version 0.3.3 - VÉRIFICATION BASE DE DONNÉES
-- **Script de diagnostic** : `check_database.php`
-  - Vérifie la structure complète de la base de données
-  - Affiche les colonnes de chaque table
-  - Compte les enregistrements
-  - Vérifie les contraintes de clé étrangère
-  - Interface web conviviale avec tableaux
-- **Script de mise à jour** : `database/update_schema.sql`
-  - Assure la cohérence de la structure
-  - Modification sans perte de données
-
-### Version 0.3.2 - CORRECTIONS ÉDITION
-- **Correction erreur JavaScript** : Fix conflit variable `count` dans custom-alerts.js
-- **Page Édition commande Sartorius** : Nouveau layout cohérent avec création
-  - Ligne fixe : Référence, Date, N° Commande, N° Lot
-  - Ligne quantités : Qty par carton, Qty étiquettes
-  - Date picker avec mois en lettres
-- **Correction édition référence** : Fix erreur "array offset on bool"
-  - `Reference::readOne()` retourne maintenant le tableau de données
-
-### Version 0.3.0 - GESTION RÉFÉRENCES ET FORMULAIRE SARTORIUS
-- **Gestion complète des références** :
-  - Tableau des références sur page Ajout Référence
-  - Boutons Éditer et Supprimer pour chaque référence
-  - Page d'édition dédiée
-  - Protection contre les doublons (référence + désignation)
-  - Routes: editer-reference, modifier-reference, supprimer-reference
-
-- **Nouveau formulaire Sartorius** :
-  - **Ligne fixe** : Référence, Date production, N° Commande, N° Lot
-  - **Lignes dynamiques** : Quantité par carton + Quantité d'étiquettes
-  - Date picker avec mois en lettres (Janvier 2026, etc.)
-  - Bouton + ajoute uniquement lignes de quantités
-  - Permet création de variantes (même produit, différentes quantités)
-
-### Version 0.2.5 - FIX JSON LATITUDE
-- **Correction critique** : PDF Latitude vides
-  - Suppression de `htmlspecialchars()` sur champs JSON
-  - Script de réparation : `fix_latitude_json.php`
-  - JSON stocké correctement en base
-
-### Version 0.2.4 - OUTILS DIAGNOSTIC
-- **Scripts de test** :
-  - `test_pdf.php` : Diagnostic Sartorius
-  - `test_pdf_latitude.php` : Diagnostic Latitude
-- Logs de débogage ajoutés
-
-### Version 0.2.3 - FIX GÉNÉRATION PDF
-- **Correction PDF Sartorius et Latitude** :
-  - Requête SQL avec JOIN pour récupérer données complètes
-  - Vérification existence fichiers
-  - Messages d'erreur utilisateur
-  - Gestion d'erreurs améliorée
-
-### Version 0.2.2
-- **Liste Latitude améliorée** : Suppression colonne "Articles"
-- **Édition Latitude** : Nouveau bouton "Éditer"
-- **Page d'édition Latitude** : Modification complète avec régénération PDF
-- **Boutons + intelligents** : Logique hide/show automatique
-
-### Version 0.2.1
-- **Script d'installation** : `install_latitude.php`
-- **Correction** : require_once manquants pour module Latitude
-
-### Version 0.2.0 - MODULE LATITUDE COMPLET 🎉
-- **Bouton Latitude activé** : Page d'accueil avec bouton Latitude fonctionnel
-- **Page Liste Latitude** : Liste des commandes sans bouton Référence
-- **Formulaire dynamique** : Ajout de lignes d'articles avec animation
-  - N° Commande
-  - Article : Carte postale, Carte stickers, Set de table, Livre
-  - Quantité d'article
-  - Nombre d'exemplaire (cartons)
-  - Bouton + pour ajouter des lignes
-  - Animation slide-down et opacité
-- **Génération PDF** : Étiquettes Latitude avec numérotation continue
-  - Format A4 paysage, 4 étiquettes par page
-  - Champs : Carton n°, Fournisseur, Commande n°, Article, Quantité
-  - Numérotation séquentielle : 1-25 (Carte postale), 26-39 (Set de table), etc.
-- **Base de données** : Table `commandes_latitude` avec stockage JSON des articles
-- **Gestion complète** : Créer, lister, télécharger, supprimer
-- **Dossier dédié** : pdfs_latitude/ pour les PDF générés
-
-### Version 0.1.8
-- **Bouton Vider PDF supprimé** : Le bouton "Vider PDF" a été retiré de l'interface
-- **Suppression améliorée** : Le bouton Supprimer supprime maintenant aussi le fichier PDF associé
-- **Validation renforcée** : Impossible de créer une référence + désignation identique
-- **Ordre des boutons** : Boutons Sauvegarder et Annuler intervertis dans la page Édition
-- **Code d'erreur** : Nouveau message `duplicate_combination` pour référence + désignation identiques
-- **Nettoyage du code** : Suppression de la méthode `viderPdf()` et de sa route
-
-### Version 0.1.7
-- **Compatibilité Mac améliorée** : Correction de la génération PDF sur Mac avec XAMPP
-- **Chemins absolus** : Utilisation de chemins absolus pour la création du dossier pdfs
-- **Permissions renforcées** : Création automatique avec chmod 777 pour Mac
-- **Gestion d'erreurs** : Try-catch complet dans PdfGenerator avec messages détaillés
-- **Nettoyage des noms** : Les caractères spéciaux dans les références sont remplacés par "_"
-- **Diagnostic PDF** : Nouveau fichier `diagnostic_pdf.php` pour identifier les problèmes
-- **Guide Mac** : Nouveau fichier `INSTALL_MAC.md` avec instructions détaillées
-- **Logs améliorés** : error_log() pour tracer les erreurs de génération PDF
-
-### Version 0.1.6
-- **Navbar avec dégradé** : Ajout d'une navbar bleue avec dégradé (#0061f2 → rgba(105, 0, 199, 0.8))
-- **Organisation des boutons** : Réorganisation des boutons dans la page liste (Référence et Nouveau en premier)
-- **Icône factory agrandie** : Taille doublée de l'icône factory dans le PDF (4mm → 8mm)
-- **Alertes unifiées** : Suppression de toutes les alertes Bootstrap, utilisation exclusive du système d'alertes personnalisé
-- **Gestion d'erreurs améliorée** : Les erreurs de création/modification redirigent maintenant avec des paramètres URL
-- **Nouveaux codes d'erreur** :
-  - `duplicate_reference` : Référence déjà existante
-  - `create_failed` : Erreur de création
-  - `update_failed` : Erreur de modification
-- **Alertes sur toutes les pages** : Le système d'alertes fonctionne maintenant sur les pages Ajout Référence, Nouvelle étiquette et Édition
-
-### Version 0.1.5
-- **Nouveau titre** : "Étiquettes de colisages" au lieu de "Application Étiquettes"
-- **Favicons** : Ajout de favicons complets (favicon.ico, apple-touch-icon, android-chrome, etc.)
-- **Fond coloré** : Couleur de fond #eff5f7 pour un look plus moderne
-- **Footer simplifié** : Retrait du fond gris, footer plus épuré
-- **Page d'accueil améliorée** : Carte Sartorius cliquable avec effet hover
-- **Style CSS centralisé** : Nouveau fichier css/style.css avec styles globaux
-- **PDF amélioré** : Dimensions d'étiquettes ajustées (148,5mm x 105mm) et taille de police augmentée (18pt)
-- **Icône d'usine mise à jour** : Nouvelles versions factory.png et factory.svg
-
-### Version 0.1.4
-- **Alertes personnalisées** : Nouveau système d'alertes avec animation depuis la gauche
-- **Design moderne** : Alertes avec dégradés de couleurs et ombres portées
-- **Animation fluide** : Apparition depuis la gauche (slideIn) avec transition douce
-- **Couleurs par type** :
-  - 🟢 Succès : Vert (#10b981 → #059669)
-  - 🔴 Erreur : Rouge (#ef4444 → #dc2626)
-  - 🟠 Warning : Orange (#f97316 → #ea580c)
-  - 🔵 Info : Bleu (#3b82f6 → #2563eb)
-- **Fermeture automatique** : Les alertes disparaissent après 5 secondes
-- **Bouton de fermeture** : Possibilité de fermer manuellement
-- **URL nettoyage** : Les paramètres success/error sont supprimés de l'URL après affichage
-- **Responsive** : Adaptation aux petits écrans
-
-### Version 0.1.3
-- **Bouton "Vider PDF"** : Supprime tous les fichiers PDF du dossier pdfs (conserve les commandes)
-- **Bouton "Supprimer tout"** : Supprime toutes les commandes de la base de données et leurs PDF associés
-- **Modales de confirmation** avec Bootstrap pour confirmer les actions destructives
-- **Messages de retour** : Affichage du nombre de PDF supprimés et messages d'erreur appropriés
-- **Sécurité** : Confirmations obligatoires avant suppression pour éviter les erreurs
-
-### Version 0.1.2
-- **Police Roboto** : Utilisation de Helvetica (police standard PDF) qui ressemble beaucoup à Roboto
-  - Roboto Regular → Helvetica
-  - Roboto Bold → Helvetica-Bold
-- **Icône d'usine PNG** : Remplacement de la police ZapfDingbats par une véritable icône d'usine (16x16 px)
-- **Meilleure lisibilité** : Icône plus claire et professionnelle
-
-### Version 0.1.1
-- **Format A4 paysage** pour les PDFs d'étiquettes
-- **4 étiquettes par page** (2 colonnes x 2 lignes)
-- **Suppression des contours** autour des étiquettes
-- Remplacement de "e" par "**ex**" dans "1 CARTON DE XX ex"
-- **Icône d'usine** (⚙) avant la date de production
-- **Nom de fichier amélioré** : format `REFERENCE-MM_AAAA.pdf` (ex: IU114789-02_2026.pdf)
-
-### Version 0.1.0
-- **Génération de PDF d'étiquettes** avec FPDF
-- Téléchargement automatique du PDF lors de la création d'une commande
-- Bouton de téléchargement PDF dans la liste des commandes
-- Format d'étiquette personnalisé (4 étiquettes par page A4)
-- Dossier pdfs protégé pour stocker les fichiers générés
-
-### Version 0.0.3
-- Amélioration de la gestion des erreurs (try-catch pour PDOException)
-- Messages de succès après création/modification/suppression
-- Message d'erreur convivial pour les doublons de référence
-
-### Version 0.0.2
-- Correction du schéma de base de données (mot réservé SQL 'references')
-
-### Version 0.0.1
-- Page d'accueil avec navigation vers Sartorius et Latitude
-- Gestion des références (ajout, liste)
-- Gestion des commandes d'étiquettes Sartorius (création, édition, suppression, liste)
-- Interface responsive avec Bootstrap 5
-- Architecture MVC en PHP orienté objet
-
-## Prérequis
-
-- PHP 7.4 ou supérieur
-- MySQL 5.7 ou supérieur
-- Serveur web (Apache, Nginx)
-- Extension PHP PDO et PDO_MySQL
-
-## Installation
-
-1. **Cloner ou extraire l'application dans votre serveur web**
-   ```
-   etiquette-app/
-   ```
-
-2. **Créer la base de données**
-   - Ouvrir phpMyAdmin ou votre client MySQL
-   - Exécuter le script SQL situé dans `database/schema.sql`
-
-3. **Configurer la connexion à la base de données**
-   - Ouvrir le fichier `config/database.php`
-   - Modifier les paramètres de connexion si nécessaire :
-     ```php
-     private $host = "localhost";
-     private $db_name = "etiquette_db";
-     private $username = "root";
-     private $password = "";
-     ```
-
-4. **Accéder à l'application**
-   - Ouvrir votre navigateur
-   - Accéder à l'URL : `http://localhost/etiquette-app/`
-
-## Structure du projet
-
-```
-etiquette-app/
-├── config/
-│   └── database.php          # Configuration BDD
-├── controllers/
-│   ├── CommandeController.php
-│   └── ReferenceController.php
-├── models/
-│   ├── Commande.php
-│   └── Reference.php
-├── views/
-│   ├── layouts/
-│   │   ├── header.php
-│   │   └── footer.php
-│   ├── commandes/
-│   │   ├── liste.php
-│   │   ├── nouvelle.php
-│   │   └── edition.php
-│   ├── references/
-│   │   └── ajout.php
-│   └── home.php
-├── database/
-│   └── schema.sql            # Schéma de la base de données
-├── index.php                  # Point d'entrée
-├── .htaccess                  # Configuration Apache
-└── README.md
-```
-
-## Utilisation
-
-### Page d'accueil
-Deux boutons permettent d'accéder aux modules :
-- **Sartorius** : Gestion des étiquettes Sartorius (fonctionnel)
-- **Latitude** : À venir
-
-### Gestion Sartorius
-
-#### Ajouter une référence
-1. Cliquer sur le bouton "Référence" dans la page Étiquettes Sartorius
-2. Remplir le formulaire (Référence et Désignation)
-3. Cliquer sur "Sauvegarder"
-
-#### Créer une nouvelle commande
-1. Cliquer sur le bouton "Nouveau" dans la page Étiquettes Sartorius
-2. Remplir tous les champs du formulaire :
-   - Référence (liste déroulante)
-   - Quantité par carton
-   - Date de production (format MM/AAAA)
-   - N° Commande
-   - N° Lot
-   - Quantité d'étiquettes
-3. Cliquer sur "Sauvegarder"
-
-#### Éditer une commande
-1. Cliquer sur le bouton "Éditer" (crayon) dans la liste
-2. Modifier les informations
-3. Cliquer sur "Sauvegarder"
-
-#### Supprimer une commande
-1. Cliquer sur le bouton "Supprimer" (poubelle) dans la liste
-2. Confirmer la suppression
-
-#### Télécharger le PDF
-*Fonctionnalité à venir dans une prochaine version*
-
-## Technologies utilisées
-
-- **Backend** : PHP 7.4+ (POO)
-- **Architecture** : MVC (Model-View-Controller)
-- **Base de données** : MySQL 5.7+
-- **Frontend** : Bootstrap 5.3, Bootstrap Icons
-- **JavaScript** : Vanilla JS pour les interactions
-
-## À venir
-
-- Génération de PDF pour les étiquettes
-- Module Latitude
-- Export des données
-- Gestion avancée des références
-
-## Support
-
-Pour toute question ou problème, veuillez créer une issue dans le dépôt du projet.
-
-## Licence
-
-Tous droits réservés.
+**Version actuelle : 1.0.11**  
+**Dernière mise à jour : Mars 2026**  
+**Statut : Production stable** ✅

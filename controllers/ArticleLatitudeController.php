@@ -17,7 +17,7 @@ class ArticleLatitudeController {
      */
     public function nouveau() {
         $articles = $this->article->readAll();
-        require_once 'views/articles_latitude/nouveau.php';
+        require_once 'views/latitude/articles_latitude/nouveau_article_latitude.php';
     }
 
     /**
@@ -68,7 +68,7 @@ class ArticleLatitudeController {
         $articleData = $this->article->readOne();
         
         if($articleData) {
-            require_once 'views/articles_latitude/edition.php';
+            require_once 'views/latitude/articles_latitude/edition_article_latitude.php';
         } else {
             header("Location: index.php?page=nouveau-article-latitude&error=not_found");
             exit();

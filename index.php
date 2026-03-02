@@ -10,7 +10,7 @@
 // ini_set('display_errors', 1);
 
 // Définir la version de l'application
-define('APP_VERSION', '1.0.10');
+define('APP_VERSION', '1.0.11');
 
 // Démarrer la session
 session_start();

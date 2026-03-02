@@ -1,0 +1,11 @@
+# Protection du dossier PDFs Sartorius
+# Bloquer l'accès direct, autoriser seulement via PHP
+
+# Bloquer le listing du répertoire
+Options -Indexes
+
+# Autoriser seulement l'accès aux fichiers PDF via PHP
+<FilesMatch "\.pdf$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>

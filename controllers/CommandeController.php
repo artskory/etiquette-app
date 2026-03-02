@@ -17,7 +17,7 @@ class CommandeController {
      */
     public function liste() {
         $stmt = $this->commande->readAll();
-        require_once 'views/sartorius/liste.php';
+        require_once 'views/sartorius/liste_commande_sartorius.php';
     }
 
     /**
@@ -26,7 +26,7 @@ class CommandeController {
     public function nouvelle() {
         $referenceController = new ReferenceController();
         $references = $referenceController->getAll();
-        require_once 'views/sartorius/nouvelle.php';
+        require_once 'views/sartorius/nouvelle_commande_sartorius.php';
     }
 
     /**
@@ -106,7 +106,7 @@ class CommandeController {
         if($commandeData) {
             $referenceController = new ReferenceController();
             $references = $referenceController->getAll();
-            require_once 'views/sartorius/edition.php';
+            require_once 'views/sartorius/edition_commande_sartorius.php';
         } else {
             header("Location: index.php?page=sartorius");
             exit();
@@ -175,7 +175,7 @@ class CommandeController {
                 $dateParts = explode('/', $commandeData['date_production']);
                 $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
                 $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
-                $pdfFilename = 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+                $pdfFilename = 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
                 
                 // Supprimer le PDF s'il existe
                 if(file_exists($pdfFilename)) {
@@ -284,7 +284,7 @@ class CommandeController {
             
             if($stmt->execute()) {
                 // Optionnel : aussi supprimer les PDF
-                $pdfDir = 'pdfs/';
+                $pdfDir = 'pdfs_sartorius/';
                 if(is_dir($pdfDir)) {
                     $files = glob($pdfDir . '*.pdf');
                     foreach($files as $file) {
@@ -325,7 +325,7 @@ class CommandeController {
                     $dateParts = explode('/', $commandeData['date_production']);
                     $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
                     $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
-                    $pdfFilename = 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+                    $pdfFilename = 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
                     if(file_exists($pdfFilename)) unlink($pdfFilename);
                     $this->commande->delete();
                 }

@@ -16,7 +16,7 @@ class ReferenceController {
      * Afficher la page d'ajout de référence
      */
     public function ajout() {
-        require_once 'views/references/ajout.php';
+        require_once 'views/sartorius/articles_sartorius/nouveau_article_sartorius.php';
     }
 
     /**
@@ -96,7 +96,7 @@ class ReferenceController {
         $referenceData = $this->reference->readOne();
         
         if($referenceData) {
-            require_once 'views/references/edition.php';
+            require_once 'views/sartorius/articles_sartorius/edition_article_sartorius.php';
         } else {
             header("Location: index.php?page=ajout-reference&error=not_found");
             exit();

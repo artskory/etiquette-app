@@ -17,7 +17,7 @@ class LatitudeController {
      */
     public function liste() {
         $stmt = $this->commande->readAll();
-        require_once 'views/latitude/liste.php';
+        require_once 'views/latitude/liste_commande_latitude.php';
     }
 
     /**
@@ -29,7 +29,7 @@ class LatitudeController {
         $articleModel = new ArticleLatitude($this->db);
         $articles = $articleModel->readAll();
         
-        require_once 'views/latitude/nouvelle.php';
+        require_once 'views/latitude/nouvelle_commande_latitude.php';
     }
     
     /**
@@ -46,7 +46,7 @@ class LatitudeController {
             $articleModel = new ArticleLatitude($this->db);
             $articles = $articleModel->readAll();
             
-            require_once 'views/latitude/edition.php';
+            require_once 'views/latitude/edition_commande_latitude.php';
         } else {
             header("Location: index.php?page=latitude");
             exit();

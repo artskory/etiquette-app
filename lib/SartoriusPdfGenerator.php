@@ -106,7 +106,7 @@ class SartoriusPdfGenerator extends FPDF {
             }
             
             // Créer le dossier pdfs s'il n'existe pas
-            $pdfDir = dirname(__FILE__) . '/../pdfs';
+            $pdfDir = dirname(__FILE__) . '/../pdfs_sartorius/';
             if(!is_dir($pdfDir)) {
                 if(!mkdir($pdfDir, 0777, true)) {
                     throw new Exception("Impossible de créer le dossier pdfs. Vérifiez les permissions.");
@@ -136,7 +136,7 @@ class SartoriusPdfGenerator extends FPDF {
             chmod($filename, 0666);
             
             // Retourner le chemin relatif pour l'application
-            return 'pdfs/' . $refClean . '-' . $dateFormatted . '.pdf';
+            return 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
             
         } catch(Exception $e) {
             error_log("Erreur PdfGenerator: " . $e->getMessage());
