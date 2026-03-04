@@ -1,7 +1,7 @@
 <?php
 /**
  * Application Étiquettes
- * Version 1.0.11 - Protection CSRF ajoutée
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 
 // Désactiver l'affichage des erreurs en production
@@ -15,8 +15,9 @@ define('APP_VERSION', '1.0.11');
 // Démarrer la session
 session_start();
 
-// Charger la classe CSRF en premier
+// Charger les classes de sécurité
 require_once 'lib/CsrfToken.php';
+require_once 'lib/Validator.php';
 
 // Charger les fichiers nécessaires
 require_once 'config/database.php';

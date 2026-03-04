@@ -1,6 +1,7 @@
 <?php
 /**
  * Contrôleur Reference
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 class ReferenceController {
     private $db;
@@ -24,21 +25,38 @@ class ReferenceController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            // Démarrer la session si pas déjà fait
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            // Démarrer la session si pas déjà fait
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
+            
+            // Validation des données
+            $reference = Validator::reference($_POST['reference'] ?? '');
+            $designation = Validator::text($_POST['designation'] ?? '');
+            
+            // Vérifier que les données sont valides
+            if ($reference === false || Validator::isEmpty($_POST['reference'] ?? '')) {
+                $_SESSION['form_data'] = $_POST;
+                header("Location: index.php?page=ajout-reference&error=invalid_reference");
+                exit;
             }
             
-            $this->reference->reference = $_POST['reference'] ?? '';
-            $this->reference->designation = $_POST['designation'] ?? '';
+            if ($designation === false || Validator::isEmpty($_POST['designation'] ?? '')) {
+                $_SESSION['form_data'] = $_POST;
+                header("Location: index.php?page=ajout-reference&error=invalid_designation");
+                exit;
+            }
+            
+            // Assigner les données validées
+            $this->reference->reference = $reference;
+            $this->reference->designation = $designation;
 
             try {
                 // Vérifier si la référence existe déjà
@@ -99,7 +117,12 @@ class ReferenceController {
      * Afficher la page d'édition
      */
     public function edition() {
-        $id = $_GET['id'] ?? 0;
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=ajout-reference&error=invalid_id");
+            exit();
+        }
+        
         $this->reference->id = $id;
         $referenceData = $this->reference->readOne();
         
@@ -116,16 +139,33 @@ class ReferenceController {
      */
     public function modifier() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-            $this->reference->id = $_POST['id'] ?? '';
-            $this->reference->reference = $_POST['reference'] ?? '';
-            $this->reference->designation = $_POST['designation'] ?? '';
+            
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=ajout-reference&error=invalid_id");
+                exit;
+            }
+            
+            // Valider les données
+            $reference = Validator::reference($_POST['reference'] ?? '');
+            $designation = Validator::text($_POST['designation'] ?? '');
+            
+            if ($reference === false || $designation === false) {
+                header("Location: index.php?page=editer-reference&id=$id&error=invalid_data");
+                exit;
+            }
+            
+            $this->reference->id = $id;
+            $this->reference->reference = $reference;
+            $this->reference->designation = $designation;
 
             try {
                 // Vérifier si la référence existe déjà (en excluant l'ID actuel)
@@ -160,15 +200,21 @@ class ReferenceController {
      */
     public function supprimer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            $id = $_POST['id'] ?? 0;
+            
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=ajout-reference&error=invalid_id");
+                exit;
+            }
+            
             $this->reference->id = $id;
 
             try {
@@ -190,7 +236,7 @@ class ReferenceController {
      * Supprimer une sélection de références
      */
     public function supprimerSelection() {
-
+        
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
@@ -198,15 +244,17 @@ class ReferenceController {
             exit;
         }
         
-        $ids = $_POST['ids'] ?? [];
-        if(empty($ids)) {
+        // Valider le tableau d'IDs
+        $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
+        
+        if ($ids === false) {
             header("Location: index.php?page=ajout-reference&error=no_selection");
-            exit();
+            exit;
         }
 
         try {
             foreach($ids as $id) {
-                $this->reference->id = intval($id);
+                $this->reference->id = $id;
                 $this->reference->delete();
             }
             header("Location: index.php?page=ajout-reference&success=selection_deleted");

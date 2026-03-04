@@ -179,7 +179,37 @@ function showAlertsFromURL() {
             case 'pdf_generation_failed':
                 message = 'Erreur lors de la génération du PDF.';
                 break;
-            default:
+            case 'invalid_data':
+                message = 'Données invalides. Veuillez vérifier les champs.';
+                break;
+            case 'invalid_reference':
+                message = 'Référence invalide (lettres, chiffres, tirets, points uniquement).';
+                break;
+            case 'invalid_designation':
+                message = 'Désignation invalide.';
+                break;
+            case 'invalid_name':
+                message = 'Nom invalide.';
+                break;
+            case 'invalid_numero':
+                message = 'Numéro de commande invalide.';
+                break;
+            case 'invalid_lot':
+                message = 'Numéro de lot invalide.';
+                break;
+            case 'invalid_date':
+                message = 'Date invalide.';
+                break;
+            case 'invalid_quantities':
+                message = 'Quantités invalides.';
+                break;
+            case 'invalid_articles':
+                message = 'Articles invalides.';
+                break;
+            case 'invalid_id':
+                message = 'Identifiant invalide.';
+                break;
+    default:
                 message = 'Une erreur est survenue.';
         }
         showCustomAlert(message, 'danger');
