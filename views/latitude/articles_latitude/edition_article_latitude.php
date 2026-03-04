@@ -12,6 +12,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="index.php?page=modifier-article-latitude" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($articleData['id']); ?>">
                     
                     <div class="mb-3">

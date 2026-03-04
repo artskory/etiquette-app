@@ -24,6 +24,7 @@ if(isset($articles)) {
         <div class="card">
             <div class="card-body">
                 <form id="latitudeForm" action="index.php?page=latitude-modifier" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     
                     <!-- N° Commande -->

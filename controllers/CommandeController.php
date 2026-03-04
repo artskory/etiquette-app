@@ -34,6 +34,13 @@ class CommandeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             // Récupérer les champs communs
             $reference_id = $_POST['reference_id'] ?? '';
             $date_production = $_POST['date_production'] ?? '';
@@ -117,7 +124,14 @@ class CommandeController {
      * Mettre à jour une commande
      */
     public function modifier() {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             $this->commande->id = $_POST['id'] ?? '';
             $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
             $this->commande->reference_id = $_POST['reference_id'] ?? '';
@@ -163,6 +177,13 @@ class CommandeController {
      * Supprimer une commande
      */
     public function supprimer() {
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+
         $id = $_POST['id'] ?? 0;
         $this->commande->id = $id;
 
@@ -310,6 +331,13 @@ class CommandeController {
      * Supprimer une sélection de commandes
      */
     public function supprimerSelection() {
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+        
         $ids = $_POST['ids'] ?? [];
         if(empty($ids)) {
             header("Location: index.php?page=sartorius&error=no_selection");

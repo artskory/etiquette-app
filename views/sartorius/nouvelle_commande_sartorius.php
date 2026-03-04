@@ -19,6 +19,7 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
         <div class="card">
             <div class="card-body">
                 <form id="commandeForm" action="index.php?page=creer-commande" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <!-- Ligne fixe en haut : Référence, Date, N° Commande, N° Lot -->
                     <div class="row mb-4">
                         <div class="col-md-3">

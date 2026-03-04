@@ -24,6 +24,14 @@ class ReferenceController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // Validation CSRF
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             // Démarrer la session si pas déjà fait
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
@@ -108,6 +116,13 @@ class ReferenceController {
      */
     public function modifier() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // Validation CSRF
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
             $this->reference->id = $_POST['id'] ?? '';
             $this->reference->reference = $_POST['reference'] ?? '';
             $this->reference->designation = $_POST['designation'] ?? '';
@@ -145,6 +160,14 @@ class ReferenceController {
      */
     public function supprimer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            // Validation CSRF
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             $id = $_POST['id'] ?? 0;
             $this->reference->id = $id;
 
@@ -167,6 +190,14 @@ class ReferenceController {
      * Supprimer une sélection de références
      */
     public function supprimerSelection() {
+
+        // Validation CSRF
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+        
         $ids = $_POST['ids'] ?? [];
         if(empty($ids)) {
             header("Location: index.php?page=ajout-reference&error=no_selection");

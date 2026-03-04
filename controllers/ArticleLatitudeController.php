@@ -25,6 +25,13 @@ class ArticleLatitudeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+        
             // Démarrer la session si pas déjà fait
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
@@ -79,7 +86,14 @@ class ArticleLatitudeController {
      * Modifier un article
      */
     public function modifier() {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             $this->article->id = $_POST['id'] ?? '';
             $this->article->nom = $_POST['nom'] ?? '';
 
@@ -104,6 +118,13 @@ class ArticleLatitudeController {
      */
     public function supprimer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             $id = $_POST['id'] ?? 0;
             $this->article->id = $id;
 
@@ -127,6 +148,13 @@ class ArticleLatitudeController {
      * Supprimer une sélection d'articles
      */
     public function supprimerSelection() {
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+
         $ids = $_POST['ids'] ?? [];
         if(empty($ids)) {
             header("Location: index.php?page=nouveau-article-latitude&error=no_selection");

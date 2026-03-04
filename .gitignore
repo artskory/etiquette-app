@@ -2,3 +2,4 @@ pdfs/*.pdf
 pdfs_latitude/*.pdf
 .installation_complete
 config/*.php
+.DS_Store

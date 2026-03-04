@@ -46,6 +46,7 @@ $hasReferences = !empty($referencesArray);
     <div class="card">
         <div class="card-body">
             <form id="referenceForm" action="index.php?page=creer-reference" method="POST">
+                <?php echo CsrfToken::field(); ?>
                 <div class="row">
                     <div class="col-md-6">
                         <i class="bi bi-hash blue icons"></i>

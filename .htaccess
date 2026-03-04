@@ -1,3 +1,7 @@
+# ============================================
+# HEADERS DE SÉCURITÉ - VERSION 2 (AVEC CSP)
+# ============================================
+
 RewriteEngine On
 
 # Rediriger vers index.php si le fichier n'existe pas
@@ -7,6 +11,58 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Bloquer l'accès aux fichiers sensibles
 <FilesMatch "\.(sql|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# HEADERS DE SÉCURITÉ
+# ============================================
+
+<IfModule mod_headers.c>
+    # Anti-Clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Anti-MIME Sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Protection XSS
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+    # ============================================
+    # Content Security Policy (CSP) - PERMISSIF
+    # ============================================
+    # ⚠️ ATTENTION : Peut bloquer du contenu si mal configuré
+    # Cette version est permissive pour compatibilité
+    
+    Header always set Content-Security-Policy "\
+        default-src 'self'; \
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; \
+        style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; \
+        font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; \
+        img-src 'self' data: https:; \
+        connect-src 'self'; \
+        frame-ancestors 'self'; \
+        base-uri 'self'; \
+        form-action 'self'"
+</IfModule>
+
+# ============================================
+# PROTECTION FICHIERS SENSIBLES
+# ============================================
+
+<FilesMatch "^(config|\.env|\.git|\.htaccess|\.htpasswd)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(bak|backup|old|tmp|swp)$">
     Order allow,deny
     Deny from all
 </FilesMatch>

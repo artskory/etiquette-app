@@ -131,6 +131,9 @@ function showAlertsFromURL() {
             case 'delete':
                 message = 'Erreur lors de la suppression de la commande.';
                 break;
+            case 'csrf_invalid':
+                message = 'Session expirée. Veuillez rafraîchir la page et réessayer.';
+                break;
             case 'not_found':
                 message = 'Commande introuvable.';
                 break;

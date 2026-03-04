@@ -13,6 +13,7 @@
     <div class="card">
         <div class="card-body">
             <form id="referenceForm" action="index.php?page=modifier-reference" method="POST">
+                <?php echo CsrfToken::field(); ?>
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($referenceData['id']); ?>">
                 
                 <div class="row">    

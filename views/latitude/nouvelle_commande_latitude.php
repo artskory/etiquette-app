@@ -22,6 +22,7 @@ if(isset($articles)) {
 
             <div class="card mt-5">
                 <form id="latitudeForm" action="index.php?page=latitude-creer" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <!-- N° Commande -->
                     <div class="mb-4">
                         <label for="numero_commande" class="form-label">

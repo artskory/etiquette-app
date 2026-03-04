@@ -31,6 +31,7 @@ if(!$quantitesArray || !is_array($quantitesArray) || empty($quantitesArray)) {
         <div class="card">
             <div class="card-body">
                 <form id="commandeForm" action="index.php?page=modifier-commande" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     
                     <!-- Ligne fixe en haut -->

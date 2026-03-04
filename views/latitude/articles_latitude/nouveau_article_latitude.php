@@ -37,6 +37,7 @@ $hasArticles = !empty($articlesArray);
         <div class="card">
             <div class="card-body">
                 <form action="index.php?page=creer-article-latitude" method="POST">
+                    <?php echo CsrfToken::field(); ?>
                     <div class="mb-3">
                         <label for="nom" class="form-label">
                             <i class="bi bi-tag blue icons"></i>Nom de l'article <span class="text-danger">*</span>

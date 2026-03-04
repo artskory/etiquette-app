@@ -58,6 +58,13 @@ class LatitudeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+
             $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
             
             // Debug: Afficher les données POST reçues
@@ -107,6 +114,13 @@ class LatitudeController {
      */
     public function modifier() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+            
             $this->commande->id = $_POST['id'] ?? '';
             $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
             
@@ -149,6 +163,13 @@ class LatitudeController {
      * Supprimer une commande
      */
     public function supprimer() {
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+        
         $id = $_POST['id'] ?? 0;
         $this->commande->id = $id;
 
@@ -234,6 +255,13 @@ class LatitudeController {
      * Supprimer une sélection de commandes Latitude
      */
     public function supprimerSelection() {
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: index.php?error=csrf_invalid");
+            exit;
+        }
+        
         $ids = $_POST['ids'] ?? [];
         if(empty($ids)) {
             header("Location: index.php?page=latitude&error=no_selection");

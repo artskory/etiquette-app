@@ -1,7 +1,7 @@
 <?php
 /**
  * Application Étiquettes
- * Version 0.0.1
+ * Version 1.0.11 - Protection CSRF ajoutée
  */
 
 // Désactiver l'affichage des erreurs en production
@@ -14,6 +14,9 @@ define('APP_VERSION', '1.0.11');
 
 // Démarrer la session
 session_start();
+
+// Charger la classe CSRF en premier
+require_once 'lib/CsrfToken.php';
 
 // Charger les fichiers nécessaires
 require_once 'config/database.php';
@@ -80,7 +83,7 @@ switch($page) {
         $controller->creer();
         break;
     
-    case 'edition-commande':
+    case 'editer-commande':
         $controller = new CommandeController();
         $controller->edition();
         break;
@@ -100,63 +103,11 @@ switch($page) {
         $controller->supprimerSelection();
         break;
     
-    case 'telecharger-pdf':
-        $controller = new CommandeController();
-        $controller->telecharger();
-        break;
-    
-    case 'supprimer-tout':
-        $controller = new CommandeController();
-        $controller->supprimerTout();
-        break;
-    
-    // Routes Latitude
     case 'latitude':
         $controller = new LatitudeController();
         $controller->liste();
         break;
     
-    case 'latitude-nouvelle':
-        $controller = new LatitudeController();
-        $controller->nouvelle();
-        break;
-    
-    case 'latitude-edition':
-        $controller = new LatitudeController();
-        $controller->edition();
-        break;
-    
-    case 'latitude-creer':
-        $controller = new LatitudeController();
-        $controller->creer();
-        break;
-    
-    case 'latitude-modifier':
-        $controller = new LatitudeController();
-        $controller->modifier();
-        break;
-    
-    case 'latitude-supprimer':
-        $controller = new LatitudeController();
-        $controller->supprimer();
-        break;
-    
-    case 'latitude-supprimer-selection':
-        $controller = new LatitudeController();
-        $controller->supprimerSelection();
-        break;
-    
-    case 'latitude-telecharger':
-        $controller = new LatitudeController();
-        $controller->telecharger();
-        break;
-    
-    case 'latitude-supprimer-tout':
-        $controller = new LatitudeController();
-        $controller->supprimerTout();
-        break;
-    
-    // Articles Latitude
     case 'nouveau-article-latitude':
         $controller = new ArticleLatitudeController();
         $controller->nouveau();
@@ -184,6 +135,36 @@ switch($page) {
     
     case 'supprimer-selection-articles-latitude':
         $controller = new ArticleLatitudeController();
+        $controller->supprimerSelection();
+        break;
+    
+    case 'nouvelle-commande-latitude':
+        $controller = new LatitudeController();
+        $controller->nouvelle();
+        break;
+    
+    case 'creer-commande-latitude':
+        $controller = new LatitudeController();
+        $controller->creer();
+        break;
+    
+    case 'editer-commande-latitude':
+        $controller = new LatitudeController();
+        $controller->edition();
+        break;
+    
+    case 'modifier-commande-latitude':
+        $controller = new LatitudeController();
+        $controller->modifier();
+        break;
+    
+    case 'supprimer-commande-latitude':
+        $controller = new LatitudeController();
+        $controller->supprimer();
+        break;
+    
+    case 'supprimer-selection-commandes-latitude':
+        $controller = new LatitudeController();
         $controller->supprimerSelection();
         break;
     
