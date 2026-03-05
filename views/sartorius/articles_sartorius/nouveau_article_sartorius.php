@@ -140,6 +140,7 @@ $hasReferences = !empty($referencesArray);
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
             <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-references" method="POST" style="display:inline;">
+                <?php echo CsrfToken::field(); ?>    
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>
             </form>

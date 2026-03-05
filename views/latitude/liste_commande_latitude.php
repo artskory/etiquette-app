@@ -65,7 +65,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="index.php?page=latitude-telecharger&id=<?php echo $row['id']; ?>"
+                                    <a href="index.php?page=telecharger-pdf-latitude&id=<?php echo $row['id']; ?>"
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -106,7 +106,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=latitude-supprimer-selection" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-commandes-latitude" method="POST" style="display:inline;">
                 <?php echo CsrfToken::field(); ?>
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>

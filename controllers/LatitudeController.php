@@ -258,22 +258,23 @@ class LatitudeController {
      * Télécharger le PDF
      */
     public function telecharger() {
-        $id = Validator::id($_GET['id'] ?? 0);
-        if ($id === false) {
-            header("Location: index.php?page=latitude&error=invalid_id");
-            exit();
-        }
-        
-        $this->commande->id = $id;
-        $commandeData = $this->commande->readOne();
-        
-        if($commandeData) {
-            $this->genererPDF($id, true);
-        } else {
-            header("Location: index.php?page=latitude&error=not_found");
-            exit();
-        }
+    // Valider l'ID depuis GET
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    if ($id <= 0) {
+        header("Location: index.php?page=sartorius&error=invalid_id");
+        exit();
     }
+    
+    $this->commande->id = $id;
+    $commandeData = $this->commande->readOne();
+    
+    if($commandeData) {
+        $this->genererPDF($id, true);
+    } else {
+        header("Location: index.php?page=sartorius&error=not_found");
+        exit();
+    }
+}
 
     /**
      * Générer ou télécharger le PDF

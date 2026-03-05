@@ -103,6 +103,10 @@ switch($page) {
         $controller = new CommandeController();
         $controller->supprimerSelection();
         break;
+    case 'telecharger-pdf':
+        $controller = new CommandeController();
+        $controller->telecharger();
+        break;
     
     case 'latitude':
         $controller = new LatitudeController();
@@ -167,6 +171,11 @@ switch($page) {
     case 'supprimer-selection-commandes-latitude':
         $controller = new LatitudeController();
         $controller->supprimerSelection();
+        break;
+    
+    case 'telecharger-pdf-latitude':
+        $controller = new LatitudeController();
+        $controller->telecharger();
         break;
     
     default:
