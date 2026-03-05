@@ -1,5 +1,6 @@
 # ============================================
-# HEADERS DE SÉCURITÉ - VERSION 2 (AVEC CSP)
+# HEADERS DE SÉCURITÉ - VERSION FINALE
+# Application Étiquettes v1.0.11
 # ============================================
 
 RewriteEngine On
@@ -10,7 +11,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Bloquer l'accès aux fichiers sensibles
-<FilesMatch "\.(sql|md)$">
+<FilesMatch "\.(sql|md|env|git|gitignore|htaccess|htpasswd|ini|log|sh|bak|backup|old|tmp|swp)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
@@ -20,49 +21,33 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 # ============================================
 
 <IfModule mod_headers.c>
-    # Anti-Clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
+    # Anti-Clickjacking : Empêche l'intégration du site dans une iframe
+    Header set X-Frame-Options "SAMEORIGIN"
 
-    # Anti-MIME Sniffing
-    Header always set X-Content-Type-Options "nosniff"
+    # Anti-MIME Sniffing : Force le navigateur à respecter le Content-Type
+    Header set X-Content-Type-Options "nosniff"
 
-    # Protection XSS
-    Header always set X-XSS-Protection "1; mode=block"
+    # Protection XSS : Filtre XSS intégré (navigateurs anciens)
+    Header set X-XSS-Protection "1; mode=block"
 
-    # Referrer Policy
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Referrer Policy : Contrôle les informations envoyées dans le header Referer
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
 
-    # Permissions Policy
-    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
-
-    # ============================================
-    # Content Security Policy (CSP) - PERMISSIF
-    # ============================================
-    # ⚠️ ATTENTION : Peut bloquer du contenu si mal configuré
-    # Cette version est permissive pour compatibilité
-    
-    Header always set Content-Security-Policy "\
-        default-src 'self'; \
-        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; \
-        style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; \
-        font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; \
-        img-src 'self' data: https:; \
-        connect-src 'self'; \
-        frame-ancestors 'self'; \
-        base-uri 'self'; \
-        form-action 'self'"
+    # Permissions Policy : Désactive les APIs non utilisées
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
 </IfModule>
 
 # ============================================
-# PROTECTION FICHIERS SENSIBLES
+# PROTECTION FICHIERS SENSIBLES (renforcée)
 # ============================================
 
-<FilesMatch "^(config|\.env|\.git|\.htaccess|\.htpasswd)">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
+# Bloquer l'accès direct aux dossiers sensibles
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
 
-<FilesMatch "\.(bak|backup|old|tmp|swp)$">
+# Protection config
+<FilesMatch "^(config\.php|database\.php)">
     Order allow,deny
     Deny from all
 </FilesMatch>
