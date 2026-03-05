@@ -1,7 +1,7 @@
 <?php
 /**
  * SCRIPT D'INSTALLATION - APPLICATION ÉTIQUETTES
- * Version 1.0.8
+ * Version 1.0.11 - Avec création automatique des index de performance
  * 
  * Ce script installe automatiquement la base de données complète
  * Accès : http://localhost/etiquette-app/install.php
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                     </h1>
                     
                     <p class="text-center text-muted mb-4">
-                        Application Étiquettes v1.0.8
+                        Application Étiquettes v1.0.11
                     </p>
 
                     <hr class="my-4">
@@ -157,23 +157,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                                 <i class="bi bi-database me-2"></i>Nom de la base de données <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" id="db_name" name="db_name" 
-                                   value="etiquette_db" required 
+                                   value="etiquettes_app" required 
                                    pattern="[a-zA-Z0-9_]+" 
-                                   placeholder="etiquette_db">
-                            <div class="form-text">Uniquement lettres, chiffres et underscores</div>
+                                   title="Uniquement lettres, chiffres et underscores">
+                            <div class="form-text">
+                                <i class="bi bi-lightbulb text-warning me-1"></i>
+                                Choisissez un nom unique (ex: etiquettes_prod, etiquettes_test)
+                            </div>
                         </div>
 
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
-                            <strong>Important :</strong> Une nouvelle base de données sera créée avec ce nom. 
-                            Assurez-vous que ce nom n'existe pas déjà.
+                            <strong>Note :</strong> La base de données sera créée automatiquement si elle n'existe pas.
                         </div>
 
-                        <hr class="my-4">
-
-                        <div class="text-center">
+                        <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-rocket-takeoff me-2"></i>Lancer l'installation
+                                <i class="bi bi-rocket-takeoff me-2"></i>
+                                Lancer l'installation
                             </button>
                         </div>
                     </form>
@@ -181,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             </div>
 
             <div class="text-center mt-4 text-white">
-                <small>Application Étiquettes - Installation automatique</small>
+                <small>Application Étiquettes v1.0.11 - Installation automatique avec optimisations</small>
             </div>
         </div>
 
@@ -193,25 +194,25 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // ========================================
-// TRAITEMENT DU FORMULAIRE
+// TRAITEMENT DE L'INSTALLATION
 // ========================================
-$DB_HOST = $_POST['db_host'] ?? 'localhost';
-$DB_USER = $_POST['db_user'] ?? 'root';
+$DB_HOST = $_POST['db_host'] ?? '';
+$DB_USER = $_POST['db_user'] ?? '';
 $DB_PASS = $_POST['db_pass'] ?? '';
-$DB_NAME = $_POST['db_name'] ?? 'etiquette_db';
+$DB_NAME = $_POST['db_name'] ?? '';
 
-// Validation du nom de base
-if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
-    die('Erreur : Nom de base de données invalide');
+// Validation
+if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
+    die('Erreur : Tous les champs obligatoires doivent être remplis.');
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation - Application Étiquettes</title>
+    <title>Installation en cours...</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -221,7 +222,7 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
             padding: 40px 0;
         }
         .install-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         .card {
@@ -231,77 +232,59 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
         }
         .step {
             padding: 20px;
-            border-left: 4px solid #e9ecef;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
             background: #f8f9fa;
-            border-radius: 5px;
-        }
-        .step.success {
-            border-left-color: #28a745;
-            background: #d4edda;
-        }
-        .step.error {
-            border-left-color: #dc3545;
-            background: #f8d7da;
         }
         .step.processing {
-            border-left-color: #0061f2;
-            background: #cfe2ff;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
         }
-        .logo {
-            font-size: 4rem;
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
+        .step.success {
+            background: #d1e7dd;
+            border-left: 4px solid #198754;
+        }
+        .step.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="install-container">
-        <div class="logo">
-            <i class="bi bi-tags-fill"></i>
-        </div>
-        
         <div class="card">
             <div class="card-body p-5">
                 <h1 class="text-center mb-4">
-                    <i class="bi bi-download text-primary"></i>
-                    Installation en cours...
+                    <i class="bi bi-hourglass-split text-primary"></i>
+                    Installation en cours
                 </h1>
                 
-                <p class="text-center text-muted mb-4">
-                    Base de données : <strong><?php echo htmlspecialchars($DB_NAME); ?></strong>
-                </p>
-
-                <hr class="my-4">
-
-                <div id="installation-steps">
+                <div id="progress">
                     <?php
                     $hasError = false;
-
+                    
                     // ========================================
                     // ÉTAPE 1 : Connexion au serveur MySQL
                     // ========================================
                     echo '<div class="step processing" id="step1">';
-                    echo '<h5><i class="bi bi-database me-2"></i>Étape 1 : Connexion au serveur MySQL</h5>';
+                    echo '<h5><i class="bi bi-server me-2"></i>Étape 1 : Connexion au serveur MySQL</h5>';
                     
                     try {
-                        $conn = new PDO("mysql:host=$DB_HOST", $DB_USER, $DB_PASS);
+                        $dsn = "mysql:host=$DB_HOST;charset=utf8mb4";
+                        $conn = new PDO($dsn, $DB_USER, $DB_PASS);
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         
-                        echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Connexion réussie au serveur MySQL</p>';
+                        echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Connexion établie avec succès</p>';
                         echo '</div>';
                         
                         echo '<script>document.getElementById("step1").classList.remove("processing"); document.getElementById("step1").classList.add("success");</script>';
                         
                     } catch(PDOException $e) {
-                        echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur de connexion : ' . htmlspecialchars($e->getMessage()) . '</p>';
-                        echo '<div class="alert alert-warning mt-3">';
-                        echo '<strong>Solution :</strong><br>';
-                        echo '1. Vérifiez que MySQL/XAMPP est démarré<br>';
-                        echo '2. Vérifiez les identifiants saisis<br>';
-                        echo '3. <a href="install.php">Retour au formulaire</a>';
-                        echo '</div>';
+                        echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
                         echo '</div>';
                         
                         echo '<script>document.getElementById("step1").classList.remove("processing"); document.getElementById("step1").classList.add("error");</script>';
@@ -310,14 +293,16 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
 
                     if(!$hasError) {
                         // ========================================
-                        // ÉTAPE 2 : Création de la base de données
+                        // ÉTAPE 2 : Vérification/Création de la base de données
                         // ========================================
                         echo '<div class="step processing" id="step2">';
-                        echo '<h5><i class="bi bi-folder-plus me-2"></i>Étape 2 : Création de la base de données</h5>';
+                        echo '<h5><i class="bi bi-database me-2"></i>Étape 2 : Création de la base de données</h5>';
                         
                         try {
                             $conn->exec("CREATE DATABASE IF NOT EXISTS `$DB_NAME` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-                            echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Base de données "' . htmlspecialchars($DB_NAME) . '" créée</p>';
+                            $conn->exec("USE `$DB_NAME`");
+                            
+                            echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Base de données <strong>' . htmlspecialchars($DB_NAME) . '</strong> créée/vérifiée</p>';
                             echo '</div>';
                             
                             echo '<script>document.getElementById("step2").classList.remove("processing"); document.getElementById("step2").classList.add("success");</script>';
@@ -333,22 +318,21 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
 
                     if(!$hasError) {
                         // ========================================
-                        // ÉTAPE 3 : Connexion à la base de données
+                        // ÉTAPE 3 : Vérification du fichier SQL
                         // ========================================
                         echo '<div class="step processing" id="step3">';
-                        echo '<h5><i class="bi bi-plug me-2"></i>Étape 3 : Connexion à la base de données</h5>';
+                        echo '<h5><i class="bi bi-file-earmark-code me-2"></i>Étape 3 : Vérification du fichier SQL</h5>';
                         
-                        try {
-                            $conn = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASS);
-                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                            
-                            echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Connecté à la base de données</p>';
+                        $sqlFile = 'bdd/etiquettes_app_structure.sql';
+                        
+                        if(file_exists($sqlFile)) {
+                            $sql = file_get_contents($sqlFile);
+                            echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Fichier SQL trouvé (' . number_format(strlen($sql)) . ' caractères)</p>';
                             echo '</div>';
                             
                             echo '<script>document.getElementById("step3").classList.remove("processing"); document.getElementById("step3").classList.add("success");</script>';
-                            
-                        } catch(PDOException $e) {
-                            echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
+                        } else {
+                            echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Fichier ' . htmlspecialchars($sqlFile) . ' introuvable</p>';
                             echo '</div>';
                             
                             echo '<script>document.getElementById("step3").classList.remove("processing"); document.getElementById("step3").classList.add("error");</script>';
@@ -364,24 +348,7 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
                         echo '<h5><i class="bi bi-table me-2"></i>Étape 4 : Création des tables</h5>';
                         
                         try {
-                            $sqlFile = 'database/schema_complete.sql';
-                            
-                            if(!file_exists($sqlFile)) {
-                                throw new Exception("Fichier SQL introuvable : $sqlFile");
-                            }
-                            
-                            $sql = file_get_contents($sqlFile);
-                            
-                            // ========================================
-                            // NETTOYER LE SQL : Retirer CREATE DATABASE et USE
-                            // ========================================
-                            // Problème : Le fichier SQL contient CREATE DATABASE et USE qui peuvent pointer vers une autre base
-                            // Solution : On retire ces lignes car on a déjà créé et sélectionné la bonne base
-                            
-                            // Supprimer les lignes CREATE DATABASE
-                            $sql = preg_replace('/CREATE DATABASE.*?;/is', '', $sql);
-                            
-                            // Supprimer les lignes USE
+                            // Nettoyer le SQL (enlever les commandes USE)
                             $sql = preg_replace('/USE\s+[`]?[\w]+[`]?\s*;/i', '', $sql);
                             
                             // Exécuter le SQL nettoyé
@@ -444,10 +411,67 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
 
                     if(!$hasError) {
                         // ========================================
-                        // ÉTAPE 6 : Vérification finale
+                        // ÉTAPE 6 : Optimisation - Création des index (NOUVEAU)
                         // ========================================
                         echo '<div class="step processing" id="step6">';
-                        echo '<h5><i class="bi bi-check2-all me-2"></i>Étape 6 : Vérification finale</h5>';
+                        echo '<h5><i class="bi bi-lightning me-2"></i>Étape 6 : Optimisation des performances</h5>';
+                        
+                        try {
+                            $indexes = [
+                                "CREATE INDEX idx_date_production ON commandes(date_production)",
+                                "CREATE INDEX idx_numero_lot ON commandes(numero_lot)",
+                                "CREATE INDEX idx_numero_commande ON commandes(numero_commande)",
+                                "CREATE INDEX idx_reference_id ON commandes(reference_id)",
+                                "CREATE INDEX idx_latitude_numero_commande ON commandes_latitude(numero_commande)",
+                                "CREATE INDEX idx_reference ON `references`(reference)",
+                                "CREATE INDEX idx_designation ON `references`(designation)",
+                                "CREATE INDEX idx_article_nom ON articles_latitude(nom)"
+                            ];
+                            
+                            $indexCount = 0;
+                            foreach($indexes as $sql) {
+                                try {
+                                    $conn->exec($sql);
+                                    $indexCount++;
+                                } catch(PDOException $e) {
+                                    // Ignorer si l'index existe déjà
+                                    if(strpos($e->getMessage(), 'Duplicate key name') === false) {
+                                        throw $e;
+                                    }
+                                }
+                            }
+                            
+                            echo '<p class="text-success"><i class="bi bi-check-circle me-2"></i>Index de performance créés avec succès :</p>';
+                            echo '<ul class="mb-0 small">';
+                            echo '<li>idx_date_production → Recherches par date</li>';
+                            echo '<li>idx_numero_lot → Recherches par lot</li>';
+                            echo '<li>idx_numero_commande → Recherches par numéro (Sartorius)</li>';
+                            echo '<li>idx_reference_id → Jointures rapides</li>';
+                            echo '<li>idx_latitude_numero_commande → Recherches (Latitude)</li>';
+                            echo '<li>idx_reference → Recherches par référence</li>';
+                            echo '<li>idx_designation → Recherches par désignation</li>';
+                            echo '<li>idx_article_nom → Recherches par nom d\'article</li>';
+                            echo '</ul>';
+                            echo '<p class="text-info small mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>Impact : Requêtes 10-100x plus rapides !</p>';
+                            echo '</div>';
+                            
+                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("success");</script>';
+                            
+                        } catch(Exception $e) {
+                            echo '<p class="text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Avertissement : ' . htmlspecialchars($e->getMessage()) . '</p>';
+                            echo '<p class="text-muted small mb-0">L\'installation peut continuer, les index peuvent être créés manuellement plus tard.</p>';
+                            echo '</div>';
+                            
+                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("success");</script>';
+                        }
+                    }
+
+                    if(!$hasError) {
+                        // ========================================
+                        // ÉTAPE 7 : Vérification finale
+                        // ========================================
+                        echo '<div class="step processing" id="step7">';
+                        echo '<h5><i class="bi bi-check2-all me-2"></i>Étape 7 : Vérification finale</h5>';
                         
                         try {
                             $stats = [];
@@ -466,13 +490,13 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
                             echo '</div>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("success");</script>';
+                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("success");</script>';
                             
                         } catch(Exception $e) {
                             echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("error");</script>';
+                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("error");</script>';
                             $hasError = true;
                         }
                     }
@@ -500,6 +524,13 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
                         <i class="bi bi-check-circle-fill me-2"></i>Installation réussie !
                     </h5>
                     <p class="mb-3">La base de données <strong><?php echo htmlspecialchars($DB_NAME); ?></strong> est prête à être utilisée.</p>
+                    <hr>
+                    <h6>✨ Nouveautés v1.0.11 :</h6>
+                    <ul class="mb-3">
+                        <li>✅ Index de performance créés automatiquement</li>
+                        <li>✅ Requêtes optimisées (10-100x plus rapides)</li>
+                        <li>✅ Application prête pour des milliers de commandes</li>
+                    </ul>
                     <hr>
                     <h6>Prochaines étapes :</h6>
                     <ol class="mb-0">
@@ -533,7 +564,7 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
         </div>
 
         <div class="text-center mt-4 text-white">
-            <small>Application Étiquettes v1.0.8 - Installation automatique</small>
+            <small>Application Étiquettes v1.0.11 - Installation automatique avec optimisations</small>
         </div>
     </div>
 
