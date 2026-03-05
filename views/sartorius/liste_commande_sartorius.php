@@ -59,7 +59,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 <td><?php echo htmlspecialchars($row['numero_commande']); ?></td>
                                 <td><?php echo $total; ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=edition-commande&id=<?php echo $row['id']; ?>" 
+                                    <a href="index.php?page=editer-commande&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>

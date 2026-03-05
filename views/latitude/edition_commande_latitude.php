@@ -8,6 +8,7 @@ if(isset($articles)) {
         $articlesDisponibles[] = $art;
     }
 }
+
 ?>
 
     <div class="container-fluid px-4 pb-5">
@@ -23,7 +24,7 @@ if(isset($articles)) {
 
         <div class="card">
             <div class="card-body">
-                <form id="latitudeForm" action="index.php?page=latitude-modifier" method="POST">
+                <form id="latitudeForm" action="index.php?page=modifier-commande-latitude" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     
@@ -36,7 +37,16 @@ if(isset($articles)) {
                             value="<?php echo htmlspecialchars($commandeData['numero_commande']); ?>"
                             placeholder="Ex: 2510-4028">
                     </div>
+$articlesCommande = json_decode($commandeData['articles'], true);
 
+// DEBUG
+echo "<div style='background:#f0f0f0; padding:20px; margin:20px; border:2px solid red;'>";
+echo "<h3>🔍 DEBUG</h3>";
+echo "<p><strong>Articles bruts (JSON) :</strong><br>" . htmlspecialchars($commandeData['articles']) . "</p>";
+echo "<p><strong>Articles décodés :</strong><br><pre>" . print_r($articlesCommande, true) . "</pre></p>";
+echo "<p><strong>Articles disponibles :</strong><br><pre>" . print_r($articlesDisponibles, true) . "</pre></p>";
+echo "</div>";
+// FIN DEBUG
                     <hr class="my-4">
 
                     <div id="articlesContainer">

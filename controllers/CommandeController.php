@@ -179,7 +179,7 @@ class CommandeController {
             }
             
             // Valider la date
-            $dateProduction = Validator::date($_POST['date_production'] ?? '');
+            $dateProduction = Validator::dateMoisAnnee($_POST['date_production'] ?? '');
             if ($dateProduction === false) {
                 header("Location: index.php?page=editer-commande&id=$id&error=invalid_date");
                 exit;

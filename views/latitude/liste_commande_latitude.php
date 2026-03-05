@@ -61,7 +61,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
                                 <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($row['created_at']))); ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=latitude-edition&id=<?php echo $row['id']; ?>"
+                                    <a href="index.php?page=editer-commande-latitude&id=<?php echo $row['id']; ?>"
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
