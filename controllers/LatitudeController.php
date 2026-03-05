@@ -18,7 +18,7 @@ class LatitudeController {
      */
     public function liste() {
         // Nombre d'éléments par page
-        $perPage = 5;
+        $perPage = 50;
         
         // Page courante (défaut: 1)
         $page = isset($_GET['p']) ? max(1, intval($_GET['p'])) : 1;

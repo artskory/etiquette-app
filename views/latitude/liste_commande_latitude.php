@@ -90,31 +90,18 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     </div><!-- PAGINATION - À ajouter juste avant le </div> de fermeture -->
 <?php if($totalPages > 1): ?>
 <nav aria-label="Pagination des commandes" class="mt-4">
-    <ul class="pagination pagination-sm justify-content-center">
-        
-        <!-- Bouton Première page -->
-        <?php if($page > 1): ?>
-            <li class="page-item">
-                <a class="page-link" href="index.php?page=latitude&p=1" aria-label="Première page">
-                    <span aria-hidden="true">&laquo;&laquo;</span>
-                </a>
-            </li>
-        <?php else: ?>
-            <li class="page-item disabled">
-                <span class="page-link">&laquo;&laquo;</span>
-            </li>
-        <?php endif; ?>
+    <ul class="pagination justify-content-center">
         
         <!-- Bouton Page précédente -->
         <?php if($page > 1): ?>
             <li class="page-item">
                 <a class="page-link" href="index.php?page=latitude&p=<?= $page - 1 ?>" aria-label="Page précédente">
-                    <span aria-hidden="true">&laquo;</span>
+                    <span aria-hidden="true">Précédent</span>
                 </a>
             </li>
         <?php else: ?>
             <li class="page-item disabled">
-                <span class="page-link">&laquo;</span>
+                <span class="page-link">Précédent</span>
             </li>
         <?php endif; ?>
 
@@ -148,35 +135,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <?php if($page < $totalPages): ?>
             <li class="page-item">
                 <a class="page-link" href="index.php?page=latitude&p=<?= $page + 1 ?>" aria-label="Page suivante">
-                    <span aria-hidden="true">&raquo;</span>
+                    <span aria-hidden="true">Suivant</span>
                 </a>
             </li>
         <?php else: ?>
             <li class="page-item disabled">
-                <span class="page-link">&raquo;</span>
+                <span class="page-link">Suivant</span>
             </li>
         <?php endif; ?>
-
-        <!-- Bouton Dernière page -->
-        <?php if($page < $totalPages): ?>
-            <li class="page-item">
-                <a class="page-link" href="index.php?page=latitude&p=<?= $totalPages ?>" aria-label="Dernière page">
-                    <span aria-hidden="true">&raquo;&raquo;</span>
-                </a>
-            </li>
-        <?php else: ?>
-            <li class="page-item disabled">
-                <span class="page-link">&raquo;&raquo;</span>
-            </li>
-        <?php endif; ?>
-        
-    </ul>
     
-    <!-- Info nombre total -->
-    <div class="text-center text-muted small mt-2">
-        Page <?= $page ?> sur <?= $totalPages ?> 
-        (<?= $totalCommandes ?> commande<?= $totalCommandes > 1 ? 's' : '' ?> au total)
-    </div>
+    </ul>
 </nav>
 <?php endif; ?>
 </div>
