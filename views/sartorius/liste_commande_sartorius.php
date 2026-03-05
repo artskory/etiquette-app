@@ -63,7 +63,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="index.php?page=telecharger-pdf-latitude&id=<?php echo $row['id']; ?>" 
+                                    <a href="index.php?page=telecharger-pdf&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
