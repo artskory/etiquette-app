@@ -323,7 +323,7 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
                         echo '<div class="step processing" id="step3">';
                         echo '<h5><i class="bi bi-file-earmark-code me-2"></i>Étape 3 : Vérification du fichier SQL</h5>';
                         
-                        $sqlFile = 'bdd/etiquettes_app_structure.sql';
+                        $sqlFile = 'database/schema_complete.sql';
                         
                         if(file_exists($sqlFile)) {
                             $sql = file_get_contents($sqlFile);
