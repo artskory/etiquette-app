@@ -1,4 +1,4 @@
-pdfs/*.pdf
+pdfs_sartorius/*.pdf
 pdfs_latitude/*.pdf
 .installation_complete
 config/*.php

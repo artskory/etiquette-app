@@ -17,7 +17,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 <a href="index.php?page=nouveau-article-latitude" class="btn btn-success me-2">
                     <i class="bi bi-tag me-1"></i><span class="btn-text">Article</span>
                 </a>
-                <a href="index.php?page=latitude-nouvelle" class="btn btn-primary me-2">
+                <a href="index.php?page=nouvelle-commande-latitude" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>
                 <?php if($hasCommandes): ?>

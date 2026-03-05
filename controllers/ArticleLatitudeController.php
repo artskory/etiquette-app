@@ -1,6 +1,7 @@
 <?php
 /**
  * Contrôleur pour les articles Latitude
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 class ArticleLatitudeController {
     private $db;
@@ -25,19 +26,28 @@ class ArticleLatitudeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $token = $_POST['csrf_token'] ?? null;
-            if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
-                exit;
-            }
-        
             // Démarrer la session si pas déjà fait
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
             
-            $this->article->nom = $_POST['nom'] ?? '';
+            // Validation CSRF
+            $token = $_POST['csrf_token'] ?? null;
+            if (!CsrfToken::validate($token)) {
+                header("Location: index.php?error=csrf_invalid");
+                exit;
+            }
+            
+            // Valider le nom de l'article
+            $nom = Validator::text($_POST['nom'] ?? '');
+            
+            if ($nom === false || Validator::isEmpty($_POST['nom'] ?? '')) {
+                $_SESSION['form_data'] = $_POST;
+                header("Location: index.php?page=nouveau-article-latitude&error=invalid_name");
+                exit;
+            }
+            
+            $this->article->nom = $nom;
 
             // Vérifier si l'article existe déjà
             if($this->article->exists()) {
@@ -70,7 +80,12 @@ class ArticleLatitudeController {
      * Afficher la page d'édition
      */
     public function edition() {
-        $id = $_GET['id'] ?? 0;
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=nouveau-article-latitude&error=invalid_id");
+            exit();
+        }
+        
         $this->article->id = $id;
         $articleData = $this->article->readOne();
         
@@ -86,16 +101,31 @@ class ArticleLatitudeController {
      * Modifier un article
      */
     public function modifier() {
-
-            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            $this->article->id = $_POST['id'] ?? '';
-            $this->article->nom = $_POST['nom'] ?? '';
+            
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=nouveau-article-latitude&error=invalid_id");
+                exit;
+            }
+            
+            // Valider le nom
+            $nom = Validator::text($_POST['nom'] ?? '');
+            if ($nom === false) {
+                header("Location: index.php?page=editer-article-latitude&id=$id&error=invalid_name");
+                exit;
+            }
+            
+            $this->article->id = $id;
+            $this->article->nom = $nom;
 
             try {
                 if($this->article->update()) {
@@ -118,14 +148,21 @@ class ArticleLatitudeController {
      */
     public function supprimer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            $id = $_POST['id'] ?? 0;
+            
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=nouveau-article-latitude&error=invalid_id");
+                exit;
+            }
+            
             $this->article->id = $id;
 
             try {
@@ -148,22 +185,25 @@ class ArticleLatitudeController {
      * Supprimer une sélection d'articles
      */
     public function supprimerSelection() {
-
+        
+        // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
             header("Location: index.php?error=csrf_invalid");
             exit;
         }
-
-        $ids = $_POST['ids'] ?? [];
-        if(empty($ids)) {
+        
+        // Valider le tableau d'IDs
+        $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
+        
+        if ($ids === false) {
             header("Location: index.php?page=nouveau-article-latitude&error=no_selection");
-            exit();
+            exit;
         }
 
         try {
             foreach($ids as $id) {
-                $this->article->id = intval($id);
+                $this->article->id = $id;
                 $this->article->delete();
             }
             header("Location: index.php?page=nouveau-article-latitude&success=selection_deleted");

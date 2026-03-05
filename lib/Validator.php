@@ -150,20 +150,29 @@ class Validator {
     }
     
     /**
-     * Valide une date au format YYYY-MM-DD
+     * Valide une date au format MM/YYYY (Sartorius)
      * 
      * @param string $date Date à valider
      * @return string|false Date validée ou false si invalide
      */
-    public static function date(string $date) {
-        // Vérifier le format
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+    public static function dateMoisAnnee(string $date) {
+        // Vérifier le format MM/YYYY
+        if (!preg_match('/^\d{2}\/\d{4}$/', $date)) {
             return false;
         }
         
         // Vérifier que la date est valide
-        $parts = explode('-', $date);
-        if (!checkdate((int)$parts[1], (int)$parts[2], (int)$parts[0])) {
+        $parts = explode('/', $date);
+        $mois = (int)$parts[0];
+        $annee = (int)$parts[1];
+        
+        // Vérifier le mois (1-12)
+        if ($mois < 1 || $mois > 12) {
+            return false;
+        }
+        
+        // Vérifier l'année (raisonnable)
+        if ($annee < 2000 || $annee > 2100) {
             return false;
         }
         

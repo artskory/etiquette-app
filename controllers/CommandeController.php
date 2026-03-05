@@ -1,6 +1,7 @@
 <?php
 /**
  * Contrôleur Commande
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 class CommandeController {
     private $db;
@@ -34,44 +35,55 @@ class CommandeController {
      */
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+            
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            // Récupérer les champs communs
-            $reference_id = $_POST['reference_id'] ?? '';
-            $date_production = $_POST['date_production'] ?? '';
-            $numero_commande = $_POST['numero_commande'] ?? '';
-            $numero_lot = $_POST['numero_lot'] ?? '';
             
-            // Récupérer les lignes de quantités
-            $quantitesPost = $_POST['quantites'] ?? [];
+            // Valider l'ID de référence
+            $referenceId = Validator::id($_POST['reference_id'] ?? 0);
+            if ($referenceId === false) {
+                header("Location: index.php?page=nouvelle-commande&error=invalid_reference");
+                exit;
+            }
             
-            if(empty($quantitesPost)) {
-                header("Location: index.php?page=nouvelle-commande&error=no_data");
-                exit();
+            // Valider le numéro de commande
+            $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
+            if ($numeroCommande === false) {
+                header("Location: index.php?page=nouvelle-commande&error=invalid_numero");
+                exit;
+            }
+            
+            // Valider le numéro de lot
+            $numeroLot = Validator::numeroLot($_POST['numero_lot'] ?? '');
+            if ($numeroLot === false) {
+                header("Location: index.php?page=nouvelle-commande&error=invalid_lot");
+                exit;
+            }
+            
+            // Valider la date
+            $dateProduction = Validator::dateMoisAnnee($_POST['date_production'] ?? '');
+            if ($dateProduction === false) {
+                header("Location: index.php?page=nouvelle-commande&error=invalid_date");
+                exit;
+            }
+            
+            // Valider les quantités
+            $quantites = Validator::quantitesSartorius($_POST['quantites'] ?? []);
+            if ($quantites === false) {
+                header("Location: index.php?page=nouvelle-commande&error=invalid_quantities");
+                exit;
             }
             
             try {
-                // Construire le tableau de quantités
-                $quantites = [];
-                foreach($quantitesPost as $qty) {
-                    if(!empty($qty['quantite_par_carton']) && !empty($qty['quantite_etiquettes'])) {
-                        $quantites[] = [
-                            'quantite_par_carton' => (int)$qty['quantite_par_carton'],
-                            'quantite_etiquettes' => (int)$qty['quantite_etiquettes']
-                        ];
-                    }
-                }
-                
                 // Créer UNE SEULE commande avec toutes les quantités
-                $this->commande->reference_id = $reference_id;
-                $this->commande->date_production = $date_production;
-                $this->commande->numero_commande = $numero_commande;
-                $this->commande->numero_lot = $numero_lot;
+                $this->commande->reference_id = $referenceId;
+                $this->commande->date_production = $dateProduction;
+                $this->commande->numero_commande = $numeroCommande;
+                $this->commande->numero_lot = $numeroLot;
                 $this->commande->quantites = json_encode($quantites);
 
                 if($this->commande->create()) {
@@ -106,7 +118,12 @@ class CommandeController {
      * Afficher la page d'édition
      */
     public function edition() {
-        $id = $_GET['id'] ?? 0;
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=sartorius&error=invalid_id");
+            exit();
+        }
+        
         $this->commande->id = $id;
         $commandeData = $this->commande->readOne();
         
@@ -115,7 +132,7 @@ class CommandeController {
             $references = $referenceController->getAll();
             require_once 'views/sartorius/edition_commande_sartorius.php';
         } else {
-            header("Location: index.php?page=sartorius");
+            header("Location: index.php?page=sartorius&error=not_found");
             exit();
         }
     }
@@ -124,34 +141,62 @@ class CommandeController {
      * Mettre à jour une commande
      */
     public function modifier() {
-
-            if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
-
-            $this->commande->id = $_POST['id'] ?? '';
-            $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
-            $this->commande->reference_id = $_POST['reference_id'] ?? '';
-            $this->commande->date_production = $_POST['date_production'] ?? '';
-            $this->commande->numero_lot = $_POST['numero_lot'] ?? '';
             
-            // Récupérer les lignes de quantités
-            $quantitesPost = $_POST['quantites'] ?? [];
-            
-            // Construire le tableau de quantités
-            $quantites = [];
-            foreach($quantitesPost as $qty) {
-                if(!empty($qty['quantite_par_carton']) && !empty($qty['quantite_etiquettes'])) {
-                    $quantites[] = [
-                        'quantite_par_carton' => (int)$qty['quantite_par_carton'],
-                        'quantite_etiquettes' => (int)$qty['quantite_etiquettes']
-                    ];
-                }
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=sartorius&error=invalid_id");
+                exit;
             }
             
+            // Valider l'ID de référence
+            $referenceId = Validator::id($_POST['reference_id'] ?? 0);
+            if ($referenceId === false) {
+                header("Location: index.php?page=editer-commande&id=$id&error=invalid_reference");
+                exit;
+            }
+            
+            // Valider le numéro de commande
+            $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
+            if ($numeroCommande === false) {
+                header("Location: index.php?page=editer-commande&id=$id&error=invalid_numero");
+                exit;
+            }
+            
+            // Valider le numéro de lot
+            $numeroLot = Validator::numeroLot($_POST['numero_lot'] ?? '');
+            if ($numeroLot === false) {
+                header("Location: index.php?page=editer-commande&id=$id&error=invalid_lot");
+                exit;
+            }
+            
+            // Valider la date
+            $dateProduction = Validator::date($_POST['date_production'] ?? '');
+            if ($dateProduction === false) {
+                header("Location: index.php?page=editer-commande&id=$id&error=invalid_date");
+                exit;
+            }
+            
+            // Valider les quantités
+            $quantites = Validator::quantitesSartorius($_POST['quantites'] ?? []);
+            if ($quantites === false) {
+                header("Location: index.php?page=editer-commande&id=$id&error=invalid_quantities");
+                exit;
+            }
+            
+            $this->commande->id = $id;
+            $this->commande->numero_commande = $numeroCommande;
+            $this->commande->reference_id = $referenceId;
+            $this->commande->date_production = $dateProduction;
+            $this->commande->numero_lot = $numeroLot;
             $this->commande->quantites = json_encode($quantites);
 
             try {
@@ -162,12 +207,12 @@ class CommandeController {
                     header("Location: index.php?page=sartorius&success=commande_updated");
                     exit();
                 } else {
-                    header("Location: index.php?page=edition-commande&id=" . $this->commande->id . "&error=update_failed");
+                    header("Location: index.php?page=editer-commande&id=" . $this->commande->id . "&error=update_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur modification commande: " . $e->getMessage());
-                header("Location: index.php?page=edition-commande&id=" . $this->commande->id . "&error=update_failed");
+                header("Location: index.php?page=editer-commande&id=" . $this->commande->id . "&error=update_failed");
                 exit();
             }
         }
@@ -177,14 +222,21 @@ class CommandeController {
      * Supprimer une commande
      */
     public function supprimer() {
-
+        
+        // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
             header("Location: index.php?error=csrf_invalid");
             exit;
         }
-
-        $id = $_POST['id'] ?? 0;
+        
+        // Valider l'ID
+        $id = Validator::id($_POST['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=sartorius&error=invalid_id");
+            exit;
+        }
+        
         $this->commande->id = $id;
 
         try {
@@ -209,11 +261,11 @@ class CommandeController {
                 header("Location: index.php?page=sartorius&success=commande_deleted");
                 exit();
             } else {
-                header("Location: index.php?page=sartorius&error=delete");
+                header("Location: index.php?page=sartorius&error=delete_failed");
                 exit();
             }
         } catch(PDOException $e) {
-            header("Location: index.php?page=sartorius&error=delete");
+            header("Location: index.php?page=sartorius&error=delete_failed");
             exit();
         }
     }
@@ -222,7 +274,12 @@ class CommandeController {
      * Télécharger le PDF
      */
     public function telecharger() {
-        $id = $_GET['id'] ?? 0;
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=sartorius&error=invalid_id");
+            exit();
+        }
+        
         $this->commande->id = $id;
         $commandeData = $this->commande->readOne();
         
@@ -293,60 +350,29 @@ class CommandeController {
             return false;
         }
     }
-    
-    /**
-     * Supprimer toutes les commandes
-     */
-    public function supprimerTout() {
-        try {
-            // Supprimer toutes les commandes de la base de données
-            $query = "DELETE FROM commandes";
-            $stmt = $this->db->prepare($query);
-            
-            if($stmt->execute()) {
-                // Optionnel : aussi supprimer les PDF
-                $pdfDir = 'pdfs_sartorius/';
-                if(is_dir($pdfDir)) {
-                    $files = glob($pdfDir . '*.pdf');
-                    foreach($files as $file) {
-                        if(is_file($file)) {
-                            unlink($file);
-                        }
-                    }
-                }
-                
-                header("Location: index.php?page=sartorius&success=all_deleted");
-                exit();
-            } else {
-                header("Location: index.php?page=sartorius&error=delete_all_failed");
-                exit();
-            }
-        } catch(Exception $e) {
-            header("Location: index.php?page=sartorius&error=delete_all_failed");
-            exit();
-        }
-    }
 
     /**
      * Supprimer une sélection de commandes
      */
     public function supprimerSelection() {
-
+        
+        // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
             header("Location: index.php?error=csrf_invalid");
             exit;
         }
         
-        $ids = $_POST['ids'] ?? [];
-        if(empty($ids)) {
+        // Valider le tableau d'IDs
+        $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
+        
+        if ($ids === false) {
             header("Location: index.php?page=sartorius&error=no_selection");
-            exit();
+            exit;
         }
 
         try {
             foreach($ids as $id) {
-                $id = intval($id);
                 $this->commande->id = $id;
                 $commandeData = $this->commande->readOne();
                 if($commandeData) {
@@ -361,7 +387,7 @@ class CommandeController {
             header("Location: index.php?page=sartorius&success=selection_deleted");
             exit();
         } catch(Exception $e) {
-            header("Location: index.php?page=sartorius&error=delete");
+            header("Location: index.php?page=sartorius&error=delete_failed");
             exit();
         }
     }

@@ -1,6 +1,7 @@
 <?php
 /**
  * Contrôleur Latitude
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 class LatitudeController {
     private $db;
@@ -36,7 +37,12 @@ class LatitudeController {
      * Afficher le formulaire d'édition
      */
     public function edition() {
-        $id = $_GET['id'] ?? 0;
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=latitude&error=invalid_id");
+            exit();
+        }
+        
         $this->commande->id = $id;
         $commandeData = $this->commande->readOne();
         
@@ -48,7 +54,7 @@ class LatitudeController {
             
             require_once 'views/latitude/edition_commande_latitude.php';
         } else {
-            header("Location: index.php?page=latitude");
+            header("Location: index.php?page=latitude&error=not_found");
             exit();
         }
     }
@@ -59,36 +65,29 @@ class LatitudeController {
     public function creer() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
 
-            $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
-            
-            // Debug: Afficher les données POST reçues
-            error_log("LatitudeController::creer - POST data: " . print_r($_POST, true));
-            
-            // Récupérer et encoder les articles en JSON
-            $articles = [];
-            if(isset($_POST['articles']) && is_array($_POST['articles'])) {
-                foreach($_POST['articles'] as $article) {
-                    if(!empty($article['type']) && !empty($article['quantite']) && !empty($article['nombre_cartons'])) {
-                        $articles[] = [
-                            'type' => $article['type'],
-                            'quantite' => intval($article['quantite']),
-                            'nombre_cartons' => intval($article['nombre_cartons'])
-                        ];
-                    }
-                }
+            // Valider le numéro de commande
+            $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
+            if ($numeroCommande === false) {
+                header("Location: index.php?page=nouvelle-commande-latitude&error=invalid_numero");
+                exit;
             }
             
-            $this->commande->articles = json_encode($articles);
+            // Valider les articles
+            $articles = Validator::articlesLatitude($_POST['articles'] ?? []);
+            if ($articles === false) {
+                header("Location: index.php?page=nouvelle-commande-latitude&error=invalid_articles");
+                exit;
+            }
             
-            // Debug: Afficher le JSON généré
-            error_log("LatitudeController::creer - Articles JSON: " . $this->commande->articles);
-            error_log("LatitudeController::creer - Nombre d'articles: " . count($articles));
+            $this->commande->numero_commande = $numeroCommande;
+            $this->commande->articles = json_encode($articles);
 
             try {
                 if($this->commande->create()) {
@@ -98,12 +97,12 @@ class LatitudeController {
                     header("Location: index.php?page=latitude&success=commande_created");
                     exit();
                 } else {
-                    header("Location: index.php?page=latitude-nouvelle&error=create_failed");
+                    header("Location: index.php?page=nouvelle-commande-latitude&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création commande Latitude: " . $e->getMessage());
-                header("Location: index.php?page=latitude-nouvelle&error=create_failed");
+                header("Location: index.php?page=nouvelle-commande-latitude&error=create_failed");
                 exit();
             }
         }
@@ -115,29 +114,36 @@ class LatitudeController {
     public function modifier() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
                 header("Location: index.php?error=csrf_invalid");
                 exit;
             }
             
-            $this->commande->id = $_POST['id'] ?? '';
-            $this->commande->numero_commande = $_POST['numero_commande'] ?? '';
-            
-            // Récupérer et encoder les articles en JSON
-            $articles = [];
-            if(isset($_POST['articles']) && is_array($_POST['articles'])) {
-                foreach($_POST['articles'] as $article) {
-                    if(!empty($article['type']) && !empty($article['quantite']) && !empty($article['nombre_cartons'])) {
-                        $articles[] = [
-                            'type' => $article['type'],
-                            'quantite' => intval($article['quantite']),
-                            'nombre_cartons' => intval($article['nombre_cartons'])
-                        ];
-                    }
-                }
+            // Valider l'ID
+            $id = Validator::id($_POST['id'] ?? 0);
+            if ($id === false) {
+                header("Location: index.php?page=latitude&error=invalid_id");
+                exit;
             }
             
+            // Valider le numéro de commande
+            $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
+            if ($numeroCommande === false) {
+                header("Location: index.php?page=editer-commande-latitude&id=$id&error=invalid_numero");
+                exit;
+            }
+            
+            // Valider les articles
+            $articles = Validator::articlesLatitude($_POST['articles'] ?? []);
+            if ($articles === false) {
+                header("Location: index.php?page=editer-commande-latitude&id=$id&error=invalid_articles");
+                exit;
+            }
+            
+            $this->commande->id = $id;
+            $this->commande->numero_commande = $numeroCommande;
             $this->commande->articles = json_encode($articles);
 
             try {
@@ -148,12 +154,12 @@ class LatitudeController {
                     header("Location: index.php?page=latitude&success=commande_updated");
                     exit();
                 } else {
-                    header("Location: index.php?page=latitude-edition&id=" . $this->commande->id . "&error=update_failed");
+                    header("Location: index.php?page=editer-commande-latitude&id=" . $this->commande->id . "&error=update_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur modification commande Latitude: " . $e->getMessage());
-                header("Location: index.php?page=latitude-edition&id=" . $this->commande->id . "&error=update_failed");
+                header("Location: index.php?page=editer-commande-latitude&id=" . $this->commande->id . "&error=update_failed");
                 exit();
             }
         }
@@ -164,13 +170,20 @@ class LatitudeController {
      */
     public function supprimer() {
 
+        // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
             header("Location: index.php?error=csrf_invalid");
             exit;
         }
         
-        $id = $_POST['id'] ?? 0;
+        // Valider l'ID
+        $id = Validator::id($_POST['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=latitude&error=invalid_id");
+            exit;
+        }
+        
         $this->commande->id = $id;
 
         try {
@@ -193,60 +206,11 @@ class LatitudeController {
                 header("Location: index.php?page=latitude&success=commande_deleted");
                 exit();
             } else {
-                header("Location: index.php?page=latitude&error=delete");
+                header("Location: index.php?page=latitude&error=delete_failed");
                 exit();
             }
         } catch(PDOException $e) {
-            header("Location: index.php?page=latitude&error=delete");
-            exit();
-        }
-    }
-
-    /**
-     * Télécharger le PDF
-     */
-    public function telecharger() {
-        $id = $_GET['id'] ?? 0;
-        $this->commande->id = $id;
-        $commandeData = $this->commande->readOne();
-        
-        if($commandeData) {
-            $this->genererPDF($id, true);
-        } else {
-            header("Location: index.php?page=latitude&error=not_found");
-            exit();
-        }
-    }
-
-    /**
-     * Supprimer toutes les commandes
-     */
-    public function supprimerTout() {
-        try {
-            // Supprimer toutes les commandes
-            $query = "DELETE FROM commandes_latitude";
-            $stmt = $this->db->prepare($query);
-            
-            if($stmt->execute()) {
-                // Supprimer tous les PDF
-                $pdfDir = 'pdfs_latitude/';
-                if(is_dir($pdfDir)) {
-                    $files = glob($pdfDir . '*.pdf');
-                    foreach($files as $file) {
-                        if(is_file($file)) {
-                            unlink($file);
-                        }
-                    }
-                }
-                
-                header("Location: index.php?page=latitude&success=all_deleted");
-                exit();
-            } else {
-                header("Location: index.php?page=latitude&error=delete_all_failed");
-                exit();
-            }
-        } catch(Exception $e) {
-            header("Location: index.php?page=latitude&error=delete_all_failed");
+            header("Location: index.php?page=latitude&error=delete_failed");
             exit();
         }
     }
@@ -256,21 +220,23 @@ class LatitudeController {
      */
     public function supprimerSelection() {
 
+        // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
             header("Location: index.php?error=csrf_invalid");
             exit;
         }
         
-        $ids = $_POST['ids'] ?? [];
-        if(empty($ids)) {
+        // Valider le tableau d'IDs
+        $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
+        
+        if ($ids === false) {
             header("Location: index.php?page=latitude&error=no_selection");
-            exit();
+            exit;
         }
 
         try {
             foreach($ids as $id) {
-                $id = intval($id);
                 $this->commande->id = $id;
                 $commandeData = $this->commande->readOne();
                 if($commandeData) {
@@ -283,7 +249,28 @@ class LatitudeController {
             header("Location: index.php?page=latitude&success=selection_deleted");
             exit();
         } catch(Exception $e) {
-            header("Location: index.php?page=latitude&error=delete");
+            header("Location: index.php?page=latitude&error=delete_failed");
+            exit();
+        }
+    }
+
+    /**
+     * Télécharger le PDF
+     */
+    public function telecharger() {
+        $id = Validator::id($_GET['id'] ?? 0);
+        if ($id === false) {
+            header("Location: index.php?page=latitude&error=invalid_id");
+            exit();
+        }
+        
+        $this->commande->id = $id;
+        $commandeData = $this->commande->readOne();
+        
+        if($commandeData) {
+            $this->genererPDF($id, true);
+        } else {
+            header("Location: index.php?page=latitude&error=not_found");
             exit();
         }
     }
