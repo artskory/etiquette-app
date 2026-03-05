@@ -86,6 +86,98 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             </div>
         </div>
     </div>
+    <!-- PAGINATION - À ajouter juste avant le </div> de fermeture -->
+    <?php if($totalPages > 1): ?>
+    <nav aria-label="Pagination des commandes" class="mt-4">
+        <ul class="pagination pagination-sm justify-content-center">
+            
+            <!-- Bouton Première page -->
+            <?php if($page > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="index.php?page=sartorius&p=1" aria-label="Première page">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;&laquo;</span>
+                </li>
+            <?php endif; ?>
+            
+            <!-- Bouton Page précédente -->
+            <?php if($page > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="index.php?page=sartorius&p=<?= $page - 1 ?>" aria-label="Page précédente">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            <?php endif; ?>
+
+            <!-- Numéros de pages -->
+            <?php
+            // Afficher max 5 pages autour de la page courante
+            $startPage = max(1, $page - 2);
+            $endPage = min($totalPages, $page + 2);
+            
+            // Ajuster si on est au début ou à la fin
+            if($page <= 3) {
+                $endPage = min(5, $totalPages);
+            }
+            if($page > $totalPages - 3) {
+                $startPage = max(1, $totalPages - 4);
+            }
+            
+            for($i = $startPage; $i <= $endPage; $i++):
+            ?>
+                <li class="page-item <?= $i === $page ? 'active' : '' ?>">
+                    <a class="page-link" href="index.php?page=sartorius&p=<?= $i ?>">
+                        <?= $i ?>
+                        <?php if($i === $page): ?>
+                            <span class="visually-hidden">(page courante)</span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+            <?php endfor; ?>
+
+            <!-- Bouton Page suivante -->
+            <?php if($page < $totalPages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="index.php?page=sartorius&p=<?= $page + 1 ?>" aria-label="Page suivante">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            <?php endif; ?>
+
+            <!-- Bouton Dernière page -->
+            <?php if($page < $totalPages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="index.php?page=sartorius&p=<?= $totalPages ?>" aria-label="Dernière page">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;&raquo;</span>
+                </li>
+            <?php endif; ?>
+            
+        </ul>
+        
+        <!-- Info nombre total -->
+        <div class="text-center text-muted small mt-2">
+            Page <?= $page ?> sur <?= $totalPages ?> 
+            (<?= $totalCommandes ?> commande<?= $totalCommandes > 1 ? 's' : '' ?> au total)
+        </div>
+    </nav>
+    <?php endif; ?>
 </div>
 
 <!-- Modal suppression sélection -->

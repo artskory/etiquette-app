@@ -1,7 +1,7 @@
 <?php
 /**
  * Contrôleur Latitude
- * Version 1.0.11 - Protection CSRF + Validation entrées + Pagination
+ * Version 1.0.11 - Protection CSRF + Validation entrées
  */
 class LatitudeController {
     private $db;
@@ -14,25 +14,10 @@ class LatitudeController {
     }
 
     /**
-     * Afficher la liste des commandes AVEC PAGINATION
+     * Afficher la liste des commandes
      */
     public function liste() {
-        // Nombre d'éléments par page
-        $perPage = 5;
-        
-        // Page courante (défaut: 1)
-        $page = isset($_GET['p']) ? max(1, intval($_GET['p'])) : 1;
-        
-        // Récupérer les commandes paginées
-        $stmt = $this->commande->readAll($page, $perPage);
-        
-        // Compter le nombre total
-        $totalCommandes = $this->commande->count();
-        
-        // Calculer le nombre total de pages
-        $totalPages = ceil($totalCommandes / $perPage);
-        
-        // Charger la vue avec les données de pagination
+        $stmt = $this->commande->readAll();
         require_once 'views/latitude/liste_commande_latitude.php';
     }
 
@@ -273,22 +258,23 @@ class LatitudeController {
      * Télécharger le PDF
      */
     public function telecharger() {
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-        if ($id <= 0) {
-            header("Location: index.php?page=latitude&error=invalid_id");
-            exit();
-        }
-        
-        $this->commande->id = $id;
-        $commandeData = $this->commande->readOne();
-        
-        if($commandeData) {
-            $this->genererPDF($id, true);
-        } else {
-            header("Location: index.php?page=latitude&error=not_found");
-            exit();
-        }
+    // Valider l'ID depuis GET
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    if ($id <= 0) {
+        header("Location: index.php?page=sartorius&error=invalid_id");
+        exit();
     }
+    
+    $this->commande->id = $id;
+    $commandeData = $this->commande->readOne();
+    
+    if($commandeData) {
+        $this->genererPDF($id, true);
+    } else {
+        header("Location: index.php?page=sartorius&error=not_found");
+        exit();
+    }
+}
 
     /**
      * Générer ou télécharger le PDF

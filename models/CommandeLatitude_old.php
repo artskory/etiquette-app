@@ -1,7 +1,6 @@
 <?php
 /**
  * Modèle CommandeLatitude
- * Version 1.0.11 - Avec pagination
  */
 class CommandeLatitude {
     private $conn;
@@ -46,42 +45,16 @@ class CommandeLatitude {
     }
 
     /**
-     * Lire toutes les commandes avec détails AVEC PAGINATION
-     * 
-     * @param int $page Numéro de page (commence à 1)
-     * @param int $perPage Nombre d'éléments par page
-     * @return PDOStatement
+     * Lire toutes les commandes avec détails
      */
-    public function readAll($page = 1, $perPage = 50) {
-        // Calculer l'offset
-        $offset = ($page - 1) * $perPage;
-        
+    public function readAll() {
         $query = "SELECT * FROM " . $this->table_name . " 
-                  ORDER BY created_at DESC
-                  LIMIT :limit OFFSET :offset";
+                  ORDER BY created_at DESC";
         
         $stmt = $this->conn->prepare($query);
-        
-        // Bind avec PDO::PARAM_INT pour LIMIT/OFFSET
-        $stmt->bindParam(':limit', $perPage, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        
         $stmt->execute();
 
         return $stmt;
-    }
-    
-    /**
-     * Compter le nombre total de commandes
-     * 
-     * @return int Nombre total de commandes
-     */
-    public function count() {
-        $query = "SELECT COUNT(*) as total FROM " . $this->table_name;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)$row['total'];
     }
 
     /**
@@ -113,19 +86,20 @@ class CommandeLatitude {
      * Mettre à jour une commande
      */
     public function update() {
-        $query = "UPDATE " . $this->table_name . "
-                  SET numero_commande = :numero_commande,
-                      articles = :articles
-                  WHERE id = :id";
+        $query = "UPDATE " . $this->table_name . " 
+                  SET numero_commande=:numero_commande,
+                      articles=:articles
+                  WHERE id=:id";
 
         $stmt = $this->conn->prepare($query);
 
         $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
+        // Ne pas échapper le JSON - il est déjà valide
         $this->id = htmlspecialchars(strip_tags($this->id));
 
-        $stmt->bindParam(':numero_commande', $this->numero_commande);
-        $stmt->bindParam(':articles', $this->articles);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(":numero_commande", $this->numero_commande);
+        $stmt->bindParam(":articles", $this->articles);
+        $stmt->bindParam(":id", $this->id);
 
         if($stmt->execute()) {
             return true;
@@ -139,9 +113,7 @@ class CommandeLatitude {
      */
     public function delete() {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-
         $stmt = $this->conn->prepare($query);
-        $this->id = htmlspecialchars(strip_tags($this->id));
         $stmt->bindParam(1, $this->id);
 
         if($stmt->execute()) {
@@ -149,5 +121,21 @@ class CommandeLatitude {
         }
 
         return false;
+    }
+    
+    /**
+     * Calculer le nombre total d'étiquettes
+     */
+    public function getTotalEtiquettes() {
+        $articlesArray = json_decode($this->articles, true);
+        $total = 0;
+        
+        if($articlesArray && is_array($articlesArray)) {
+            foreach($articlesArray as $article) {
+                $total += intval($article['nombre_cartons']);
+            }
+        }
+        
+        return $total;
     }
 }
