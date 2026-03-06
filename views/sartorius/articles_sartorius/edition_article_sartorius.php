@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4 header-table">
         <h1 class="greeting-title">Édition Référence</h1>
         <div>
-            <a href="index.php?page=ajout-reference" class="btn btn-secondary me-2">
+            <a href="<?= BASE_URL ?>/sartorius/reference/ajout" class="btn btn-secondary me-2">
                 <i class="bi bi-arrow-left me-1"></i>Annuler
             </a>
         </div>
@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form id="referenceForm" action="index.php?page=modifier-reference" method="POST">
+            <form id="referenceForm" action="<?= BASE_URL ?>/sartorius/reference/<?php echo $reference['id']; ?>/modifier" method="POST">
                 <?php echo CsrfToken::field(); ?>
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($referenceData['id']); ?>">
                 

@@ -14,10 +14,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Étiquettes Sartorius</h1>
             <div>
-                <a href="index.php?page=ajout-reference" class="btn btn-success me-2">
+                <a href="<?= BASE_URL ?>/sartorius/reference/ajout" class="btn btn-success me-2">
                     <i class="bi bi-bookmark-plus me-1"></i><span class="btn-text">Référence</span>
                 </a>
-                <a href="index.php?page=nouvelle-commande" class="btn btn-primary me-2">
+                <a href="<?= BASE_URL ?>/sartorius/nouvelle" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>
                 <?php if($hasCommandes): ?>
@@ -59,11 +59,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 <td><?php echo htmlspecialchars($row['numero_commande']); ?></td>
                                 <td><?php echo $total; ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=editer-commande&id=<?php echo $row['id']; ?>" 
+                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/editer" 
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="index.php?page=telecharger-pdf&id=<?php echo $row['id']; ?>" 
+                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/telecharger" 
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -94,7 +94,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <!-- Bouton Page précédente -->
             <?php if($page > 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="index.php?page=sartorius&p=<?= $page - 1 ?>" aria-label="Page précédente">
+                    <a class="page-link" href="<?= BASE_URL ?>/sartorius?p=<?= $page - 1 ?>" aria-label="Page précédente">
                         <span aria-hidden="true">Précédent</span>
                     </a>
                 </li>
@@ -121,7 +121,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             for($i = $startPage; $i <= $endPage; $i++):
             ?>
                 <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                    <a class="page-link" href="index.php?page=sartorius&p=<?= $i ?>">
+                    <a class="page-link" href="<?= BASE_URL ?>/sartorius?p=<?= $i ?>">
                         <?= $i ?>
                         <?php if($i === $page): ?>
                             <span class="visually-hidden">(page courante)</span>
@@ -133,7 +133,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <!-- Bouton Page suivante -->
             <?php if($page < $totalPages): ?>
                 <li class="page-item">
-                    <a class="page-link" href="index.php?page=sartorius&p=<?= $page + 1 ?>" aria-label="Page suivante">
+                    <a class="page-link" href="<?= BASE_URL ?>/sartorius?p=<?= $page + 1 ?>" aria-label="Page suivante">
                         <span aria-hidden="true">Suivant</span>
                     </a>
                 </li>
@@ -166,7 +166,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-commandes" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="<?= BASE_URL ?>/sartorius/supprimer-selection" method="POST" style="display:inline;">
                 <?php echo CsrfToken::field(); ?>
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>

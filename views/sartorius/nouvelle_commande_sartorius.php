@@ -11,14 +11,14 @@ while ($ref = $references->fetch(PDO::FETCH_ASSOC)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Nouvelle étiquette Sartorius</h1>
             <div>
-                <a href="index.php?page=sartorius" class="btn btn-secondary me-2">
+                <a href="<?= BASE_URL ?>/sartorius" class="btn btn-secondary me-2">
                     <i class="bi bi-arrow-left me-1"></i>Annuler
                 </a>
             </div>
         </div>
         <div class="card">
             <div class="card-body">
-                <form id="commandeForm" action="index.php?page=creer-commande" method="POST">
+                <form id="commandeForm" action="<?= BASE_URL ?>/sartorius/creer" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <!-- Ligne fixe en haut : Référence, Date, N° Commande, N° Lot -->
                     <div class="row mb-4">

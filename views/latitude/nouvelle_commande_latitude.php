@@ -14,14 +14,14 @@ if(isset($articles)) {
             <div class="d-flex justify-content-between align-items-center mb-4 header-table">
                 <h1 class="greeting-title">Nouvelle étiquette Latitude</h1>
                 <div>
-                    <a href="index.php?page=latitude" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/latitude" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Annuler
                     </a>
                 </div>
             </div>
 
             <div class="card mt-5">
-                <form id="latitudeForm" action="index.php?page=creer-commande-latitude" method="POST">
+                <form id="latitudeForm" action="<?= BASE_URL ?>/latitude/creer" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <!-- N° Commande -->
                     <div class="mb-4">

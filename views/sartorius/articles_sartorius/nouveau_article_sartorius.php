@@ -37,7 +37,7 @@ $hasReferences = !empty($referencesArray);
                 <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
             </button>
             <?php endif; ?>
-            <a href="index.php?page=sartorius" class="btn btn-secondary">
+            <a href="<?= BASE_URL ?>/sartorius" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
             </a>
         </div>
@@ -45,7 +45,7 @@ $hasReferences = !empty($referencesArray);
 
     <div class="card">
         <div class="card-body">
-            <form id="referenceForm" action="index.php?page=creer-reference" method="POST">
+            <form id="referenceForm" action="<?= BASE_URL ?>/sartorius/reference/creer" method="POST">
                 <?php echo CsrfToken::field(); ?>
                 <div class="row">
                     <div class="col-md-6">
@@ -97,7 +97,7 @@ $hasReferences = !empty($referencesArray);
                                 <td><?php echo htmlspecialchars($row['reference']); ?></td>
                                 <td><?php echo htmlspecialchars($row['designation']); ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=editer-reference&id=<?php echo $row['id']; ?>"
+                                    <a href="<?= BASE_URL ?>/sartorius/reference/<?php echo $row['id']; ?>/editer"
                                        class="btn btn-sm btn-outline-primary" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
@@ -139,7 +139,7 @@ $hasReferences = !empty($referencesArray);
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-references" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="<?= BASE_URL ?>/sartorius/reference/supprimer-selection" method="POST" style="display:inline;">
                 <?php echo CsrfToken::field(); ?>    
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>

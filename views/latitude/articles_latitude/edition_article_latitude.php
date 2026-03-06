@@ -4,14 +4,14 @@
     <div class="container mt-4 col-md-9 overview-card">
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Éditer l'article Latitude</h1>
-            <a href="index.php?page=nouveau-article-latitude" class="btn btn-secondary">
+            <a href="<?= BASE_URL ?>/latitude/article/nouveau" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Retour
             </a>
         </div>
 
         <div class="card">
             <div class="card-body">
-                <form action="index.php?page=modifier-article-latitude" method="POST">
+                <form action="<?= BASE_URL ?>/latitude/article/<?php echo $article['id']; ?>/modifier" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($articleData['id']); ?>">
                     

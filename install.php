@@ -125,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                     <hr class="my-4">
 
                     <form method="POST" action="install.php" id="installForm">
+
                         <div class="mb-4">
                             <label for="db_host" class="form-label">
                                 <i class="bi bi-server me-2"></i>Hôte MySQL
@@ -166,6 +167,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                             </div>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="app_folder" class="form-label">
+                                <i class="bi bi-folder me-2"></i>Nom du dossier de l'application <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text text-muted">/</span>
+                                <input type="text" class="form-control" id="app_folder" name="app_folder"
+                                       value="etiquette-app-rewrite" required
+                                       pattern="[a-zA-Z0-9_\-]+"
+                                       title="Uniquement lettres, chiffres, tirets et underscores">
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle text-info me-1"></i>
+                                Nom du dossier où l'application est déployée sur le serveur (ex: <code>etiquette-app</code>, <code>mon-app</code>).
+                                Mis à jour automatiquement dans <code>.htaccess</code>.
+                            </div>
+                        </div>
+
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Note :</strong> La base de données sera créée automatiquement si elle n'existe pas.
@@ -196,14 +215,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // ========================================
 // TRAITEMENT DE L'INSTALLATION
 // ========================================
-$DB_HOST = $_POST['db_host'] ?? '';
-$DB_USER = $_POST['db_user'] ?? '';
-$DB_PASS = $_POST['db_pass'] ?? '';
-$DB_NAME = $_POST['db_name'] ?? '';
+$DB_HOST    = $_POST['db_host']    ?? '';
+$DB_USER    = $_POST['db_user']    ?? '';
+$DB_PASS    = $_POST['db_pass']    ?? '';
+$DB_NAME    = $_POST['db_name']    ?? '';
+$APP_FOLDER = trim($_POST['app_folder'] ?? '', '/');
 
 // Validation
-if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
+if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME) || empty($APP_FOLDER)) {
     die('Erreur : Tous les champs obligatoires doivent être remplis.');
+}
+if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $APP_FOLDER)) {
+    die('Erreur : Nom de dossier invalide. Utilisez uniquement lettres, chiffres, tirets et underscores.');
 }
 ?>
 
@@ -377,10 +400,55 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
 
                     if(!$hasError) {
                         // ========================================
-                        // ÉTAPE 5 : Mise à jour config/database.php
+                        // ÉTAPE 5 : Mise à jour du .htaccess (RewriteBase)
                         // ========================================
                         echo '<div class="step processing" id="step5">';
-                        echo '<h5><i class="bi bi-file-code me-2"></i>Étape 5 : Configuration de l\'application</h5>';
+                        echo '<h5><i class="bi bi-signpost-split me-2"></i>Étape 5 : Mise à jour du .htaccess</h5>';
+
+                        try {
+                            $htaccessFile = '.htaccess';
+                            if (!file_exists($htaccessFile)) {
+                                throw new Exception('Fichier .htaccess introuvable.');
+                            }
+
+                            $htContent = file_get_contents($htaccessFile);
+
+                            // Remplacer ou ajouter RewriteBase
+                            if (preg_match('/RewriteBase\s+\S+/i', $htContent)) {
+                                $htContent = preg_replace(
+                                    '/RewriteBase\s+\S+/i',
+                                    'RewriteBase /' . $APP_FOLDER . '/',
+                                    $htContent
+                                );
+                            } else {
+                                $htContent = preg_replace(
+                                    '/RewriteEngine On/i',
+                                    "RewriteEngine On\nRewriteBase /" . $APP_FOLDER . "/",
+                                    $htContent
+                                );
+                            }
+
+                            file_put_contents($htaccessFile, $htContent);
+
+                            echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>'
+                               . 'RewriteBase mis à jour : <code>/' . htmlspecialchars($APP_FOLDER) . '/</code></p>';
+                            echo '</div>';
+                            echo '<script>document.getElementById("step5").classList.remove("processing"); document.getElementById("step5").classList.add("success");</script>';
+
+                        } catch(Exception $e) {
+                            echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
+                            echo '</div>';
+                            echo '<script>document.getElementById("step5").classList.remove("processing"); document.getElementById("step5").classList.add("error");</script>';
+                            $hasError = true;
+                        }
+                    }
+
+                    if(!$hasError) {
+                        // ========================================
+                        // ÉTAPE 6 : Mise à jour config/database.php
+                        // ========================================
+                        echo '<div class="step processing" id="step6">';
+                        echo '<h5><i class="bi bi-file-code me-2"></i>Étape 6 : Configuration de l\'application</h5>';
                         
                         try {
                             $configFile = 'config/database.php';
@@ -398,23 +466,23 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
                             echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>Configuration mise à jour dans config/database.php</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step5").classList.remove("processing"); document.getElementById("step5").classList.add("success");</script>';
+                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("success");</script>';
                             
                         } catch(Exception $e) {
                             echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step5").classList.remove("processing"); document.getElementById("step5").classList.add("error");</script>';
+                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("error");</script>';
                             $hasError = true;
                         }
                     }
 
                     if(!$hasError) {
                         // ========================================
-                        // ÉTAPE 6 : Optimisation - Création des index (NOUVEAU)
+                        // ÉTAPE 7 : Optimisation - Création des index
                         // ========================================
-                        echo '<div class="step processing" id="step6">';
-                        echo '<h5><i class="bi bi-lightning me-2"></i>Étape 6 : Optimisation des performances</h5>';
+                        echo '<div class="step processing" id="step7">';
+                        echo '<h5><i class="bi bi-lightning me-2"></i>Étape 7 : Optimisation des performances</h5>';
                         
                         try {
                             $indexes = [
@@ -455,14 +523,14 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
                             echo '<p class="text-info small mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>Impact : Requêtes 10-100x plus rapides !</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("success");</script>';
+                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("success");</script>';
                             
                         } catch(Exception $e) {
                             echo '<p class="text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Avertissement : ' . htmlspecialchars($e->getMessage()) . '</p>';
                             echo '<p class="text-muted small mb-0">L\'installation peut continuer, les index peuvent être créés manuellement plus tard.</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step6").classList.remove("processing"); document.getElementById("step6").classList.add("success");</script>';
+                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("success");</script>';
                         }
                     }
 
@@ -470,8 +538,8 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
                         // ========================================
                         // ÉTAPE 7 : Vérification finale
                         // ========================================
-                        echo '<div class="step processing" id="step7">';
-                        echo '<h5><i class="bi bi-check2-all me-2"></i>Étape 7 : Vérification finale</h5>';
+                        echo '<div class="step processing" id="step8">';
+                        echo '<h5><i class="bi bi-check2-all me-2"></i>Étape 8 : Vérification finale</h5>';
                         
                         try {
                             $stats = [];
@@ -490,13 +558,13 @@ if(empty($DB_HOST) || empty($DB_USER) || empty($DB_NAME)) {
                             echo '</div>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("success");</script>';
+                            echo '<script>document.getElementById("step8").classList.remove("processing"); document.getElementById("step8").classList.add("success");</script>';
                             
                         } catch(Exception $e) {
                             echo '<p class="text-danger mb-0"><i class="bi bi-x-circle me-2"></i>Erreur : ' . htmlspecialchars($e->getMessage()) . '</p>';
                             echo '</div>';
                             
-                            echo '<script>document.getElementById("step7").classList.remove("processing"); document.getElementById("step7").classList.add("error");</script>';
+                            echo '<script>document.getElementById("step8").classList.remove("processing"); document.getElementById("step8").classList.add("error");</script>';
                             $hasError = true;
                         }
                     }

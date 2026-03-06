@@ -1,17 +1,20 @@
 # ============================================
-# HEADERS DE SÉCURITÉ - VERSION FINALE
-# Application Étiquettes v1.0.11
+# RÉÉCRITURE D'URL + HEADERS DE SÉCURITÉ
+# Application Étiquettes v2.0.0
 # ============================================
 
 RewriteEngine On
+RewriteBase /etiquette-app-rewrite/
 
-# Rediriger vers index.php si le fichier n'existe pas
+# Ne pas réécrire les fichiers et dossiers existants
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tout rediriger vers index.php en passant le chemin complet
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Bloquer l'accès aux fichiers sensibles
-<FilesMatch "\.(sql|md|env|git|gitignore|htaccess|htpasswd|ini|log|sh|bak|backup|old|tmp|swp)$">
+<FilesMatch "\.(sql|md|env|git|gitignore|htpasswd|ini|log|sh|bak|backup|old|tmp|swp)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
@@ -21,32 +24,21 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 # ============================================
 
 <IfModule mod_headers.c>
-    # Anti-Clickjacking : Empêche l'intégration du site dans une iframe
     Header set X-Frame-Options "SAMEORIGIN"
-
-    # Anti-MIME Sniffing : Force le navigateur à respecter le Content-Type
     Header set X-Content-Type-Options "nosniff"
-
-    # Protection XSS : Filtre XSS intégré (navigateurs anciens)
     Header set X-XSS-Protection "1; mode=block"
-
-    # Referrer Policy : Contrôle les informations envoyées dans le header Referer
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-
-    # Permissions Policy : Désactive les APIs non utilisées
     Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
 </IfModule>
 
 # ============================================
-# PROTECTION FICHIERS SENSIBLES (renforcée)
+# PROTECTION FICHIERS SENSIBLES
 # ============================================
 
-# Bloquer l'accès direct aux dossiers sensibles
 <IfModule mod_autoindex.c>
     Options -Indexes
 </IfModule>
 
-# Protection config
 <FilesMatch "^(config\.php|database\.php)">
     Order allow,deny
     Deny from all

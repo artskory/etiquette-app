@@ -22,7 +22,7 @@ if(!$quantitesArray || !is_array($quantitesArray) || empty($quantitesArray)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Édition étiquette Sartorius</h1>
             <div>
-                <a href="index.php?page=sartorius" class="btn btn-secondary me-2">
+                <a href="<?= BASE_URL ?>/sartorius" class="btn btn-secondary me-2">
                     <i class="bi bi-arrow-left me-1"></i>Annuler
                 </a>
             </div>
@@ -30,7 +30,7 @@ if(!$quantitesArray || !is_array($quantitesArray) || empty($quantitesArray)) {
 
         <div class="card">
             <div class="card-body">
-                <form id="commandeForm" action="index.php?page=modifier-commande" method="POST">
+                <form id="commandeForm" action="<?= BASE_URL ?>/sartorius/commande/<?php echo $commande['id']; ?>/modifier" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     

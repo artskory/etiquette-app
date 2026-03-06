@@ -10,17 +10,17 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css">
     <!-- custom-alerts -->
-    <link rel="stylesheet" href="assets/css/custom-alerts.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/custom-alerts.css">
     <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="image/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="image/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="image/android-chrome-512x512.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
-    <link rel="manifest" href="image/site.webmanifest"> 
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>/image/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/image/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?= BASE_URL ?>/image/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= BASE_URL ?>/image/android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>/image/favicon-16x16.png">
+    <link rel="manifest" href="<?= BASE_URL ?>/image/site.webmanifest"> 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -32,7 +32,7 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm hover-shadow">
-                        <a href="index.php?page=sartorius" class="card-link">    
+                        <a href="<?= BASE_URL ?>/sartorius" class="card-link">    
                             <div class="card-body text-center p-5">
                                 <div class="mb-4">
                                     <i class="bi bi-tag-fill text-primary" style="font-size: 4rem;"></i>
@@ -46,7 +46,7 @@
 
                 <div class="col-md-6">
                     <div class="card h-100 shadow-sm hover-shadow">
-                        <a href="index.php?page=latitude" class="card-link">    
+                        <a href="<?= BASE_URL ?>/latitude" class="card-link">    
                             <div class="card-body text-center p-5">
                                 <div class="mb-4">
                                     <i class="bi bi-tag-fill text-primary" style="font-size: 4rem;"></i>

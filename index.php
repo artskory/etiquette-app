@@ -1,25 +1,21 @@
 <?php
 /**
  * Application Étiquettes
- * Version 1.0.11 - Protection CSRF + Validation entrées
+ * Version 2.0.0 - Réécriture d'URL propre
  */
 
-// Désactiver l'affichage des erreurs en production
-// Décommentez les 2 lignes suivantes pour débugger
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-// Définir la version de l'application
-define('APP_VERSION', '1.0.2');
+define('APP_VERSION', '2.0.0');
 
-// Démarrer la session
 session_start();
 
-// Charger les classes de sécurité
+// Déterminer le chemin de base de l'application (fonctionne en sous-dossier)
+define('BASE_URL', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
+
 require_once 'lib/CsrfToken.php';
 require_once 'lib/Validator.php';
-
-// Charger les fichiers nécessaires
 require_once 'config/database.php';
 require_once 'models/Reference.php';
 require_once 'models/Commande.php';
@@ -30,155 +26,172 @@ require_once 'controllers/CommandeController.php';
 require_once 'controllers/LatitudeController.php';
 require_once 'controllers/ArticleLatitudeController.php';
 
-// Récupérer la page demandée
-$page = $_GET['page'] ?? 'home';
+// ============================================
+// HELPER : génération d'URL propres
+// ============================================
 
-// Router les pages
-switch($page) {
+/**
+ * Génère une URL propre.
+ * Exemple : url('sartorius', 'commande', 5, 'editer') → /sartorius/commande/5/editer
+ */
+function url(string ...$segments): string {
+    $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    $path = '/' . implode('/', array_filter(array_map('strval', $segments)));
+    return $base . $path;
+}
+
+// ============================================
+// ROUTEUR : analyse du chemin de l'URL
+// ============================================
+
+// Récupérer le chemin de la requête sans le chemin de base du script
+$requestUri  = $_SERVER['REQUEST_URI'] ?? '/';
+$scriptBase  = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+
+// Supprimer le chemin de base et les paramètres GET
+$path = parse_url($requestUri, PHP_URL_PATH);
+if ($scriptBase !== '' && strpos($path, $scriptBase) === 0) {
+    $path = substr($path, strlen($scriptBase));
+}
+$path = '/' . trim($path, '/');
+
+// Découper le chemin en segments
+$segments = array_values(array_filter(explode('/', $path)));
+
+// Paramètre de pagination (?p=X)
+$pageNum = isset($_GET['p']) ? (int)$_GET['p'] : 1;
+
+// ============================================
+// ROUTING
+// ============================================
+
+// Segment 0 = module (sartorius | latitude)
+// Segment 1 = sous-ressource (commande | reference | article)
+// Segment 2 = id
+// Segment 3 = action
+
+$module = $segments[0] ?? 'home';
+
+switch ($module) {
+
+    // ------------------------------------------
+    // ACCUEIL
+    // ------------------------------------------
+    case '':
     case 'home':
         require_once 'views/home.php';
         break;
-    
+
+    // ------------------------------------------
+    // MODULE SARTORIUS
+    // ------------------------------------------
     case 'sartorius':
-        $controller = new CommandeController();
-        $controller->liste();
+        $sub    = $segments[1] ?? null;
+        $id     = isset($segments[2]) && is_numeric($segments[2]) ? (int)$segments[2] : null;
+        $action = $id !== null ? ($segments[3] ?? null) : ($segments[2] ?? null);
+
+        // /sartorius/reference/...
+        if ($sub === 'reference') {
+            $controller = new ReferenceController();
+            switch ($action) {
+                case 'ajout':    $controller->ajout();    break;
+                case 'creer':    $controller->creer();    break;
+                case 'editer':   $controller->edition();  break;
+                case 'modifier': $controller->modifier(); break;
+                case 'supprimer':
+                    if ($id) {
+                        $controller->supprimer();
+                    } else {
+                        $controller->supprimerSelection();
+                    }
+                    break;
+                default:         $controller->ajout();    break;
+            }
+        }
+        // /sartorius/commande/...  ou  /sartorius/{action}
+        else {
+            $controller = new CommandeController();
+            // Si on a un id dans l'URL (/sartorius/commande/{id}/{action})
+            if ($sub === 'commande' && $id) {
+                // Passer l'id via $_GET pour rétrocompatibilité avec les controllers
+                $_GET['id'] = $id;
+                switch ($action) {
+                    case 'editer':     $controller->edition();   break;
+                    case 'modifier':   $controller->modifier();  break;
+                    case 'supprimer':  $controller->supprimer(); break;
+                    case 'telecharger': $controller->telecharger(); break;
+                    default:           $controller->liste();     break;
+                }
+            } else {
+                // /sartorius, /sartorius/nouvelle, /sartorius/creer, /sartorius/supprimer-selection
+                switch ($sub) {
+                    case null:
+                    case 'liste':              $controller->liste();              break;
+                    case 'nouvelle':           $controller->nouvelle();           break;
+                    case 'creer':              $controller->creer();              break;
+                    case 'supprimer-selection': $controller->supprimerSelection(); break;
+                    default:                   $controller->liste();              break;
+                }
+            }
+        }
         break;
-    
-    case 'ajout-reference':
-        $controller = new ReferenceController();
-        $controller->ajout();
-        break;
-    
-    case 'creer-reference':
-        $controller = new ReferenceController();
-        $controller->creer();
-        break;
-    
-    case 'editer-reference':
-        $controller = new ReferenceController();
-        $controller->edition();
-        break;
-    
-    case 'modifier-reference':
-        $controller = new ReferenceController();
-        $controller->modifier();
-        break;
-    
-    case 'supprimer-reference':
-        $controller = new ReferenceController();
-        $controller->supprimer();
-        break;
-    
-    case 'supprimer-selection-references':
-        $controller = new ReferenceController();
-        $controller->supprimerSelection();
-        break;
-    
-    case 'nouvelle-commande':
-        $controller = new CommandeController();
-        $controller->nouvelle();
-        break;
-    
-    case 'creer-commande':
-        $controller = new CommandeController();
-        $controller->creer();
-        break;
-    
-    case 'editer-commande':
-        $controller = new CommandeController();
-        $controller->edition();
-        break;
-    
-    case 'modifier-commande':
-        $controller = new CommandeController();
-        $controller->modifier();
-        break;
-    
-    case 'supprimer-commande':
-        $controller = new CommandeController();
-        $controller->supprimer();
-        break;
-    
-    case 'supprimer-selection-commandes':
-        $controller = new CommandeController();
-        $controller->supprimerSelection();
-        break;
-    case 'telecharger-pdf':
-        $controller = new CommandeController();
-        $controller->telecharger();
-        break;
-    
+
+    // ------------------------------------------
+    // MODULE LATITUDE
+    // ------------------------------------------
     case 'latitude':
-        $controller = new LatitudeController();
-        $controller->liste();
+        $sub    = $segments[1] ?? null;
+        $id     = isset($segments[2]) && is_numeric($segments[2]) ? (int)$segments[2] : null;
+        $action = $id !== null ? ($segments[3] ?? null) : ($segments[2] ?? null);
+
+        // /latitude/article/...
+        if ($sub === 'article') {
+            $controller = new ArticleLatitudeController();
+            switch ($action) {
+                case 'nouveau':  $controller->nouveau();  break;
+                case 'creer':    $controller->creer();    break;
+                case 'editer':   $controller->edition();  break;
+                case 'modifier': $controller->modifier(); break;
+                case 'supprimer':
+                    if ($id) {
+                        $controller->supprimer();
+                    } else {
+                        $controller->supprimerSelection();
+                    }
+                    break;
+                default:         $controller->nouveau();  break;
+            }
+        }
+        // /latitude/commande/... ou /latitude/{action}
+        else {
+            $controller = new LatitudeController();
+            if ($sub === 'commande' && $id) {
+                $_GET['id'] = $id;
+                switch ($action) {
+                    case 'editer':      $controller->edition();    break;
+                    case 'modifier':    $controller->modifier();   break;
+                    case 'supprimer':   $controller->supprimer();  break;
+                    case 'telecharger': $controller->telecharger(); break;
+                    default:            $controller->liste();      break;
+                }
+            } else {
+                switch ($sub) {
+                    case null:
+                    case 'liste':               $controller->liste();              break;
+                    case 'nouvelle':            $controller->nouvelle();           break;
+                    case 'creer':               $controller->creer();              break;
+                    case 'supprimer-selection': $controller->supprimerSelection(); break;
+                    default:                    $controller->liste();              break;
+                }
+            }
+        }
         break;
-    
-    case 'nouveau-article-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->nouveau();
-        break;
-    
-    case 'creer-article-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->creer();
-        break;
-    
-    case 'editer-article-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->edition();
-        break;
-    
-    case 'modifier-article-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->modifier();
-        break;
-    
-    case 'supprimer-article-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->supprimer();
-        break;
-    
-    case 'supprimer-selection-articles-latitude':
-        $controller = new ArticleLatitudeController();
-        $controller->supprimerSelection();
-        break;
-    
-    case 'nouvelle-commande-latitude':
-        $controller = new LatitudeController();
-        $controller->nouvelle();
-        break;
-    
-    case 'creer-commande-latitude':
-        $controller = new LatitudeController();
-        $controller->creer();
-        break;
-    
-    case 'editer-commande-latitude':
-        $controller = new LatitudeController();
-        $controller->edition();
-        break;
-    
-    case 'modifier-commande-latitude':
-        $controller = new LatitudeController();
-        $controller->modifier();
-        break;
-    
-    case 'supprimer-commande-latitude':
-        $controller = new LatitudeController();
-        $controller->supprimer();
-        break;
-    
-    case 'supprimer-selection-commandes-latitude':
-        $controller = new LatitudeController();
-        $controller->supprimerSelection();
-        break;
-    
-    case 'telecharger-pdf-latitude':
-        $controller = new LatitudeController();
-        $controller->telecharger();
-        break;
-    
+
+    // ------------------------------------------
+    // PAGE 404
+    // ------------------------------------------
     default:
+        http_response_code(404);
         require_once 'views/home.php';
         break;
 }

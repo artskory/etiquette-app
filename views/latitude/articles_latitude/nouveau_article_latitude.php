@@ -28,7 +28,7 @@ $hasArticles = !empty($articlesArray);
                     <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
                 </button>
                 <?php endif; ?>
-                <a href="index.php?page=latitude" class="btn btn-secondary">
+                <a href="<?= BASE_URL ?>/latitude" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
                 </a>
             </div>
@@ -36,7 +36,7 @@ $hasArticles = !empty($articlesArray);
 
         <div class="card">
             <div class="card-body">
-                <form action="index.php?page=creer-article-latitude" method="POST">
+                <form action="<?= BASE_URL ?>/latitude/article/creer" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <div class="mb-3">
                         <label for="nom" class="form-label">
@@ -79,7 +79,7 @@ $hasArticles = !empty($articlesArray);
                                 <tr>
                                     <td><?php echo htmlspecialchars($art['nom']); ?></td>
                                     <td class="text-center">
-                                        <a href="index.php?page=editer-article-latitude&id=<?php echo $art['id']; ?>" 
+                                        <a href="<?= BASE_URL ?>/latitude/article/<?php echo $art['id']; ?>/editer" 
                                            class="btn btn-sm btn-outline-primary" title="Éditer">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
@@ -124,7 +124,7 @@ $hasArticles = !empty($articlesArray);
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-articles-latitude" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="<?= BASE_URL ?>/latitude/article/supprimer-selection" method="POST" style="display:inline;">
                 <?php echo CsrfToken::field(); ?>    
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>

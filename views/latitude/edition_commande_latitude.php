@@ -16,7 +16,7 @@ if(isset($articles)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Édition étiquette Latitude</h1>
             <div>
-                <a href="index.php?page=latitude" class="btn btn-secondary">
+                <a href="<?= BASE_URL ?>/latitude" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-1"></i>Annuler
                 </a>
             </div>
@@ -24,7 +24,7 @@ if(isset($articles)) {
 
         <div class="card">
             <div class="card-body">
-                <form id="latitudeForm" action="index.php?page=modifier-commande-latitude" method="POST">
+                <form id="latitudeForm" action="<?= BASE_URL ?>/latitude/commande/<?php echo $commande['id']; ?>/modifier" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     

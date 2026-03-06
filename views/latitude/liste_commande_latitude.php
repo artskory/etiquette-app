@@ -14,10 +14,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Étiquettes Latitude</h1>
             <div>
-                <a href="index.php?page=nouveau-article-latitude" class="btn btn-success me-2">
+                <a href="<?= BASE_URL ?>/latitude/article/nouveau" class="btn btn-success me-2">
                     <i class="bi bi-tag me-1"></i><span class="btn-text">Article</span>
                 </a>
-                <a href="index.php?page=nouvelle-commande-latitude" class="btn btn-primary me-2">
+                <a href="<?= BASE_URL ?>/latitude/nouvelle" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>
                 <?php if($hasCommandes): ?>
@@ -61,11 +61,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
                                 <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($row['created_at']))); ?></td>
                                 <td class="text-center">
-                                    <a href="index.php?page=editer-commande-latitude&id=<?php echo $row['id']; ?>"
+                                    <a href="<?= BASE_URL ?>/latitude/commande/<?php echo $row['id']; ?>/editer"
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="index.php?page=telecharger-pdf-latitude&id=<?php echo $row['id']; ?>"
+                                    <a href="<?= BASE_URL ?>/latitude/commande/<?php echo $row['id']; ?>/telecharger"
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -95,7 +95,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <!-- Bouton Page précédente -->
         <?php if($page > 1): ?>
             <li class="page-item">
-                <a class="page-link" href="index.php?page=latitude&p=<?= $page - 1 ?>" aria-label="Page précédente">
+                <a class="page-link" href="<?= BASE_URL ?>/latitude?p=<?= $page - 1 ?>" aria-label="Page précédente">
                     <span aria-hidden="true">Précédent</span>
                 </a>
             </li>
@@ -122,7 +122,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         for($i = $startPage; $i <= $endPage; $i++):
         ?>
             <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                <a class="page-link" href="index.php?page=latitude&p=<?= $i ?>">
+                <a class="page-link" href="<?= BASE_URL ?>/latitude?p=<?= $i ?>">
                     <?= $i ?>
                     <?php if($i === $page): ?>
                         <span class="visually-hidden">(page courante)</span>
@@ -134,7 +134,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <!-- Bouton Page suivante -->
         <?php if($page < $totalPages): ?>
             <li class="page-item">
-                <a class="page-link" href="index.php?page=latitude&p=<?= $page + 1 ?>" aria-label="Page suivante">
+                <a class="page-link" href="<?= BASE_URL ?>/latitude?p=<?= $page + 1 ?>" aria-label="Page suivante">
                     <span aria-hidden="true">Suivant</span>
                 </a>
             </li>
@@ -165,7 +165,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <form id="formSupprimerSelection" action="index.php?page=supprimer-selection-commandes-latitude" method="POST" style="display:inline;">
+            <form id="formSupprimerSelection" action="<?= BASE_URL ?>/latitude/supprimer-selection" method="POST" style="display:inline;">
                 <?php echo CsrfToken::field(); ?>
                 <div id="selectionInputs"></div>
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Supprimer la sélection</button>
