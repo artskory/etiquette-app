@@ -14,9 +14,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div class="d-flex justify-content-between align-items-center mb-4 header-table">
             <h1 class="greeting-title">Étiquettes Sartorius</h1>
             <div>
-                <a href="<?= BASE_URL ?>/sartorius/reference/ajout" class="btn btn-success me-2">
-                    <i class="bi bi-bookmark-plus me-1"></i><span class="btn-text">Référence</span>
-                </a>
                 <a href="<?= BASE_URL ?>/sartorius/nouvelle" class="btn btn-primary me-2">
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>

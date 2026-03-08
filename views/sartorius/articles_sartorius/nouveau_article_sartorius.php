@@ -6,6 +6,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Détecter la provenance (nouvelle étiquette ou liste sartorius)
+$from = $_GET['from'] ?? $_SESSION['ref_from'] ?? '';
+if (!empty($_GET['from'])) {
+    $_SESSION['ref_from'] = $_GET['from'];
+}
+$retourUrl = ($from === 'nouvelle')
+    ? BASE_URL . '/sartorius/nouvelle'
+    : BASE_URL . '/sartorius';
+
 // Récupérer les valeurs du formulaire si erreur
 $formData = $_SESSION['form_data'] ?? [];
 $savedReference = htmlspecialchars($formData['reference'] ?? '');
@@ -37,7 +46,7 @@ $hasReferences = !empty($referencesArray);
                 <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
             </button>
             <?php endif; ?>
-            <a href="<?= BASE_URL ?>/sartorius" class="btn btn-secondary">
+            <a href="<?= $retourUrl ?>" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
             </a>
         </div>
@@ -47,6 +56,7 @@ $hasReferences = !empty($referencesArray);
         <div class="card-body">
             <form id="referenceForm" action="<?= BASE_URL ?>/sartorius/reference/creer" method="POST">
                 <?php echo CsrfToken::field(); ?>
+                <input type="hidden" name="from" value="<?php echo htmlspecialchars($from); ?>">
                 <div class="row">
                     <div class="col-md-6">
                         <i class="bi bi-hash blue icons"></i>
@@ -188,7 +198,8 @@ $hasReferences = !empty($referencesArray);
 
 <?php 
 // Nettoyer les données du formulaire de la session après affichage
-unset($_SESSION['form_data']); 
+unset($_SESSION['form_data']);
+// Ne pas nettoyer ref_from ici, il sera nettoyé par le controller après redirection
 ?>
 
 <?php require_once 'views/layouts/footer.php'; ?>

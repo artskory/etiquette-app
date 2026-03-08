@@ -114,15 +114,14 @@ class SartoriusPdfGenerator extends FPDF {
                 chmod($pdfDir, 0777); // Permissions maximales pour Mac
             }
             
-            // Formater la date pour le nom du fichier (MM_AAAA)
-            $dateParts = explode('/', $data['date_production']);
-            $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
-            
-            // Nettoyer le nom de référence pour éviter les caractères spéciaux
+            // Nettoyer les champs pour le nom du fichier
             $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $data['reference']);
+            $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $data['numero_commande']);
+            $lotClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $data['numero_lot']);
             
-            // Nom du fichier avec chemin absolu
-            $filename = $pdfDir . '/' . $refClean . '-' . $dateFormatted . '.pdf';
+            // Nom du fichier
+            $pdfName = $refClean . '_' . $cmdClean . '_' . $lotClean;
+            $filename = $pdfDir . '/' . $pdfName . '.pdf';
             
             // Sauvegarder le PDF
             $this->Output('F', $filename);
@@ -136,7 +135,7 @@ class SartoriusPdfGenerator extends FPDF {
             chmod($filename, 0666);
             
             // Retourner le chemin relatif pour l'application
-            return 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
+            return 'pdfs_sartorius/' . $pdfName . '.pdf';
             
         } catch(Exception $e) {
             error_log("Erreur PdfGenerator: " . $e->getMessage());

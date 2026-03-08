@@ -30,7 +30,7 @@ if(!$quantitesArray || !is_array($quantitesArray) || empty($quantitesArray)) {
 
         <div class="card">
             <div class="card-body">
-                <form id="commandeForm" action="<?= BASE_URL ?>/sartorius/commande/<?php echo $commande['id']; ?>/modifier" method="POST">
+                <form id="commandeForm" action="<?= BASE_URL ?>/sartorius/commande/<?php echo $commandeData['id']; ?>/modifier" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($commandeData['id']); ?>">
                     
@@ -124,9 +124,6 @@ if(!$quantitesArray || !is_array($quantitesArray) || empty($quantitesArray)) {
                                             </button>
                                         <?php else: ?>
                                             <div class="d-flex gap-2">
-                                                <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneQuantite()">
-                                                    <i class="bi bi-plus-lg"></i>
-                                                </button>
                                                 <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneQuantite(this)">
                                                     <i class="bi bi-trash"></i>
                                                 </button>

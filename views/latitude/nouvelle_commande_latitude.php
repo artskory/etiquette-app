@@ -14,6 +14,9 @@ if(isset($articles)) {
             <div class="d-flex justify-content-between align-items-center mb-4 header-table">
                 <h1 class="greeting-title">Nouvelle étiquette Latitude</h1>
                 <div>
+                    <a href="<?= BASE_URL ?>/latitude/article/nouveau?from=nouvelle" class="btn btn-success me-2">
+                        <i class="bi bi-tag me-1"></i>Articles
+                    </a>
                     <a href="<?= BASE_URL ?>/latitude" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Annuler
                     </a>

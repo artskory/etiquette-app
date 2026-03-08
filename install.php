@@ -1,7 +1,7 @@
 <?php
 /**
  * SCRIPT D'INSTALLATION - APPLICATION ÉTIQUETTES
- * Version 1.0.11 - Avec création automatique des index de performance
+ * Version 1.0.2 - Avec création automatique des index de performance
  * 
  * Ce script installe automatiquement la base de données complète
  * Accès : http://localhost/etiquette-app/install.php
@@ -55,7 +55,10 @@ if (file_exists('.installation_complete')) {
                     </ol>
                 </div>
 
-                <a href="index.php" class="btn btn-primary btn-lg mt-4">
+                <?php
+                $appUrl = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/') . '/';
+                ?>
+                <a href="<?php echo htmlspecialchars($appUrl); ?>" class="btn btn-primary btn-lg mt-4">
                     <i class="bi bi-house-door me-2"></i>Accéder à l'application
                 </a>
             </div>
@@ -82,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         <title>Configuration Installation</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="css/style.css">
         <style>
             body {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -108,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     <body>
         <div class="install-container">
             <div class="logo">
-                <i class="bi bi-tags-fill"></i>
+                <img src="image/logo.svg" alt="logo" id="logo">
             </div>
             
             <div class="card">
@@ -119,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                     </h1>
                     
                     <p class="text-center text-muted mb-4">
-                        Application Étiquettes v1.0.11
+                        Application Étiquettes v1.0.2
                     </p>
 
                     <hr class="my-4">
@@ -154,6 +158,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         </div>
 
                         <div class="mb-4">
+                            <label for="app_folder" class="form-label">
+                                <i class="bi bi-folder me-2"></i>Nom du dossier de l'application <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text text-muted">/</span>
+                                <input type="text" class="form-control" id="app_folder" name="app_folder"
+                                       value="etiquette-app" required
+                                       pattern="[a-zA-Z0-9_\-]+"
+                                       title="Uniquement lettres, chiffres, tirets et underscores">
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle text-info me-1"></i>
+                                Nom du dossier où l'application est déployée sur le serveur (ex: <code>etiquette-app</code>, <code>mon-app</code>).
+                                Mis à jour automatiquement dans <code>.htaccess</code>.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
                             <label for="db_name" class="form-label">
                                 <i class="bi bi-database me-2"></i>Nom de la base de données <span class="text-danger">*</span>
                             </label>
@@ -164,24 +186,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                             <div class="form-text">
                                 <i class="bi bi-lightbulb text-warning me-1"></i>
                                 Choisissez un nom unique (ex: etiquettes_prod, etiquettes_test)
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="app_folder" class="form-label">
-                                <i class="bi bi-folder me-2"></i>Nom du dossier de l'application <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text text-muted">/</span>
-                                <input type="text" class="form-control" id="app_folder" name="app_folder"
-                                       value="etiquette-app-rewrite" required
-                                       pattern="[a-zA-Z0-9_\-]+"
-                                       title="Uniquement lettres, chiffres, tirets et underscores">
-                            </div>
-                            <div class="form-text">
-                                <i class="bi bi-info-circle text-info me-1"></i>
-                                Nom du dossier où l'application est déployée sur le serveur (ex: <code>etiquette-app</code>, <code>mon-app</code>).
-                                Mis à jour automatiquement dans <code>.htaccess</code>.
                             </div>
                         </div>
 
@@ -201,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             </div>
 
             <div class="text-center mt-4 text-white">
-                <small>Application Étiquettes v1.0.11 - Installation automatique avec optimisations</small>
+                <small>Application Étiquettes v1.0.2</small>
             </div>
         </div>
 
@@ -593,7 +597,7 @@ if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $APP_FOLDER)) {
                     </h5>
                     <p class="mb-3">La base de données <strong><?php echo htmlspecialchars($DB_NAME); ?></strong> est prête à être utilisée.</p>
                     <hr>
-                    <h6>✨ Nouveautés v1.0.11 :</h6>
+                    <h6>✨ Nouveautés v1.0.2 :</h6>
                     <ul class="mb-3">
                         <li>✅ Index de performance créés automatiquement</li>
                         <li>✅ Requêtes optimisées (10-100x plus rapides)</li>
@@ -609,7 +613,7 @@ if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $APP_FOLDER)) {
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="index.php" class="btn btn-primary btn-lg">
+                    <a href="/<?php echo htmlspecialchars($APP_FOLDER); ?>/" class="btn btn-primary btn-lg">
                         <i class="bi bi-house-door me-2"></i>Accéder à l'application
                     </a>
                 </div>
@@ -632,7 +636,7 @@ if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $APP_FOLDER)) {
         </div>
 
         <div class="text-center mt-4 text-white">
-            <small>Application Étiquettes v1.0.11 - Installation automatique avec optimisations</small>
+            <small>Application Étiquettes v1.0.2 - Installation automatique avec optimisations</small>
         </div>
     </div>
 

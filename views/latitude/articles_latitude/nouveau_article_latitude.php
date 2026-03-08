@@ -5,6 +5,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Détecter la provenance
+$from = $_GET['from'] ?? $_SESSION['ref_from'] ?? '';
+if (!empty($_GET['from'])) {
+    $_SESSION['ref_from'] = $_GET['from'];
+}
+$retourUrl = ($from === 'nouvelle')
+    ? BASE_URL . '/latitude/nouvelle'
+    : BASE_URL . '/latitude';
+
 // Récupérer les valeurs du formulaire si erreur
 $formData = $_SESSION['form_data'] ?? [];
 $savedNom = htmlspecialchars($formData['nom'] ?? '');
@@ -28,7 +37,7 @@ $hasArticles = !empty($articlesArray);
                     <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
                 </button>
                 <?php endif; ?>
-                <a href="<?= BASE_URL ?>/latitude" class="btn btn-secondary">
+                <a href="<?= $retourUrl ?>" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-1"></i><span class="btn-text">Retour</span>
                 </a>
             </div>
@@ -38,6 +47,7 @@ $hasArticles = !empty($articlesArray);
             <div class="card-body">
                 <form action="<?= BASE_URL ?>/latitude/article/creer" method="POST">
                     <?php echo CsrfToken::field(); ?>
+                    <input type="hidden" name="from" value="<?php echo htmlspecialchars($from); ?>">
                     <div class="mb-3">
                         <label for="nom" class="form-label">
                             <i class="bi bi-tag blue icons"></i>Nom de l'article <span class="text-danger">*</span>
@@ -173,7 +183,8 @@ $hasArticles = !empty($articlesArray);
 
 <?php 
 // Nettoyer les données du formulaire de la session après affichage
-unset($_SESSION['form_data']); 
+unset($_SESSION['form_data']);
+// ref_from est nettoyé par le controller après succès
 ?>
 
 <?php require_once 'views/layouts/footer.php'; ?>

@@ -11,7 +11,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form action="<?= BASE_URL ?>/latitude/article/<?php echo $article['id']; ?>/modifier" method="POST">
+                <form action="<?= BASE_URL ?>/latitude/article/<?php echo $articleData['id']; ?>/modifier" method="POST">
                     <?php echo CsrfToken::field(); ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($articleData['id']); ?>">
                     

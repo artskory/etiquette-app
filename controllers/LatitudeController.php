@@ -54,7 +54,7 @@ class LatitudeController {
     public function edition() {
         $id = Validator::id($_GET['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=latitude&error=invalid_id");
+            header("Location: " . BASE_URL . "/latitude?error=invalid_id");
             exit();
         }
         
@@ -69,7 +69,7 @@ class LatitudeController {
             
             require_once 'views/latitude/edition_commande_latitude.php';
         } else {
-            header("Location: index.php?page=latitude&error=not_found");
+            header("Location: " . BASE_URL . "/latitude?error=not_found");
             exit();
         }
     }
@@ -83,21 +83,21 @@ class LatitudeController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/latitude?error=csrf_invalid");
                 exit;
             }
 
             // Valider le numéro de commande
             $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
             if ($numeroCommande === false) {
-                header("Location: index.php?page=nouvelle-commande-latitude&error=invalid_numero");
+                header("Location: " . BASE_URL . "/latitude/nouvelle?error=invalid_numero");
                 exit;
             }
             
             // Valider les articles
             $articles = Validator::articlesLatitude($_POST['articles'] ?? []);
             if ($articles === false) {
-                header("Location: index.php?page=nouvelle-commande-latitude&error=invalid_articles");
+                header("Location: " . BASE_URL . "/latitude/nouvelle?error=invalid_articles");
                 exit;
             }
             
@@ -109,15 +109,15 @@ class LatitudeController {
                     // Générer le PDF
                     $this->genererPDF($this->commande->id);
                     
-                    header("Location: index.php?page=latitude&success=commande_created");
+                    header("Location: " . BASE_URL . "/latitude?success=commande_created");
                     exit();
                 } else {
-                    header("Location: index.php?page=nouvelle-commande-latitude&error=create_failed");
+                    header("Location: " . BASE_URL . "/latitude/nouvelle?error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création commande Latitude: " . $e->getMessage());
-                header("Location: index.php?page=nouvelle-commande-latitude&error=create_failed");
+                header("Location: " . BASE_URL . "/latitude/nouvelle?error=create_failed");
                 exit();
             }
         }
@@ -132,28 +132,28 @@ class LatitudeController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/latitude?error=csrf_invalid");
                 exit;
             }
             
             // Valider l'ID
             $id = Validator::id($_POST['id'] ?? 0);
             if ($id === false) {
-                header("Location: index.php?page=latitude&error=invalid_id");
+                header("Location: " . BASE_URL . "/latitude?error=invalid_id");
                 exit;
             }
             
             // Valider le numéro de commande
             $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
             if ($numeroCommande === false) {
-                header("Location: index.php?page=editer-commande-latitude&id=$id&error=invalid_numero");
+                header("Location: " . BASE_URL . "/latitude/commande/$id/editer?error=invalid_numero");
                 exit;
             }
             
             // Valider les articles
             $articles = Validator::articlesLatitude($_POST['articles'] ?? []);
             if ($articles === false) {
-                header("Location: index.php?page=editer-commande-latitude&id=$id&error=invalid_articles");
+                header("Location: " . BASE_URL . "/latitude/commande/$id/editer?error=invalid_articles");
                 exit;
             }
             
@@ -166,15 +166,15 @@ class LatitudeController {
                     // Régénérer le PDF
                     $this->genererPDF($this->commande->id);
                     
-                    header("Location: index.php?page=latitude&success=commande_updated");
+                    header("Location: " . BASE_URL . "/latitude?success=commande_updated");
                     exit();
                 } else {
-                    header("Location: index.php?page=editer-commande-latitude&id=" . $this->commande->id . "&error=update_failed");
+                    header("Location: " . BASE_URL . "/latitude/commande/" . $this->commande->id . "/editer?error=update_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur modification commande Latitude: " . $e->getMessage());
-                header("Location: index.php?page=editer-commande-latitude&id=" . $this->commande->id . "&error=update_failed");
+                header("Location: " . BASE_URL . "/latitude/commande/" . $this->commande->id . "/editer?error=update_failed");
                 exit();
             }
         }
@@ -188,14 +188,14 @@ class LatitudeController {
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
-            header("Location: index.php?error=csrf_invalid");
+            header("Location: " . BASE_URL . "/latitude?error=csrf_invalid");
             exit;
         }
         
         // Valider l'ID
         $id = Validator::id($_POST['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=latitude&error=invalid_id");
+            header("Location: " . BASE_URL . "/latitude?error=invalid_id");
             exit;
         }
         
@@ -208,7 +208,7 @@ class LatitudeController {
             if($commandeData) {
                 // Construire le nom du fichier PDF
                 $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
-                $pdfFilename = 'pdfs_latitude/' . $cmdClean . '.pdf';
+                $pdfFilename = 'pdfs_latitude/Etiquette_latitudes_commande_' . $cmdClean . '.pdf';
                 
                 // Supprimer le PDF s'il existe
                 if(file_exists($pdfFilename)) {
@@ -218,14 +218,14 @@ class LatitudeController {
             
             // Supprimer la commande
             if($this->commande->delete()) {
-                header("Location: index.php?page=latitude&success=commande_deleted");
+                header("Location: " . BASE_URL . "/latitude?success=commande_deleted");
                 exit();
             } else {
-                header("Location: index.php?page=latitude&error=delete_failed");
+                header("Location: " . BASE_URL . "/latitude?error=delete_failed");
                 exit();
             }
         } catch(PDOException $e) {
-            header("Location: index.php?page=latitude&error=delete_failed");
+            header("Location: " . BASE_URL . "/latitude?error=delete_failed");
             exit();
         }
     }
@@ -238,7 +238,7 @@ class LatitudeController {
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
-            header("Location: index.php?error=csrf_invalid");
+            header("Location: " . BASE_URL . "/latitude?error=csrf_invalid");
             exit;
         }
         
@@ -246,7 +246,7 @@ class LatitudeController {
         $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
         
         if ($ids === false) {
-            header("Location: index.php?page=latitude&error=no_selection");
+            header("Location: " . BASE_URL . "/latitude?error=no_selection");
             exit;
         }
 
@@ -256,15 +256,15 @@ class LatitudeController {
                 $commandeData = $this->commande->readOne();
                 if($commandeData) {
                     $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
-                    $pdfFilename = 'pdfs_latitude/' . $cmdClean . '.pdf';
+                    $pdfFilename = 'pdfs_latitude/Etiquette_latitudes_commande_' . $cmdClean . '.pdf';
                     if(file_exists($pdfFilename)) unlink($pdfFilename);
                     $this->commande->delete();
                 }
             }
-            header("Location: index.php?page=latitude&success=selection_deleted");
+            header("Location: " . BASE_URL . "/latitude?success=selection_deleted");
             exit();
         } catch(Exception $e) {
-            header("Location: index.php?page=latitude&error=delete_failed");
+            header("Location: " . BASE_URL . "/latitude?error=delete_failed");
             exit();
         }
     }
@@ -275,7 +275,7 @@ class LatitudeController {
     public function telecharger() {
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         if ($id <= 0) {
-            header("Location: index.php?page=latitude&error=invalid_id");
+            header("Location: " . BASE_URL . "/latitude?error=invalid_id");
             exit();
         }
         
@@ -285,7 +285,7 @@ class LatitudeController {
         if($commandeData) {
             $this->genererPDF($id, true);
         } else {
-            header("Location: index.php?page=latitude&error=not_found");
+            header("Location: " . BASE_URL . "/latitude?error=not_found");
             exit();
         }
     }
@@ -299,7 +299,7 @@ class LatitudeController {
         
         if(!$commandeData) {
             if($download) {
-                header("Location: index.php?page=latitude&error=not_found");
+                header("Location: " . BASE_URL . "/latitude?error=not_found");
                 exit();
             }
             return false;
@@ -315,12 +315,12 @@ class LatitudeController {
             
             if($download) {
                 $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
-                $downloadName = $cmdClean . '.pdf';
+                $downloadName = 'Etiquette_latitudes_commande_' . $cmdClean . '.pdf';
                 
                 // Vérifier que le fichier existe
                 if(!file_exists($filename)) {
                     error_log("Fichier PDF Latitude introuvable: " . $filename);
-                    header("Location: index.php?page=latitude&error=pdf_not_found");
+                    header("Location: " . BASE_URL . "/latitude?error=pdf_not_found");
                     exit();
                 }
                 
@@ -336,7 +336,7 @@ class LatitudeController {
         } catch(Exception $e) {
             error_log("Erreur génération PDF Latitude: " . $e->getMessage());
             if($download) {
-                header("Location: index.php?page=latitude&error=pdf_generation_failed");
+                header("Location: " . BASE_URL . "/latitude?error=pdf_generation_failed");
                 exit();
             }
             return false;

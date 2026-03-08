@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form id="referenceForm" action="<?= BASE_URL ?>/sartorius/reference/<?php echo $reference['id']; ?>/modifier" method="POST">
+            <form id="referenceForm" action="<?= BASE_URL ?>/sartorius/reference/<?php echo $referenceData['id']; ?>/modifier" method="POST">
                 <?php echo CsrfToken::field(); ?>
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($referenceData['id']); ?>">
                 

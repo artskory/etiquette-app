@@ -54,42 +54,45 @@ class CommandeController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
                 exit;
             }
+
+            // Sauvegarder les données du formulaire en session pour les restaurer en cas d'erreur
+            $_SESSION['form_data'] = $_POST;
             
             // Valider l'ID de référence
             $referenceId = Validator::id($_POST['reference_id'] ?? 0);
             if ($referenceId === false) {
-                header("Location: index.php?page=nouvelle-commande&error=invalid_reference");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=invalid_reference");
                 exit;
             }
             
             // Valider le numéro de commande
             $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
             if ($numeroCommande === false) {
-                header("Location: index.php?page=nouvelle-commande&error=invalid_numero");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=invalid_numero");
                 exit;
             }
             
             // Valider le numéro de lot
             $numeroLot = Validator::numeroLot($_POST['numero_lot'] ?? '');
             if ($numeroLot === false) {
-                header("Location: index.php?page=nouvelle-commande&error=invalid_lot");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=invalid_lot");
                 exit;
             }
             
             // Valider la date
             $dateProduction = Validator::dateMoisAnnee($_POST['date_production'] ?? '');
             if ($dateProduction === false) {
-                header("Location: index.php?page=nouvelle-commande&error=invalid_date");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=invalid_date");
                 exit;
             }
             
             // Valider les quantités
             $quantites = Validator::quantitesSartorius($_POST['quantites'] ?? []);
             if ($quantites === false) {
-                header("Location: index.php?page=nouvelle-commande&error=invalid_quantities");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=invalid_quantities");
                 exit;
             }
             
@@ -102,28 +105,26 @@ class CommandeController {
                 $this->commande->quantites = json_encode($quantites);
 
                 if($this->commande->create()) {
-                    // Générer le PDF pour cette commande
+                    // Succès : vider la session et rediriger
+                    unset($_SESSION['form_data']);
                     $this->genererPDF($this->commande->id);
-                    
-                    header("Location: index.php?page=sartorius&success=commande_created");
+                    header("Location: " . BASE_URL . "/sartorius?success=commande_created");
                     exit();
                 } else {
-                    header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                    header("Location: " . BASE_URL . "/sartorius/nouvelle?error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création commande: " . $e->getMessage());
-                
-                // Vérifier si l'erreur est due à la colonne manquante
                 if(strpos($e->getMessage(), 'quantites') !== false || strpos($e->getMessage(), 'Unknown column') !== false) {
-                    header("Location: index.php?page=nouvelle-commande&error=migration_required");
+                    header("Location: " . BASE_URL . "/sartorius/nouvelle?error=migration_required");
                 } else {
-                    header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                    header("Location: " . BASE_URL . "/sartorius/nouvelle?error=create_failed");
                 }
                 exit();
             } catch(Exception $e) {
                 error_log("Erreur inattendue: " . $e->getMessage());
-                header("Location: index.php?page=nouvelle-commande&error=create_failed");
+                header("Location: " . BASE_URL . "/sartorius/nouvelle?error=create_failed");
                 exit();
             }
         }
@@ -135,7 +136,7 @@ class CommandeController {
     public function edition() {
         $id = Validator::id($_GET['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=sartorius&error=invalid_id");
+            header("Location: " . BASE_URL . "/sartorius?error=invalid_id");
             exit();
         }
         
@@ -147,7 +148,7 @@ class CommandeController {
             $references = $referenceController->getAll();
             require_once 'views/sartorius/edition_commande_sartorius.php';
         } else {
-            header("Location: index.php?page=sartorius&error=not_found");
+            header("Location: " . BASE_URL . "/sartorius?error=not_found");
             exit();
         }
     }
@@ -161,49 +162,49 @@ class CommandeController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
                 exit;
             }
             
             // Valider l'ID
             $id = Validator::id($_POST['id'] ?? 0);
             if ($id === false) {
-                header("Location: index.php?page=sartorius&error=invalid_id");
+                header("Location: " . BASE_URL . "/sartorius?error=invalid_id");
                 exit;
             }
             
             // Valider l'ID de référence
             $referenceId = Validator::id($_POST['reference_id'] ?? 0);
             if ($referenceId === false) {
-                header("Location: index.php?page=editer-commande&id=$id&error=invalid_reference");
+                header("Location: " . BASE_URL . "/sartorius/commande/$id/editer?error=invalid_reference");
                 exit;
             }
             
             // Valider le numéro de commande
             $numeroCommande = Validator::numeroCommande($_POST['numero_commande'] ?? '');
             if ($numeroCommande === false) {
-                header("Location: index.php?page=editer-commande&id=$id&error=invalid_numero");
+                header("Location: " . BASE_URL . "/sartorius/commande/$id/editer?error=invalid_numero");
                 exit;
             }
             
             // Valider le numéro de lot
             $numeroLot = Validator::numeroLot($_POST['numero_lot'] ?? '');
             if ($numeroLot === false) {
-                header("Location: index.php?page=editer-commande&id=$id&error=invalid_lot");
+                header("Location: " . BASE_URL . "/sartorius/commande/$id/editer?error=invalid_lot");
                 exit;
             }
             
             // Valider la date
             $dateProduction = Validator::dateMoisAnnee($_POST['date_production'] ?? '');
             if ($dateProduction === false) {
-                header("Location: index.php?page=editer-commande&id=$id&error=invalid_date");
+                header("Location: " . BASE_URL . "/sartorius/commande/$id/editer?error=invalid_date");
                 exit;
             }
             
             // Valider les quantités
             $quantites = Validator::quantitesSartorius($_POST['quantites'] ?? []);
             if ($quantites === false) {
-                header("Location: index.php?page=editer-commande&id=$id&error=invalid_quantities");
+                header("Location: " . BASE_URL . "/sartorius/commande/$id/editer?error=invalid_quantities");
                 exit;
             }
             
@@ -219,15 +220,15 @@ class CommandeController {
                     // Régénérer le PDF
                     $this->genererPDF($this->commande->id);
                     
-                    header("Location: index.php?page=sartorius&success=commande_updated");
+                    header("Location: " . BASE_URL . "/sartorius?success=commande_updated");
                     exit();
                 } else {
-                    header("Location: index.php?page=editer-commande&id=" . $this->commande->id . "&error=update_failed");
+                    header("Location: " . BASE_URL . "/sartorius/commande/" . $this->commande->id . "/editer?error=update_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur modification commande: " . $e->getMessage());
-                header("Location: index.php?page=editer-commande&id=" . $this->commande->id . "&error=update_failed");
+                header("Location: " . BASE_URL . "/sartorius/commande/" . $this->commande->id . "/editer?error=update_failed");
                 exit();
             }
         }
@@ -241,14 +242,14 @@ class CommandeController {
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
-            header("Location: index.php?error=csrf_invalid");
+            header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
             exit;
         }
         
         // Valider l'ID
         $id = Validator::id($_POST['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=sartorius&error=invalid_id");
+            header("Location: " . BASE_URL . "/sartorius?error=invalid_id");
             exit;
         }
         
@@ -260,10 +261,10 @@ class CommandeController {
             
             if($commandeData) {
                 // Construire le nom du fichier PDF
-                $dateParts = explode('/', $commandeData['date_production']);
-                $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
                 $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
-                $pdfFilename = 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
+                $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
+                $lotClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_lot']);
+                $pdfFilename = 'pdfs_sartorius/' . $refClean . '_' . $cmdClean . '_' . $lotClean . '.pdf';
                 
                 // Supprimer le PDF s'il existe
                 if(file_exists($pdfFilename)) {
@@ -273,14 +274,14 @@ class CommandeController {
             
             // Supprimer la commande de la base de données
             if($this->commande->delete()) {
-                header("Location: index.php?page=sartorius&success=commande_deleted");
+                header("Location: " . BASE_URL . "/sartorius?success=commande_deleted");
                 exit();
             } else {
-                header("Location: index.php?page=sartorius&error=delete_failed");
+                header("Location: " . BASE_URL . "/sartorius?error=delete_failed");
                 exit();
             }
         } catch(PDOException $e) {
-            header("Location: index.php?page=sartorius&error=delete_failed");
+            header("Location: " . BASE_URL . "/sartorius?error=delete_failed");
             exit();
         }
     }
@@ -291,7 +292,7 @@ class CommandeController {
     public function telecharger() {
         $id = Validator::id($_GET['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=sartorius&error=invalid_id");
+            header("Location: " . BASE_URL . "/sartorius?error=invalid_id");
             exit();
         }
         
@@ -301,7 +302,7 @@ class CommandeController {
         if($commandeData) {
             $this->genererPDF($id, true);
         } else {
-            header("Location: index.php?page=sartorius&error=not_found");
+            header("Location: " . BASE_URL . "/sartorius?error=not_found");
             exit();
         }
     }
@@ -335,15 +336,15 @@ class CommandeController {
             
             if($download) {
                 // Formater la date pour le nom de téléchargement
-                $dateParts = explode('/', $commandeData['date_production']);
-                $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
                 $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
-                $downloadName = $refClean . '-' . $dateFormatted . '.pdf';
+                $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
+                $lotClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_lot']);
+                $downloadName = $refClean . '_' . $cmdClean . '_' . $lotClean . '.pdf';
                 
                 // Vérifier que le fichier existe
                 if(!file_exists($filename)) {
                     error_log("Fichier PDF introuvable: " . $filename);
-                    header("Location: index.php?page=sartorius&error=pdf_not_found");
+                    header("Location: " . BASE_URL . "/sartorius?error=pdf_not_found");
                     exit();
                 }
                 
@@ -359,7 +360,7 @@ class CommandeController {
         } catch(Exception $e) {
             error_log("Erreur génération PDF Sartorius: " . $e->getMessage());
             if($download) {
-                header("Location: index.php?page=sartorius&error=pdf_generation_failed");
+                header("Location: " . BASE_URL . "/sartorius?error=pdf_generation_failed");
                 exit();
             }
             return false;
@@ -374,7 +375,7 @@ class CommandeController {
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
-            header("Location: index.php?error=csrf_invalid");
+            header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
             exit;
         }
         
@@ -382,7 +383,7 @@ class CommandeController {
         $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
         
         if ($ids === false) {
-            header("Location: index.php?page=sartorius&error=no_selection");
+            header("Location: " . BASE_URL . "/sartorius?error=no_selection");
             exit;
         }
 
@@ -391,18 +392,18 @@ class CommandeController {
                 $this->commande->id = $id;
                 $commandeData = $this->commande->readOne();
                 if($commandeData) {
-                    $dateParts = explode('/', $commandeData['date_production']);
-                    $dateFormatted = $dateParts[0] . '_' . $dateParts[1];
                     $refClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['reference']);
-                    $pdfFilename = 'pdfs_sartorius/' . $refClean . '-' . $dateFormatted . '.pdf';
+                    $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_commande']);
+                    $lotClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $commandeData['numero_lot']);
+                    $pdfFilename = 'pdfs_sartorius/' . $refClean . '_' . $cmdClean . '_' . $lotClean . '.pdf';
                     if(file_exists($pdfFilename)) unlink($pdfFilename);
                     $this->commande->delete();
                 }
             }
-            header("Location: index.php?page=sartorius&success=selection_deleted");
+            header("Location: " . BASE_URL . "/sartorius?success=selection_deleted");
             exit();
         } catch(Exception $e) {
-            header("Location: index.php?page=sartorius&error=delete_failed");
+            header("Location: " . BASE_URL . "/sartorius?error=delete_failed");
             exit();
         }
     }

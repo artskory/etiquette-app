@@ -4,7 +4,7 @@
 # ============================================
 
 RewriteEngine On
-RewriteBase /etiquette-app-rewrite/
+RewriteBase /etiquette-app/
 
 # Ne pas réécrire les fichiers et dossiers existants
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -29,6 +29,11 @@ RewriteRule ^(.*)$ index.php [QSA,L]
     Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
     Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+    # Type MIME correct pour le webmanifest
+    <FilesMatch "\.webmanifest$">
+        Header set Content-Type "application/manifest+json"
+    </FilesMatch>
 </IfModule>
 
 # ============================================

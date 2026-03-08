@@ -1,18 +1,19 @@
 <?php
 /**
  * Application Étiquettes
- * Version 2.0.0 - Réécriture d'URL propre
+ * Version 1.0.2 - Réécriture d'URL propre
  */
 
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-define('APP_VERSION', '2.0.0');
+define('APP_VERSION', '1.0.2');
 
 session_start();
 
-// Déterminer le chemin de base de l'application (fonctionne en sous-dossier)
-define('BASE_URL', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
+// Déterminer le chemin de base de l'application (fonctionne en sous-dossier + Windows)
+$_baseDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+define('BASE_URL', rtrim($_baseDir, '/'));
 
 require_once 'lib/CsrfToken.php';
 require_once 'lib/Validator.php';
@@ -25,6 +26,15 @@ require_once 'controllers/ReferenceController.php';
 require_once 'controllers/CommandeController.php';
 require_once 'controllers/LatitudeController.php';
 require_once 'controllers/ArticleLatitudeController.php';
+
+// ============================================
+// HELPER 404
+// ============================================
+function render404() {
+    http_response_code(404);
+    require_once 'views/404.php';
+    exit;
+}
 
 // ============================================
 // HELPER : génération d'URL propres
@@ -92,6 +102,10 @@ switch ($module) {
 
         // /sartorius/reference/...
         if ($sub === 'reference') {
+            // Injecter l'id dans $_GET pour les controllers qui utilisent $_GET['id']
+            if ($id !== null) {
+                $_GET['id'] = $id;
+            }
             $controller = new ReferenceController();
             switch ($action) {
                 case 'ajout':    $controller->ajout();    break;
@@ -105,7 +119,8 @@ switch ($module) {
                         $controller->supprimerSelection();
                     }
                     break;
-                default:         $controller->ajout();    break;
+                case 'supprimer-selection': $controller->supprimerSelection(); break;
+                default:         render404();             break;
             }
         }
         // /sartorius/commande/...  ou  /sartorius/{action}
@@ -120,7 +135,7 @@ switch ($module) {
                     case 'modifier':   $controller->modifier();  break;
                     case 'supprimer':  $controller->supprimer(); break;
                     case 'telecharger': $controller->telecharger(); break;
-                    default:           $controller->liste();     break;
+                    default:           render404();              break;
                 }
             } else {
                 // /sartorius, /sartorius/nouvelle, /sartorius/creer, /sartorius/supprimer-selection
@@ -130,7 +145,7 @@ switch ($module) {
                     case 'nouvelle':           $controller->nouvelle();           break;
                     case 'creer':              $controller->creer();              break;
                     case 'supprimer-selection': $controller->supprimerSelection(); break;
-                    default:                   $controller->liste();              break;
+                    default:                   render404();                       break;
                 }
             }
         }
@@ -146,6 +161,10 @@ switch ($module) {
 
         // /latitude/article/...
         if ($sub === 'article') {
+            // Injecter l'id dans $_GET pour les controllers qui utilisent $_GET['id']
+            if ($id !== null) {
+                $_GET['id'] = $id;
+            }
             $controller = new ArticleLatitudeController();
             switch ($action) {
                 case 'nouveau':  $controller->nouveau();  break;
@@ -159,7 +178,8 @@ switch ($module) {
                         $controller->supprimerSelection();
                     }
                     break;
-                default:         $controller->nouveau();  break;
+                case 'supprimer-selection': $controller->supprimerSelection(); break;
+                default:         render404();             break;
             }
         }
         // /latitude/commande/... ou /latitude/{action}
@@ -172,7 +192,7 @@ switch ($module) {
                     case 'modifier':    $controller->modifier();   break;
                     case 'supprimer':   $controller->supprimer();  break;
                     case 'telecharger': $controller->telecharger(); break;
-                    default:            $controller->liste();      break;
+                    default:            render404();               break;
                 }
             } else {
                 switch ($sub) {
@@ -181,7 +201,7 @@ switch ($module) {
                     case 'nouvelle':            $controller->nouvelle();           break;
                     case 'creer':               $controller->creer();              break;
                     case 'supprimer-selection': $controller->supprimerSelection(); break;
-                    default:                    $controller->liste();              break;
+                    default:                    render404();                       break;
                 }
             }
         }
@@ -192,6 +212,6 @@ switch ($module) {
     // ------------------------------------------
     default:
         http_response_code(404);
-        require_once 'views/home.php';
+        require_once 'views/404.php';
         break;
 }

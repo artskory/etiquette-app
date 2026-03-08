@@ -29,11 +29,16 @@ class ReferenceController {
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
+
+            // Récupérer la provenance pour redirection
+            $from   = $_POST['from'] ?? '';
+            $suffix = (!empty($from)) ? '?from=' . urlencode($from) : '';
+            $ajoutUrl = BASE_URL . '/sartorius/reference/ajout' . $suffix;
             
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
                 exit;
             }
             
@@ -44,13 +49,13 @@ class ReferenceController {
             // Vérifier que les données sont valides
             if ($reference === false || Validator::isEmpty($_POST['reference'] ?? '')) {
                 $_SESSION['form_data'] = $_POST;
-                header("Location: index.php?page=ajout-reference&error=invalid_reference");
+                header("Location: " . $ajoutUrl . "&error=invalid_reference");
                 exit;
             }
             
             if ($designation === false || Validator::isEmpty($_POST['designation'] ?? '')) {
                 $_SESSION['form_data'] = $_POST;
-                header("Location: index.php?page=ajout-reference&error=invalid_designation");
+                header("Location: " . $ajoutUrl . "&error=invalid_designation");
                 exit;
             }
             
@@ -68,21 +73,21 @@ class ReferenceController {
                 // Cas 1 : Les DEUX existent déjà
                 if($refExists && $desExists) {
                     $_SESSION['form_data'] = $_POST;
-                    header("Location: index.php?page=ajout-reference&error=duplicate_both");
+                    header("Location: " . $ajoutUrl . "&error=duplicate_both");
                     exit();
                 }
                 
                 // Cas 2 : Seulement la référence existe
                 if($refExists) {
                     $_SESSION['form_data'] = $_POST;
-                    header("Location: index.php?page=ajout-reference&error=duplicate_reference");
+                    header("Location: " . $ajoutUrl . "&error=duplicate_reference");
                     exit();
                 }
                 
                 // Cas 3 : Seulement la désignation existe
                 if($desExists) {
                     $_SESSION['form_data'] = $_POST;
-                    header("Location: index.php?page=ajout-reference&error=duplicate_designation");
+                    header("Location: " . $ajoutUrl . "&error=duplicate_designation");
                     exit();
                 }
                 
@@ -90,17 +95,18 @@ class ReferenceController {
                 if($this->reference->create()) {
                     // Ne PAS stocker en session pour vider les champs
                     unset($_SESSION['form_data']);
-                    header("Location: index.php?page=ajout-reference&success=reference_created");
+                    unset($_SESSION['ref_from']);
+                    header("Location: " . $ajoutUrl . "&success=reference_created");
                     exit();
                 } else {
                     $_SESSION['form_data'] = $_POST;
-                    header("Location: index.php?page=ajout-reference&error=create_failed");
+                    header("Location: " . $ajoutUrl . "&error=create_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur création référence: " . $e->getMessage());
                 $_SESSION['form_data'] = $_POST;
-                header("Location: index.php?page=ajout-reference&error=create_failed");
+                header("Location: " . $ajoutUrl . "&error=create_failed");
                 exit();
             }
         }
@@ -119,7 +125,7 @@ class ReferenceController {
     public function edition() {
         $id = Validator::id($_GET['id'] ?? 0);
         if ($id === false) {
-            header("Location: index.php?page=ajout-reference&error=invalid_id");
+            header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=invalid_id");
             exit();
         }
         
@@ -129,7 +135,7 @@ class ReferenceController {
         if($referenceData) {
             require_once 'views/sartorius/articles_sartorius/edition_article_sartorius.php';
         } else {
-            header("Location: index.php?page=ajout-reference&error=not_found");
+            header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=not_found");
             exit();
         }
     }
@@ -143,14 +149,14 @@ class ReferenceController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
                 exit;
             }
             
             // Valider l'ID
             $id = Validator::id($_POST['id'] ?? 0);
             if ($id === false) {
-                header("Location: index.php?page=ajout-reference&error=invalid_id");
+                header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=invalid_id");
                 exit;
             }
             
@@ -159,7 +165,7 @@ class ReferenceController {
             $designation = Validator::text($_POST['designation'] ?? '');
             
             if ($reference === false || $designation === false) {
-                header("Location: index.php?page=editer-reference&id=$id&error=invalid_data");
+                header("Location: " . BASE_URL . "/sartorius/reference/$id/editer?error=invalid_data");
                 exit;
             }
             
@@ -170,26 +176,26 @@ class ReferenceController {
             try {
                 // Vérifier si la référence existe déjà (en excluant l'ID actuel)
                 if($this->reference->referenceExists($this->reference->id)) {
-                    header("Location: index.php?page=editer-reference&id=" . $this->reference->id . "&error=duplicate_reference");
+                    header("Location: " . BASE_URL . "/sartorius/reference/" . $this->reference->id . "/editer?error=duplicate_reference");
                     exit();
                 }
                 
                 // Vérifier si la désignation existe déjà (en excluant l'ID actuel)
                 if($this->reference->designationExists($this->reference->id)) {
-                    header("Location: index.php?page=editer-reference&id=" . $this->reference->id . "&error=duplicate_designation");
+                    header("Location: " . BASE_URL . "/sartorius/reference/" . $this->reference->id . "/editer?error=duplicate_designation");
                     exit();
                 }
                 
                 if($this->reference->update()) {
-                    header("Location: index.php?page=ajout-reference&success=reference_updated");
+                    header("Location: " . BASE_URL . "/sartorius/reference/ajout?success=reference_updated");
                     exit();
                 } else {
-                    header("Location: index.php?page=editer-reference&id=" . $this->reference->id . "&error=update_failed");
+                    header("Location: " . BASE_URL . "/sartorius/reference/" . $this->reference->id . "/editer?error=update_failed");
                     exit();
                 }
             } catch(PDOException $e) {
                 error_log("Erreur modification référence: " . $e->getMessage());
-                header("Location: index.php?page=editer-reference&id=" . $this->reference->id . "&error=update_failed");
+                header("Location: " . BASE_URL . "/sartorius/reference/" . $this->reference->id . "/editer?error=update_failed");
                 exit();
             }
         }
@@ -204,14 +210,14 @@ class ReferenceController {
             // Validation CSRF
             $token = $_POST['csrf_token'] ?? null;
             if (!CsrfToken::validate($token)) {
-                header("Location: index.php?error=csrf_invalid");
+                header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
                 exit;
             }
             
             // Valider l'ID
             $id = Validator::id($_POST['id'] ?? 0);
             if ($id === false) {
-                header("Location: index.php?page=ajout-reference&error=invalid_id");
+                header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=invalid_id");
                 exit;
             }
             
@@ -219,14 +225,14 @@ class ReferenceController {
 
             try {
                 if($this->reference->delete()) {
-                    header("Location: index.php?page=ajout-reference&success=reference_deleted");
+                    header("Location: " . BASE_URL . "/sartorius/reference/ajout?success=reference_deleted");
                     exit();
                 } else {
-                    header("Location: index.php?page=ajout-reference&error=delete_failed");
+                    header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=delete_failed");
                     exit();
                 }
             } catch(PDOException $e) {
-                header("Location: index.php?page=ajout-reference&error=delete_failed");
+                header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=delete_failed");
                 exit();
             }
         }
@@ -240,7 +246,7 @@ class ReferenceController {
         // Validation CSRF
         $token = $_POST['csrf_token'] ?? null;
         if (!CsrfToken::validate($token)) {
-            header("Location: index.php?error=csrf_invalid");
+            header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid");
             exit;
         }
         
@@ -248,7 +254,7 @@ class ReferenceController {
         $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
         
         if ($ids === false) {
-            header("Location: index.php?page=ajout-reference&error=no_selection");
+            header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=no_selection");
             exit;
         }
 
@@ -257,10 +263,10 @@ class ReferenceController {
                 $this->reference->id = $id;
                 $this->reference->delete();
             }
-            header("Location: index.php?page=ajout-reference&success=selection_deleted");
+            header("Location: " . BASE_URL . "/sartorius/reference/ajout?success=selection_deleted");
             exit();
         } catch(Exception $e) {
-            header("Location: index.php?page=ajout-reference&error=delete_failed");
+            header("Location: " . BASE_URL . "/sartorius/reference/ajout?error=delete_failed");
             exit();
         }
     }

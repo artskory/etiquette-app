@@ -115,7 +115,8 @@ class LatitudePdfGenerator extends FPDF {
             $cmdClean = preg_replace('/[^a-zA-Z0-9_-]/', '_', $data['numero_commande']);
             
             // Nom du fichier
-            $filename = $pdfDir . '/' . $cmdClean . '.pdf';
+            $pdfName = 'Etiquette_latitudes_commande_' . $cmdClean;
+            $filename = $pdfDir . '/' . $pdfName . '.pdf';
             
             // Sauvegarder le PDF
             $this->Output('F', $filename);
@@ -128,7 +129,7 @@ class LatitudePdfGenerator extends FPDF {
             chmod($filename, 0666);
             
             // Retourner le chemin relatif
-            return 'pdfs_latitude/' . $cmdClean . '.pdf';
+            return 'pdfs_latitude/' . $pdfName . '.pdf';
             
         } catch(Exception $e) {
             error_log("Erreur LatitudePdfGenerator: " . $e->getMessage());
