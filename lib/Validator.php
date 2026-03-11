@@ -16,9 +16,7 @@ class Validator {
      * @return string Valeur nettoyée
      */
     public static function clean(string $value): string {
-        $value = trim($value);
-        $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        return $value;
+        return trim($value);
     }
     
     /**
@@ -44,7 +42,7 @@ class Validator {
             return false;
         }
         
-        return htmlspecialchars($reference, ENT_QUOTES, 'UTF-8');
+        return $reference;
     }
     
     /**
@@ -68,8 +66,7 @@ class Validator {
         // Supprimer les balises HTML
         $text = strip_tags($text);
         
-        // Échapper les caractères spéciaux
-        return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+        return $text;
     }
     
     /**
@@ -95,7 +92,7 @@ class Validator {
             return false;
         }
         
-        return htmlspecialchars($numeroCommande, ENT_QUOTES, 'UTF-8');
+        return $numeroCommande;
     }
     
     /**
@@ -121,7 +118,7 @@ class Validator {
             return false;
         }
         
-        return htmlspecialchars($numeroLot, ENT_QUOTES, 'UTF-8');
+        return $numeroLot;
     }
     
     /**
