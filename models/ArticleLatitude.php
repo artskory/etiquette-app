@@ -27,7 +27,7 @@ class ArticleLatitude {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->nom = htmlspecialchars(strip_tags($this->nom));
+        $this->nom = strip_tags($this->nom);
 
         $stmt->bindParam(":nom", $this->nom);
 
@@ -81,8 +81,8 @@ class ArticleLatitude {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->nom = htmlspecialchars(strip_tags($this->nom));
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->nom = strip_tags($this->nom);
+        $this->id = strip_tags($this->id);
 
         $stmt->bindParam(":nom", $this->nom);
         $stmt->bindParam(":id", $this->id);
@@ -101,7 +101,7 @@ class ArticleLatitude {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->id = strip_tags($this->id);
         $stmt->bindParam(1, $this->id);
 
         if($stmt->execute()) {
@@ -120,7 +120,7 @@ class ArticleLatitude {
                   LIMIT 0,1";
 
         $stmt = $this->conn->prepare($query);
-        $this->nom = htmlspecialchars(strip_tags($this->nom));
+        $this->nom = strip_tags($this->nom);
         $stmt->bindParam(":nom", $this->nom);
         $stmt->execute();
 

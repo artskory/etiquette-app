@@ -28,8 +28,8 @@ class Reference {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->reference = htmlspecialchars(strip_tags($this->reference));
-        $this->designation = htmlspecialchars(strip_tags($this->designation));
+        $this->reference = strip_tags($this->reference);
+        $this->designation = strip_tags($this->designation);
 
         $stmt->bindParam(":reference", $this->reference);
         $stmt->bindParam(":designation", $this->designation);
@@ -84,9 +84,9 @@ class Reference {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->reference = htmlspecialchars(strip_tags($this->reference));
-        $this->designation = htmlspecialchars(strip_tags($this->designation));
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->reference = strip_tags($this->reference);
+        $this->designation = strip_tags($this->designation);
+        $this->id = strip_tags($this->id);
 
         $stmt->bindParam(":reference", $this->reference);
         $stmt->bindParam(":designation", $this->designation);
@@ -124,8 +124,8 @@ class Reference {
         
         $stmt = $this->conn->prepare($query);
         
-        $this->reference = htmlspecialchars(strip_tags($this->reference));
-        $this->designation = htmlspecialchars(strip_tags($this->designation));
+        $this->reference = strip_tags($this->reference);
+        $this->designation = strip_tags($this->designation);
         
         $stmt->bindParam(":reference", $this->reference);
         $stmt->bindParam(":designation", $this->designation);
@@ -149,7 +149,7 @@ class Reference {
         
         $stmt = $this->conn->prepare($query);
         
-        $cleanRef = htmlspecialchars(strip_tags($this->reference));
+        $cleanRef = strip_tags($this->reference);
         $stmt->bindParam(":reference", $cleanRef);
         
         if ($excludeId !== null) {
@@ -176,7 +176,7 @@ class Reference {
         
         $stmt = $this->conn->prepare($query);
         
-        $cleanDes = htmlspecialchars(strip_tags($this->designation));
+        $cleanDes = strip_tags($this->designation);
         $stmt->bindParam(":designation", $cleanDes);
         
         if ($excludeId !== null) {

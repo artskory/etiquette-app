@@ -30,7 +30,7 @@ class CommandeLatitude {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
+        $this->numero_commande = strip_tags($this->numero_commande);
         // Ne pas échapper le JSON - il est déjà valide
         // $this->articles est déjà encodé en JSON par le contrôleur
 
@@ -120,8 +120,8 @@ class CommandeLatitude {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->numero_commande = strip_tags($this->numero_commande);
+        $this->id = strip_tags($this->id);
 
         $stmt->bindParam(':numero_commande', $this->numero_commande);
         $stmt->bindParam(':articles', $this->articles);
@@ -141,7 +141,7 @@ class CommandeLatitude {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->id = strip_tags($this->id);
         $stmt->bindParam(1, $this->id);
 
         if($stmt->execute()) {

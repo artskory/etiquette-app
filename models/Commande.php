@@ -41,11 +41,11 @@ class Commande {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
-        $this->reference_id = htmlspecialchars(strip_tags($this->reference_id));
+        $this->numero_commande = strip_tags($this->numero_commande);
+        $this->reference_id = strip_tags($this->reference_id);
         // Ne pas échapper le JSON
-        $this->date_production = htmlspecialchars(strip_tags($this->date_production));
-        $this->numero_lot = htmlspecialchars(strip_tags($this->numero_lot));
+        $this->date_production = strip_tags($this->date_production);
+        $this->numero_lot = strip_tags($this->numero_lot);
 
         $stmt->bindParam(":numero_commande", $this->numero_commande);
         $stmt->bindParam(":reference_id", $this->reference_id);
@@ -147,11 +147,11 @@ class Commande {
 
         $stmt = $this->conn->prepare($query);
 
-        $this->numero_commande = htmlspecialchars(strip_tags($this->numero_commande));
-        $this->reference_id = htmlspecialchars(strip_tags($this->reference_id));
-        $this->date_production = htmlspecialchars(strip_tags($this->date_production));
-        $this->numero_lot = htmlspecialchars(strip_tags($this->numero_lot));
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->numero_commande = strip_tags($this->numero_commande);
+        $this->reference_id = strip_tags($this->reference_id);
+        $this->date_production = strip_tags($this->date_production);
+        $this->numero_lot = strip_tags($this->numero_lot);
+        $this->id = strip_tags($this->id);
 
         $stmt->bindParam(':numero_commande', $this->numero_commande);
         $stmt->bindParam(':reference_id', $this->reference_id);
@@ -174,7 +174,7 @@ class Commande {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
-        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->id = strip_tags($this->id);
         $stmt->bindParam(1, $this->id);
 
         if($stmt->execute()) {
