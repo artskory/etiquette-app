@@ -1,13 +1,13 @@
 <?php
 /**
  * Application Étiquettes
- * Version 1.0.2 - Réécriture d'URL propre
+ * Version 1.0.3 - Plusieurs références dans la même commande
  */
 
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-define('APP_VERSION', '1.0.2');
+define('APP_VERSION', '1.0.3');
 
 session_start();
 
