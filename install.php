@@ -1,7 +1,7 @@
 <?php
 /**
  * SCRIPT D'INSTALLATION - APPLICATION ÉTIQUETTES
- * Version 1.0.2 - Avec création automatique des index de performance
+ * Version 1.0.3 - Avec création automatique des index de performance
  * 
  * Ce script installe automatiquement la base de données complète
  * Accès : http://localhost/etiquette-app/install.php
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                     </h1>
                     
                     <p class="text-center text-muted mb-4">
-                        Application Étiquettes v1.0.2
+                        Application Étiquettes v1.0.3
                     </p>
 
                     <hr class="my-4">
@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             </div>
 
             <div class="text-center mt-4 text-white">
-                <small>Application Étiquettes v1.0.2</small>
+                <small>Application Étiquettes v1.0.3</small>
             </div>
         </div>
 
@@ -597,11 +597,9 @@ if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $APP_FOLDER)) {
                     </h5>
                     <p class="mb-3">La base de données <strong><?php echo htmlspecialchars($DB_NAME); ?></strong> est prête à être utilisée.</p>
                     <hr>
-                    <h6>✨ Nouveautés v1.0.2 :</h6>
+                    <h6>✨ Nouveautés v1.0.3 :</h6>
                     <ul class="mb-3">
-                        <li>✅ Index de performance créés automatiquement</li>
-                        <li>✅ Requêtes optimisées (10-100x plus rapides)</li>
-                        <li>✅ Application prête pour des milliers de commandes</li>
+                        <li>✅ Ajout de plusieurs formulaires dans la même commande afin de d'imprimer plusieurs étiquettes à la fois</li>
                     </ul>
                     <hr>
                     <h6>Prochaines étapes :</h6>
