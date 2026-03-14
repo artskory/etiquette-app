@@ -33,7 +33,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     <thead class="table-light">
                         <tr>
                             <th>Référence</th>
-                            <th>Désignation</th>
                             <th>N° Commande</th>
                             <th>Cartons</th>
                             <th width="130" class="text-center">Actions</th>
@@ -44,16 +43,46 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     </thead>
                     <tbody>
                         <?php foreach($commandesArray as $row):
-                            $quantites = json_decode($row['quantites'] ?? '[]', true);
+                            // Décoder etiquettes (nouveau format) ou fallback
+                            $etiquettes = json_decode($row['etiquettes'] ?? 'null', true);
+                            if (!$etiquettes || !is_array($etiquettes)) {
+                                // Ancien format
+                                $quantites = json_decode($row['quantites'] ?? '[]', true);
+                                $etiquettes = [[
+                                    'reference'       => $row['reference'] ?? '',
+                                    'designation'     => $row['designation'] ?? '',
+                                    'numero_commande' => $row['numero_commande'],
+                                    'quantites'       => is_array($quantites) ? $quantites : [],
+                                ]];
+                            }
+                            $firstEtiq = $etiquettes[0];
+                            $nbBlocs   = count($etiquettes);
                             $total = 0;
-                            if(is_array($quantites)) {
-                                foreach($quantites as $qty) $total += (int)($qty['quantite_etiquettes'] ?? 0);
+                            foreach ($etiquettes as $etiq) {
+                                foreach (($etiq['quantites'] ?? []) as $qty) {
+                                    $total += (int)($qty['quantite_etiquettes'] ?? 0);
+                                }
                             }
                         ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($row['reference']); ?></td>
-                                <td><?php echo htmlspecialchars($row['designation']); ?></td>
-                                <td><?php echo htmlspecialchars($row['numero_commande']); ?></td>
+                                <td>
+                                    <?php
+                                        $refs    = array_values(array_filter(array_map(fn($e) => $e['reference'] ?? '', $etiquettes)));
+                                        $visible = array_slice($refs, 0, 2);
+                                        $extra   = count($refs) - 2;
+                                        echo htmlspecialchars(implode(' / ', $visible));
+                                        if ($extra > 0) echo ' <span class="badge bg-secondary">+' . $extra . '</span>';
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                        $cmds    = array_values(array_filter(array_map(fn($e) => $e['numero_commande'] ?? '', $etiquettes)));
+                                        $visible = array_slice($cmds, 0, 2);
+                                        $extra   = count($cmds) - 2;
+                                        echo htmlspecialchars(implode(' / ', $visible));
+                                        if ($extra > 0) echo ' <span class="badge bg-secondary">+' . $extra . '</span>';
+                                    ?>
+                                </td>
                                 <td><?php echo $total; ?></td>
                                 <td class="text-center">
                                     <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/editer" 
