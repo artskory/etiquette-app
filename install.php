@@ -19,14 +19,14 @@ if (file_exists('.installation_complete')) {
         <title>Installation déjà effectuée</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-        <!-- Favicons -->
-        <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-        <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-        <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
-        <link rel="shortcut icon" href="image/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
-        <link rel="manifest" href="image/site.webmanifest" />
+    <!-- Favicons -->
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
+    <link rel="shortcut icon" href="image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
+    <link rel="manifest" href="image/site.webmanifest" />
         <style>
             body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; }
             .card { border:none; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.1); max-width:600px; }
@@ -72,14 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="css/style.css">
-        <!-- Favicons -->
-        <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-        <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-        <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
-        <link rel="shortcut icon" href="image/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
-        <link rel="manifest" href="image/site.webmanifest" />
+    <!-- Favicons -->
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
+    <link rel="shortcut icon" href="image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
+    <link rel="manifest" href="image/site.webmanifest" />
         <style>
             body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; padding:40px 0; }
             .install-container { max-width:720px; margin:0 auto; }
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                             <div class="input-group">
                                 <span class="input-group-text text-muted">github.com/</span>
                                 <input type="text" class="form-control" name="github_repo"
-                                       value="artskory/etiquette-app" required
+                                       value="votre-compte/etiquette-app" required
                                        placeholder="compte/depot">
                             </div>
                             <div class="form-text">Utilisé par le système de mise à jour</div>
@@ -341,10 +341,10 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-    <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-    <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
     <link rel="shortcut icon" href="image/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
     <link rel="manifest" href="image/site.webmanifest" />
@@ -429,6 +429,15 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
                         $ht = preg_replace('/RewriteBase\s+\S+/i', 'RewriteBase /' . $APP_FOLDER . '/', $ht);
                     } else {
                         $ht = preg_replace('/RewriteEngine On/i', "RewriteEngine On\nRewriteBase /" . $APP_FOLDER . "/", $ht);
+                    }
+                    // Ajouter/mettre à jour ErrorDocument 404
+                    $errDoc = 'ErrorDocument 404 /' . $APP_FOLDER . '/index.php?e=404';
+                    if (strpos($ht, 'ErrorDocument 404') !== false) {
+                        $ht = preg_replace('/ErrorDocument 404 .+/', $errDoc, $ht);
+                    } else {
+                        $ht .= "
+" . $errDoc . "
+";
                     }
                     file_put_contents('.htaccess', $ht);
                     echo '<p class="text-success mb-0"><i class="bi bi-check-circle me-2"></i>RewriteBase → <code>/' . htmlspecialchars($APP_FOLDER) . '/</code></p></div>';
