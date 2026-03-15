@@ -4,5 +4,5 @@
  * Mise a jour automatiquement par GitHub Actions.
  * NE PAS modifier manuellement.
  */
-define('APP_VERSION',      '1.1.3');
+define('APP_VERSION',      '1.1.4');
 define('APP_VERSION_DATE', '2026-03-15');
