@@ -1,6 +1,6 @@
 # ============================================
 # RÉÉCRITURE D'URL + HEADERS DE SÉCURITÉ
-# Application Étiquettes v2.0.0
+# Application Étiquettes — version gérée via version.php
 # ============================================
 
 RewriteEngine On

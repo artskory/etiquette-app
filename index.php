@@ -1,13 +1,13 @@
 <?php
 /**
  * Application Étiquettes
- * Version 1.0.3 - Plusieurs références dans la même commande
+ * La version est gérée via version.php
  */
 
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-define('APP_VERSION', '1.0.3');
+require_once __DIR__ . '/version.php';
 
 session_start();
 
