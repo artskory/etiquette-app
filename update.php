@@ -235,6 +235,17 @@ function cleanTmp(string $tmpDir): void {
     rmdir($tmpDir);
 }
 
+function cleanOldBackups(int $keep = 1): void {
+    if (!is_dir(BACKUP_DIR)) return;
+    $files = glob(BACKUP_DIR . '/backup_*.zip');
+    if (!$files || count($files) <= $keep) return;
+    rsort($files); // plus récents en premier
+    $toDelete = array_slice($files, $keep);
+    foreach ($toDelete as $file) {
+        unlink($file);
+    }
+}
+
 function getBackups(): array {
     if (!is_dir(BACKUP_DIR)) return [];
     $files = glob(BACKUP_DIR . '/backup_*.zip');
@@ -365,6 +376,7 @@ if ($authenticated && isset($_POST['action'])) {
                 $smartValues = captureSmartValues();
                 // 2. Backup
                 $backupFile = createBackup();
+                cleanOldBackups(3); // garder seulement les 3 derniers
                 // 3. Téléchargement + extraction
                 [$tmpDir, $sourceDir] = downloadAndExtract();
                 // 4. Application des fichiers
