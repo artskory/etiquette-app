@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS commandes_latitude (
 -- ============================================================================
 
 INSERT IGNORE INTO `references` (reference, designation) VALUES
-('IU1000076404', 'PH SENSOR CALIBRATION AND USE'),
-('IU1000076405', 'USE AND CALIBRATION'),
+('1000076404', 'PH SENSOR CALIBRATION AND USE'),
+('1000076405', 'USE AND CALIBRATION'),
 ('IU114789',     'IU  Flexsafe 3D bag for Palletank 1000 L');
 
 INSERT IGNORE INTO articles_latitude (nom) VALUES
