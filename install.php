@@ -20,10 +20,10 @@ if (file_exists('.installation_complete')) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Favicons -->
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
+    <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
     <link rel="shortcut icon" href="image/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
     <link rel="manifest" href="image/site.webmanifest" />
@@ -73,10 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="css/style.css">
     <!-- Favicons -->
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
+    <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
     <link rel="shortcut icon" href="image/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
     <link rel="manifest" href="image/site.webmanifest" />
@@ -341,10 +341,10 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Favicons -->
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
-    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="image/favicon.svg" />
+    <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
     <link rel="shortcut icon" href="image/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
     <link rel="manifest" href="image/site.webmanifest" />
