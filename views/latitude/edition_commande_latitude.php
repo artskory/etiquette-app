@@ -78,20 +78,26 @@ if(isset($articles)) {
                                         value="<?php echo htmlspecialchars($article['nombre_cartons']); ?>" min="1" required placeholder="Ex: 25">
                                 </div>
                                 <div class="col-md-3">
-                                    <?php if($isFirst): ?>
-                                        <button type="button" class="btn btn-primary w-100 <?php echo $addBtnClass; ?>" 
-                                                onclick="ajouterLigneArticle()" <?php echo $addBtnStyle; ?>>
+                                    <?php
+                                    $isLast = ($index === count($articlesCommande) - 1);
+                                    $isOnly = (count($articlesCommande) === 1);
+                                    if ($isOnly): ?>
+                                        <button type="button" class="btn btn-primary w-100" onclick="ajouterLigneArticle(this)">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-                                    <?php else: ?>
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
+                                    <?php elseif ($isLast): ?>
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle(this)">
                                                 <i class="bi bi-plus-lg"></i>
                                             </button>
                                             <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
+                                    <?php else: ?>
+                                        <button type="button" class="btn btn-danger w-100" onclick="supprimerLigneArticle(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -168,14 +174,14 @@ function generateArticleOptions() {
     return options;
 }
 
-function ajouterLigneArticle() {
-    const container = document.getElementById('articlesContainer');
-    
-    // Masquer le bouton + de la première ligne
-    const firstAddBtn = document.querySelector('.btn-add-first');
-    if(firstAddBtn) {
-        firstAddBtn.style.display = 'none';
-    }
+function ajouterLigneArticle(btn) {
+    const container  = document.getElementById('articlesContainer');
+    const currentCol = btn.closest('.article-row').querySelector('.col-md-3:last-child');
+
+    currentCol.innerHTML = `
+        <button type="button" class="btn btn-danger w-100" onclick="supprimerLigneArticle(this)">
+            <i class="bi bi-trash"></i>
+        </button>`;
     
     // Créer la nouvelle ligne
     const newRow = document.createElement('div');
@@ -198,39 +204,49 @@ function ajouterLigneArticle() {
                 <label class="form-label">Nombre d'exemplaire <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" name="articles[${articleRowIndex}][nombre_cartons]" min="1" required placeholder="Ex: 25">
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
-                <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <div class="col-md-3">
+                <div class="d-flex gap-1">
+                    <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle(this)">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-    `;
-    
+        </div>`;
+
     container.appendChild(newRow);
     articleRowIndex++;
 }
 
 function supprimerLigneArticle(button) {
-    const row = button.closest('.article-row');
+    const row       = button.closest('.article-row');
     const container = document.getElementById('articlesContainer');
-    
-    // Animation de suppression
+
     row.classList.add('removing');
-    
-    // Supprimer après l'animation
+
     setTimeout(() => {
         row.remove();
-        
-        // Si il ne reste qu'une seule ligne, réafficher le bouton + de la première ligne
-        const remainingRows = container.querySelectorAll('.article-row');
-        if(remainingRows.length === 1) {
-            const firstAddBtn = document.querySelector('.btn-add-first');
-            if(firstAddBtn) {
-                firstAddBtn.style.display = 'block';
-            }
+        const remaining = container.querySelectorAll('.article-row');
+        const newLast   = remaining[remaining.length - 1];
+        const lastCol   = newLast.querySelector('.col-md-3:last-child');
+
+        if (remaining.length === 1) {
+            lastCol.innerHTML = `
+                <button type="button" class="btn btn-primary w-100" onclick="ajouterLigneArticle(this)">
+                    <i class="bi bi-plus-lg"></i>
+                </button>`;
+        } else {
+            lastCol.innerHTML = `
+                <div class="d-flex gap-1">
+                    <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle(this)">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>`;
         }
     }, 300);
 }

@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                             <div class="input-group">
                                 <span class="input-group-text text-muted">github.com/</span>
                                 <input type="text" class="form-control" name="github_repo"
-                                       value="votre-compte/etiquette-app" required
+                                       value="artskory/etiquette-app" required
                                        placeholder="compte/depot">
                             </div>
                             <div class="form-text">Utilisé par le système de mise à jour</div>
