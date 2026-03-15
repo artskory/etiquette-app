@@ -169,18 +169,19 @@ function downloadAndExtract(): array {
 
 function applyUpdate(string $sourceDir): array {
     $applied = $skipped = $smart = [];
+    $sourceDir = rtrim(str_replace('\\', '/', $sourceDir), '/');
     $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sourceDir, RecursiveDirectoryIterator::SKIP_DOTS));
     foreach ($it as $file) {
         if ($file->isDir()) continue;
-        $rel  = ltrim(str_replace($sourceDir, '', $file->getRealPath()), DIRECTORY_SEPARATOR);
-        $rel  = str_replace('\\', '/', $rel);
-        $dest = __DIR__ . '/' . $rel;
+        $realPath = str_replace('\\', '/', $file->getRealPath());
+        $rel      = ltrim(str_replace($sourceDir . '/', '', $realPath), '/');
+        $dest     = __DIR__ . '/' . $rel;
 
         if (isWhitelisted($rel)) { $skipped[] = $rel; continue; }
 
         $destDir = dirname($dest);
         if (!is_dir($destDir)) mkdir($destDir, 0755, true);
-        copy($file->getRealPath(), $dest);
+        copy($realPath, $dest);
 
         if (isSmartFile($rel)) { $smart[] = $rel; } else { $applied[] = $rel; }
     }
@@ -208,6 +209,7 @@ function runMigrations(string $sourceDir): array {
                 $pdo = null;
                 if (file_exists(__DIR__ . '/config/database.php')) {
                     require_once __DIR__ . '/config/database.php';
+                    /** @var Database $db */
                     $db  = new Database();
                     $pdo = $db->getConnection();
                 }
@@ -258,7 +260,7 @@ function curlGet(string $url): ?string {
         ]);
         $result = curl_exec($ch);
         $err    = curl_error($ch);
-        curl_close($ch);
+        // curl_close() déprécié en PHP 8+ — la connexion se ferme automatiquement
         return ($result !== false && empty($err)) ? $result : null;
     }
     // Fallback file_get_contents
@@ -275,6 +277,13 @@ function curlGet(string $url): ?string {
 }
 
 function getLocalVersion(): string {
+    // Lire directement le fichier pour avoir la version réelle sur disque
+    // (APP_VERSION peut être obsolète si version.php vient d'être mis à jour)
+    if (file_exists(__DIR__ . '/version.php')) {
+        $content = file_get_contents(__DIR__ . '/version.php');
+        preg_match("/define\('APP_VERSION',\s*'([^']+)'/", $content, $m);
+        return $m[1] ?? '?';
+    }
     return defined('APP_VERSION') ? APP_VERSION : '?';
 }
 
@@ -433,14 +442,6 @@ if ($authenticated && !isset($_POST['action'])) {
     <title>Mise à jour — Application Étiquettes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Favicons -->
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/web-app-manifest-192x192.png" sizes="192x192" />
-    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/web-app-manifest-512x512.png" sizes="512x512" />
-    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="<?= BASE_URL ?>/image/favicon.svg" />
-    <link rel="shortcut icon" href="<?= BASE_URL ?>/image/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/image/apple-touch-icon.png" />
-    <link rel="manifest" href="<?= BASE_URL ?>/image/site.webmanifest" />
     <style>
         body { background: linear-gradient(135deg, #243142 0%, #1a2535 100%); min-height:100vh; padding:40px 0; }
         .update-card { background:#fff; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.3); max-width:800px; margin:0 auto; overflow:hidden; }
@@ -547,6 +548,7 @@ if ($authenticated && !isset($_POST['action'])) {
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
+
 
             <?php if (!empty($actionResult['migrations'])): ?>
             <div class="mb-3">
@@ -684,13 +686,13 @@ Un backup complet sera créé automatiquement avant toute modification.')">
                 <td class="small text-muted"><?= $b['size'] ?></td>
                 <td class="text-end">
                     <form method="POST" class="d-inline"
-                          onsubmit="return confirm('Restaurer ce backup ? Les fichiers actuels seront écrasés.')">
+                          onsubmit='return confirm("Restaurer ce backup ? Les fichiers actuels seront écrasés.")'>
                         <input type="hidden" name="action" value="restore">
                         <input type="hidden" name="backup" value="<?= htmlspecialchars($b['name']) ?>">
                         <button class="btn btn-sm btn-outline-warning"><i class="bi bi-arrow-counterclockwise me-1"></i>Restaurer</button>
                     </form>
                     <form method="POST" class="d-inline"
-                          onsubmit="return confirm('Supprimer ce backup ?')">
+                          onsubmit='return confirm("Supprimer ce backup ?")'>
                         <input type="hidden" name="action" value="delete_backup">
                         <input type="hidden" name="backup" value="<?= htmlspecialchars($b['name']) ?>">
                         <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
