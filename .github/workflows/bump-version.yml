@@ -1,0 +1,83 @@
+name: Bump Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Lire et incrémenter la version
+        id: bump
+        run: |
+          # Lire la version actuelle depuis version.php
+          CURRENT=$(grep "define('APP_VERSION'" version.php | grep -oP "'\K[^']+(?=')" | head -1)
+          echo "Version actuelle : $CURRENT"
+
+          # Décomposer en MAJEUR.MINEUR.PATCH
+          MAJOR=$(echo $CURRENT | cut -d. -f1)
+          MINOR=$(echo $CURRENT | cut -d. -f2)
+          PATCH=$(echo $CURRENT | cut -d. -f3)
+
+          # Lire le message du dernier commit
+          MSG=$(git log -1 --pretty=%s)
+          echo "Message commit : $MSG"
+
+          # Déterminer le type d'incrément
+          if echo "$MSG" | grep -qi "^major:"; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            TYPE="majeure"
+          elif echo "$MSG" | grep -qi "^minor:"; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            TYPE="mineure"
+          else
+            # fix: ou tout autre préfixe → patch par défaut
+            PATCH=$((PATCH + 1))
+            TYPE="patch"
+          fi
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          NEW_DATE=$(date +%Y-%m-%d)
+
+          echo "Nouvelle version : $NEW_VERSION ($TYPE)"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_date=$NEW_DATE"       >> $GITHUB_OUTPUT
+          echo "bump_type=$TYPE"          >> $GITHUB_OUTPUT
+
+      - name: Mettre à jour version.php
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+          NEW_DATE="${{ steps.bump.outputs.new_date }}"
+
+          cat > version.php << PHPEOF
+<?php
+/**
+ * Version de l'application
+ * Mise à jour automatiquement par GitHub Actions.
+ * NE PAS modifier manuellement.
+ */
+define('APP_VERSION',      '$NEW_VERSION');
+define('APP_VERSION_DATE', '$NEW_DATE');
+PHPEOF
+
+          echo "version.php mis à jour → v$NEW_VERSION ($NEW_DATE)"
+
+      - name: Commiter la nouvelle version
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.php
+          git diff --staged --quiet || git commit -m "chore: bump version → v${{ steps.bump.outputs.new_version }} (${{ steps.bump.outputs.bump_type }})"
+          git push
