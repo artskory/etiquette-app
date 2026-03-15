@@ -74,34 +74,38 @@ jobs:
           echo "new_date=$NEW_DATE"       >> $GITHUB_OUTPUT
           echo "bump_type=$TYPE"          >> $GITHUB_OUTPUT
 
-      - name: Mettre à jour version.php
-        if: steps.bump.outputs.new_version != ''
+      - name: Mettre à jour version.php et commiter
         run: |
           NEW_VERSION="${{ steps.bump.outputs.new_version }}"
           NEW_DATE="${{ steps.bump.outputs.new_date }}"
+          BUMP_TYPE="${{ steps.bump.outputs.bump_type }}"
+
+          if [ -z "$NEW_VERSION" ]; then
+            echo "Pas de nouvelle version à écrire, abandon"
+            exit 0
+          fi
+
           {
             echo '<?php'
             echo '/**'
             echo ' * Version de l'"'"'application'
-            echo ' * Mise à jour automatiquement par GitHub Actions.'
+            echo ' * Mise a jour automatiquement par GitHub Actions.'
             echo ' * NE PAS modifier manuellement.'
             echo ' */'
             echo "define('APP_VERSION',      '$NEW_VERSION');"
             echo "define('APP_VERSION_DATE', '$NEW_DATE');"
           } > version.php
-          echo "version.php mis à jour → v$NEW_VERSION ($NEW_DATE)"
+
+          echo "--- Contenu de version.php ---"
           cat version.php
 
-      - name: Commiter et pousser
-        if: steps.bump.outputs.new_version != ''
-        run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add version.php
           if git diff --staged --quiet; then
             echo "Aucun changement à commiter"
           else
-            git commit -m "chore: bump version → v${{ steps.bump.outputs.new_version }} (${{ steps.bump.outputs.bump_type }})"
+            git commit -m "chore: bump version -> v$NEW_VERSION ($BUMP_TYPE)"
             git push
-            echo "version.php poussé sur main"
+            echo "version.php pousse sur main : v$NEW_VERSION"
           fi
