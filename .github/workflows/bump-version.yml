@@ -27,7 +27,7 @@ jobs:
       - name: Lire et incrémenter la version
         id: bump
         run: |
-          CURRENT=$(grep "define('APP_VERSION'" version.php | grep -oP "'\K[^']+(?=')" | head -1)
+          CURRENT=$(grep "define('APP_VERSION'" version.php | grep -oP "APP_VERSION',\s*'\K[^']+")
           if [ -z "$CURRENT" ]; then
             echo "ERREUR : impossible de lire APP_VERSION dans version.php"
             exit 1
