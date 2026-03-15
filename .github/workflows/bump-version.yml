@@ -28,9 +28,19 @@ jobs:
           MINOR=$(echo $CURRENT | cut -d. -f2)
           PATCH=$(echo $CURRENT | cut -d. -f3)
 
-          # Lire le message du dernier commit
-          MSG=$(git log -1 --pretty=%s)
-          echo "Message commit : $MSG"
+          # Chercher le bon message de commit :
+          # Si le dernier commit est un merge, on remonte dans l'historique
+          # pour trouver le premier message qui ne soit pas un merge
+          MSG=""
+          for SHA in $(git log --pretty=%H -10); do
+            CANDIDATE=$(git log -1 --pretty=%s $SHA)
+            if ! echo "$CANDIDATE" | grep -qi "^Merge "; then
+              MSG="$CANDIDATE"
+              break
+            fi
+          done
+
+          echo "Message commit retenu : $MSG"
 
           # Déterminer le type d'incrément
           if echo "$MSG" | grep -qi "^major:"; then
