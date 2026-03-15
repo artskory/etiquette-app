@@ -433,6 +433,14 @@ if ($authenticated && !isset($_POST['action'])) {
     <title>Mise à jour — Application Étiquettes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Favicons -->
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="<?= BASE_URL ?>image/png" href="<?= BASE_URL ?>/image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="<?= BASE_URL ?>image/svg+xml" href="<?= BASE_URL ?>/image/favicon.svg" />
+    <link rel="shortcut icon" href="<?= BASE_URL ?>/image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/image/apple-touch-icon.png" />
+    <link rel="manifest" href="<?= BASE_URL ?>/image/site.webmanifest" />
     <style>
         body { background: linear-gradient(135deg, #243142 0%, #1a2535 100%); min-height:100vh; padding:40px 0; }
         .update-card { background:#fff; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.3); max-width:800px; margin:0 auto; overflow:hidden; }

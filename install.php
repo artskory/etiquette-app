@@ -19,6 +19,14 @@ if (file_exists('.installation_complete')) {
         <title>Installation déjà effectuée</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+        <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
+        <link rel="shortcut icon" href="image/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
+        <link rel="manifest" href="image/site.webmanifest" />
         <style>
             body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; }
             .card { border:none; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.1); max-width:600px; }
@@ -64,6 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="css/style.css">
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+        <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
+        <link rel="shortcut icon" href="image/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
+        <link rel="manifest" href="image/site.webmanifest" />
         <style>
             body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; padding:40px 0; }
             .install-container { max-width:720px; margin:0 auto; }
@@ -324,6 +340,14 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $DB_NAME)) {
     <title>Installation en cours…</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="image/web-app-manifest-512x512.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml" href="image/favicon.svg" />
+    <link rel="shortcut icon" href="image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
+    <link rel="manifest" href="image/site.webmanifest" />
     <style>
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; padding:40px 0; }
         .install-container { max-width:900px; margin:0 auto; }
