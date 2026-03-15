@@ -67,7 +67,7 @@ if(isset($articles)) {
                                             placeholder="Ex: 25">
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary w-100 btn-add-first" onclick="ajouterLigneArticle()">
+                                    <button type="button" class="btn btn-primary w-100 btn-add-first" onclick="ajouterLigneArticle(this)">
                                         <i class="bi bi-plus-lg"></i>
                                     </button>
                                 </div>
@@ -140,20 +140,21 @@ function generateArticleOptions() {
     return options;
 }
 
-function ajouterLigneArticle() {
+function ajouterLigneArticle(btn) {
     const container = document.getElementById('articlesContainer');
-    
-    // Masquer le bouton + de la première ligne
-    const firstAddBtn = document.querySelector('.btn-add-first');
-    if(firstAddBtn) {
-        firstAddBtn.style.display = 'none';
-    }
-    
-    // Créer la nouvelle ligne
+
+    // La ligne courante perd son + → garde seulement 🗑 (pleine largeur)
+    const currentRow = btn.closest('.article-row');
+    const currentCol = currentRow.querySelector('.col-md-3:last-child');
+    currentCol.innerHTML = `
+        <button type="button" class="btn btn-danger w-100" onclick="supprimerLigneArticle(this)">
+            <i class="bi bi-trash"></i>
+        </button>`;
+
+    // Nouvelle ligne avec + + 🗑
     const newRow = document.createElement('div');
     newRow.className = 'article-row mb-3';
     newRow.setAttribute('data-row-index', articleRowIndex);
-    
     newRow.innerHTML = `
         <div class="row align-items-end">
             <div class="col-md-3">
@@ -170,39 +171,54 @@ function ajouterLigneArticle() {
                 <label class="form-label">Nombre d'exemplaire <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" name="articles[${articleRowIndex}][nombre_cartons]" min="1" required placeholder="Ex: 25">
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle()">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
-                <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <div class="col-md-3">
+                <div class="d-flex gap-1">
+                    <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle(this)">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-    `;
-    
+        </div>`;
+
     container.appendChild(newRow);
     articleRowIndex++;
 }
 
 function supprimerLigneArticle(button) {
-    const row = button.closest('.article-row');
+    const row       = button.closest('.article-row');
     const container = document.getElementById('articlesContainer');
-    
-    // Animation de suppression
+    const rows      = container.querySelectorAll('.article-row');
+    const idx       = Array.from(rows).indexOf(row);
+
     row.classList.add('removing');
-    
-    // Supprimer après l'animation
+
     setTimeout(() => {
         row.remove();
-        
-        // Si il ne reste qu'une seule ligne, réafficher le bouton + de la première ligne
-        const remainingRows = container.querySelectorAll('.article-row');
-        if(remainingRows.length === 1) {
-            const firstAddBtn = document.querySelector('.btn-add-first');
-            if(firstAddBtn) {
-                firstAddBtn.style.display = 'block';
-            }
+
+        const remaining = container.querySelectorAll('.article-row');
+        const newLast   = remaining[remaining.length - 1];
+        const lastCol   = newLast.querySelector('.col-md-3:last-child');
+
+        if (remaining.length === 1) {
+            // Une seule ligne : + pleine largeur
+            lastCol.innerHTML = `
+                <button type="button" class="btn btn-primary w-100 btn-add-first" onclick="ajouterLigneArticle(this)">
+                    <i class="bi bi-plus-lg"></i>
+                </button>`;
+        } else {
+            // Plusieurs lignes : la nouvelle dernière récupère + + 🗑
+            lastCol.innerHTML = `
+                <div class="d-flex gap-1">
+                    <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneArticle(this)">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneArticle(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>`;
         }
     }, 300);
 }
