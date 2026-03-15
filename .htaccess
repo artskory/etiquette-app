@@ -1,10 +1,14 @@
 # ============================================
 # RÉÉCRITURE D'URL + HEADERS DE SÉCURITÉ
-# Application Étiquettes — version gérée via version.php
+# Application Étiquettes v2.0.0
 # ============================================
 
 RewriteEngine On
 RewriteBase /etiquette-app/
+
+# Forcer le passage par index.php pour les extensions sensibles (même si le fichier existe)
+RewriteCond %{REQUEST_URI} \.(sql|md|env|gitignore|htpasswd|ini|log|sh|bak|backup|old|tmp|swp|git)$ [NC]
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Ne pas réécrire les fichiers et dossiers existants
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -13,11 +17,8 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # Tout rediriger vers index.php en passant le chemin complet
 RewriteRule ^(.*)$ index.php [QSA,L]
 
-# Bloquer l'accès aux fichiers sensibles
-<FilesMatch "\.(sql|md|env|git|gitignore|htpasswd|ini|log|sh|bak|backup|old|tmp|swp)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
+
+# Les extensions sensibles sont gérées par index.php
 
 # ============================================
 # HEADERS DE SÉCURITÉ
@@ -45,6 +46,12 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
 <FilesMatch "^(config\.php|database\.php)">
-    Order allow,deny
-    Deny from all
+    <IfVersion >= 2.4>
+        Require all denied
+    </IfVersion>
+    <IfVersion < 2.4>
+        Order allow,deny
+        Deny from all
+    </IfVersion>
 </FilesMatch>
+

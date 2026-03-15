@@ -51,6 +51,35 @@ function url(string ...$segments): string {
 }
 
 // ============================================
+// GESTION DES ERREURS HTTP
+// ============================================
+
+// Via paramètre ?e= (ErrorDocument Apache)
+if (isset($_GET['e'])) {
+    $errCode = (int)$_GET['e'];
+    if ($errCode === 403) {
+        http_response_code(403);
+        require_once 'views/403.php';
+        exit;
+    }
+    if ($errCode === 404) {
+        http_response_code(404);
+        require_once 'views/404.php';
+        exit;
+    }
+}
+
+// Bloquer les extensions sensibles dans l'URL → 403
+$blockedExtensions = ['sql','md','env','gitignore','htpasswd','ini','log','sh','bak','backup','old','tmp','swp','git'];
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+$ext = strtolower(pathinfo($requestPath, PATHINFO_EXTENSION));
+if ($ext && in_array($ext, $blockedExtensions)) {
+    http_response_code(403);
+    require_once 'views/403.php';
+    exit;
+}
+
+// ============================================
 // ROUTEUR : analyse du chemin de l'URL
 // ============================================
 
@@ -210,6 +239,11 @@ switch ($module) {
     // ------------------------------------------
     // INSTALL / UPDATE
     // ------------------------------------------
+    case '403':
+        http_response_code(403);
+        require_once 'views/403.php';
+        break;
+
     case 'install':
         require_once __DIR__ . '/install.php';
         break;

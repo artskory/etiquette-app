@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>404 — Erreur de repérage CMJN</title>
+    <title>403 — Arrêt sécurité presse</title>
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -167,20 +167,20 @@
       <div class="crop br"></div>
 
       <div class="error">
-        <div class="layer cyan">Erreur<br>404</div>
-        <div class="layer magenta">Erreur<br>404</div>
-        <div class="layer yellow">Erreur<br>404</div>
-        <div class="black">Erreur<br>404</div>
+        <div class="layer cyan">Erreur<br>403</div>
+        <div class="layer magenta">Erreur<br>403</div>
+        <div class="layer yellow">Erreur<br>403</div>
+        <div class="black">Erreur<br>403</div>
       </div>
     </div>
 
     <!-- Titre -->
-    <h1 class="mt-4 fw-bold fs-3">Erreur de repérage CMJN</h1>
+    <h1 class="mt-4 fw-bold fs-3">ARRÊT SÉCURITÉ PRESSE</h1>
 
     <!-- Description -->
     <p class="text-secondary fs-5 mt-2">
-      Les plaques sont en cours d'alignement…<br>
-      mais la page demandée n'existe pas dans ce tirage.
+      Cette page est protégée par le système de sécurité de l'atelier.<br>
+      L'opérateur n'a pas autorisé ce tirage.
     </p>
 
     <!-- Bouton Bootstrap -->
