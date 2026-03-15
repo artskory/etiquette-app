@@ -319,10 +319,25 @@ function getGithubInfo(): array {
 }
 
 // ── Authentification ──────────────────────────────────────────────────────────
-if (isset($_POST['logout'])) unset($_SESSION['update_auth']);
+if (isset($_POST['logout'])) {
+    unset($_SESSION['update_auth']);
+    unset($_SESSION['update_auth_time']);
+}
+
+// Expiration de session après 30 minutes
+if (!empty($_SESSION['update_auth'])) {
+    $sessionAge = time() - ($_SESSION['update_auth_time'] ?? 0);
+    if ($sessionAge > 1800) {
+        unset($_SESSION['update_auth']);
+        unset($_SESSION['update_auth_time']);
+        $authError = 'Session expirée. Veuillez vous reconnecter.';
+    }
+}
+
 if (isset($_POST['password'])) {
     if (password_verify($_POST['password'], $config['update_password'] ?? '')) {
-        $_SESSION['update_auth'] = true;
+        $_SESSION['update_auth']      = true;
+        $_SESSION['update_auth_time'] = time();
     } else {
         $authError = 'Mot de passe incorrect.';
     }
@@ -594,26 +609,37 @@ if ($authenticated && !isset($_POST['action'])) {
         <!-- Bouton update -->
         <div class="mb-4">
         <?php if ($remoteVersion && isUpToDate($localVersion, $remoteVersion)): ?>
+            <!-- À jour -->
             <div class="alert alert-success mb-0">
                 <i class="bi bi-check-circle-fill me-2"></i>
                 Votre application est à jour <strong>(v<?= htmlspecialchars($localVersion) ?>)</strong>. Aucune mise à jour disponible.
             </div>
-        <?php else: ?>
-            <?php if ($remoteVersion): ?>
+        <?php elseif ($remoteVersion && !isUpToDate($localVersion, $remoteVersion)): ?>
+            <!-- Mise à jour disponible -->
             <div class="alert alert-warning mb-3">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 Mise à jour disponible : <strong>v<?= htmlspecialchars($remoteVersion) ?></strong>
                 (installée : v<?= htmlspecialchars($localVersion) ?>)
             </div>
-            <?php endif; ?>
             <form method="POST"
-                  onsubmit="return confirm('Lancer la mise à jour depuis GitHub ?\n\nUn backup complet sera créé automatiquement avant toute modification.')">
+                  onsubmit="return confirm('Lancer la mise à jour vers v<?= htmlspecialchars($remoteVersion) ?> ?
+
+Un backup complet sera créé automatiquement avant toute modification.')">
                 <input type="hidden" name="action" value="update">
                 <button type="submit" class="btn btn-update">
                     <i class="bi bi-cloud-download me-2"></i>Mettre à jour depuis GitHub
                 </button>
             </form>
             <p class="text-muted small mt-2">Un backup sera créé automatiquement. Vos paramètres (BDD, dossier) seront préservés.</p>
+        <?php else: ?>
+            <!-- GitHub injoignable : bouton désactivé -->
+            <div class="alert alert-secondary mb-3">
+                <i class="bi bi-wifi-off me-2"></i>
+                Impossible de vérifier la version distante. La mise à jour est désactivée par sécurité.
+            </div>
+            <button class="btn btn-update" disabled style="opacity:.5;cursor:not-allowed;">
+                <i class="bi bi-cloud-download me-2"></i>Mettre à jour depuis GitHub
+            </button>
         <?php endif; ?>
         </div>
 
