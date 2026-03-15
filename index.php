@@ -208,6 +208,17 @@ switch ($module) {
         break;
 
     // ------------------------------------------
+    // INSTALL / UPDATE
+    // ------------------------------------------
+    case 'install':
+        require_once __DIR__ . '/install.php';
+        break;
+
+    case 'update':
+        require_once __DIR__ . '/update.php';
+        break;
+
+    // ------------------------------------------
     // PAGE 404
     // ------------------------------------------
     default:
