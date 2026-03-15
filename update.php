@@ -1,7 +1,7 @@
 <?php
 /**
  * update.php — Mise à jour depuis GitHub
- * Version 2.0.0
+ * La version est gérée via version.php
  *
  * - Téléchargement du ZIP GitHub (pas besoin de git)
  * - Capture des valeurs personnalisées avant update, réinjection après
@@ -24,6 +24,7 @@ if (!file_exists('.app_config')) {
 }
 
 $config     = json_decode(file_get_contents('.app_config'), true);
+require_once __DIR__ . '/version.php'; // Source unique de la version
 $APP_FOLDER = $config['app_folder']   ?? 'etiquette-app';
 $BASE_PATH  = '/' . $APP_FOLDER . '/';
 
@@ -273,6 +274,35 @@ function curlGet(string $url): ?string {
     return $result !== false ? $result : null;
 }
 
+function getLocalVersion(): string {
+    return defined('APP_VERSION') ? APP_VERSION : '?';
+}
+
+function getRemoteVersionFile(): ?string {
+    global $GITHUB_REPO;
+    // raw.githubusercontent.com : accès direct sans API, sans rate limit
+    $url = 'https://raw.githubusercontent.com/' . $GITHUB_REPO . '/main/version.php';
+    return curlGet($url);
+}
+
+function getRemoteVersion(): ?string {
+    $content = getRemoteVersionFile();
+    if (!$content) return null;
+    preg_match("/define\('APP_VERSION',\s*'([^']+)'/", $content, $m);
+    return $m[1] ?? null;
+}
+
+function getRemoteVersionDate(): ?string {
+    $content = getRemoteVersionFile();
+    if (!$content) return null;
+    preg_match("/define\('APP_VERSION_DATE',\s*'([^']+)'/", $content, $m);
+    return $m[1] ?? null;
+}
+
+function isUpToDate(string $local, string $remote): bool {
+    return version_compare($local, $remote, '>=');
+}
+
 function getGithubInfo(): array {
     global $GITHUB_API;
     $json = curlGet($GITHUB_API . '/commits/main');
@@ -323,6 +353,18 @@ if ($authenticated && isset($_POST['action'])) {
                 cleanTmp($tmpDir);
                 // 8. Vider OPcache
                 if (function_exists('opcache_reset')) opcache_reset();
+                // 9. Mettre à jour la version dans .app_config
+                if (file_exists('.app_config')) {
+                    $cfg = json_decode(file_get_contents('.app_config'), true) ?? [];
+                    // Recharger version.php pour lire la nouvelle version
+                    $vFile = __DIR__ . '/version.php';
+                    if (file_exists($vFile)) {
+                        $vContent = file_get_contents($vFile);
+                        preg_match("/define\('APP_VERSION',\s*'([^']+)'/", $vContent, $mv);
+                        $cfg['version'] = $mv[1] ?? ($cfg['version'] ?? '?');
+                    }
+                    file_put_contents('.app_config', json_encode($cfg, JSON_PRETTY_PRINT));
+                }
 
                 $actionResult = [
                     'type'       => 'update',
@@ -357,8 +399,16 @@ if ($authenticated && isset($_POST['action'])) {
     }
 }
 
-$backups = getBackups();
-$githubInfo = ($authenticated && !isset($_POST['action'])) ? getGithubInfo() : [];
+$backups       = getBackups();
+$localVersion  = getLocalVersion();
+$remoteVersion = null;
+$remoteDate    = null;
+$githubInfo    = [];
+if ($authenticated && !isset($_POST['action'])) {
+    $githubInfo    = getGithubInfo();
+    $remoteVersion = getRemoteVersion();
+    $remoteDate    = getRemoteVersionDate();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -503,23 +553,59 @@ $githubInfo = ($authenticated && !isset($_POST['action'])) ? getGithubInfo() : [
     <?php else: ?>
     <!-- ── Tableau de bord ── -->
 
-        <!-- Infos dépôt -->
-        <div class="section-title"><i class="bi bi-info-circle me-1"></i>État</div>
-        <div class="p-3 bg-light rounded mb-4">
-            <?php if (!empty($githubInfo)): ?>
-            <div class="small">
-                <strong>Dernier commit GitHub :</strong>
-                <code><?= htmlspecialchars($githubInfo['sha']) ?></code>
-                — <?= htmlspecialchars(substr($githubInfo['message'], 0, 80)) ?>
-                <span class="text-muted ms-2"><?= htmlspecialchars($githubInfo['date']) ?></span>
+        <!-- Versions -->
+        <div class="section-title"><i class="bi bi-info-circle me-1"></i>État de l'application</div>
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+                <div class="p-3 rounded border">
+                    <div class="text-muted small mb-1">Version installée</div>
+                    <span class="badge bg-secondary fs-6 font-monospace">v<?= htmlspecialchars($localVersion) ?></span>
+                </div>
             </div>
-            <?php else: ?>
-            <span class="text-muted small">Impossible de joindre GitHub</span>
-            <?php endif; ?>
+            <div class="col-sm-6">
+                <div class="p-3 rounded border">
+                    <div class="text-muted small mb-1">Dernière version disponible</div>
+                    <?php if ($remoteVersion): ?>
+                        <?php if (isUpToDate($localVersion, $remoteVersion)): ?>
+                            <span class="badge bg-success fs-6 font-monospace">v<?= htmlspecialchars($remoteVersion) ?></span>
+                            <span class="text-success small ms-2"><i class="bi bi-check2"></i> À jour</span>
+                        <?php else: ?>
+                            <span class="badge bg-warning text-dark fs-6 font-monospace">v<?= htmlspecialchars($remoteVersion) ?></span>
+                            <?php if ($remoteDate): ?>
+                                <span class="text-muted small ms-2"><?= htmlspecialchars($remoteDate) ?></span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <span class="text-muted small">Impossible de joindre GitHub</span>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
+
+        <?php if (!empty($githubInfo)): ?>
+        <div class="p-3 bg-light rounded mb-3 small">
+            <strong>Dernier commit :</strong>
+            <code><?= htmlspecialchars($githubInfo['sha']) ?></code>
+            — <?= htmlspecialchars(substr($githubInfo['message'], 0, 80)) ?>
+            <span class="text-muted ms-2"><?= htmlspecialchars($githubInfo['date']) ?></span>
+        </div>
+        <?php endif; ?>
 
         <!-- Bouton update -->
         <div class="mb-4">
+        <?php if ($remoteVersion && isUpToDate($localVersion, $remoteVersion)): ?>
+            <div class="alert alert-success mb-0">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Votre application est à jour <strong>(v<?= htmlspecialchars($localVersion) ?>)</strong>. Aucune mise à jour disponible.
+            </div>
+        <?php else: ?>
+            <?php if ($remoteVersion): ?>
+            <div class="alert alert-warning mb-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Mise à jour disponible : <strong>v<?= htmlspecialchars($remoteVersion) ?></strong>
+                (installée : v<?= htmlspecialchars($localVersion) ?>)
+            </div>
+            <?php endif; ?>
             <form method="POST"
                   onsubmit="return confirm('Lancer la mise à jour depuis GitHub ?\n\nUn backup complet sera créé automatiquement avant toute modification.')">
                 <input type="hidden" name="action" value="update">
@@ -528,6 +614,7 @@ $githubInfo = ($authenticated && !isset($_POST['action'])) ? getGithubInfo() : [
                 </button>
             </form>
             <p class="text-muted small mt-2">Un backup sera créé automatiquement. Vos paramètres (BDD, dossier) seront préservés.</p>
+        <?php endif; ?>
         </div>
 
         <!-- Fichiers protégés -->

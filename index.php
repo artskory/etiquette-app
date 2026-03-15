@@ -1,13 +1,13 @@
 <?php
 /**
  * Application Étiquettes
- * Version 1.0.2 - Réécriture d'URL propre
+ * La version est gérée via version.php
  */
 
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
-define('APP_VERSION', '1.0.2');
+require_once __DIR__ . '/version.php';
 
 session_start();
 

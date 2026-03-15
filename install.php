@@ -1,10 +1,10 @@
 <?php
 /**
  * SCRIPT D'INSTALLATION - APPLICATION ÉTIQUETTES
- * Version 2.0.0
+ * La version est gérée automatiquement via version.php
  */
 
-define('APP_VERSION', '2.0.0');
+require_once __DIR__ . '/version.php';
 
 // ── Protection contre double installation ────────────────────────────────────
 if (file_exists('.installation_complete')) {
