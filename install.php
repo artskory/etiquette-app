@@ -192,6 +192,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                                 <span id="strengthLabel" class="text-muted">—</span>
                             </div>
                             <div class="form-text">Recommandé : plusieurs mots séparés par des tirets, ex: <code>soleil-camion-fenetre-bleu</code></div>
+
+                            <label class="form-label mt-3">Confirmer le mot de passe</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword"
+                                       placeholder="Répétez votre mot de passe" oninput="checkConfirm()">
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleVisibility('confirmPassword', 'eyeIconConfirm')">
+                                    <i class="bi bi-eye" id="eyeIconConfirm"></i>
+                                </button>
+                            </div>
+                            <div id="confirmFeedback" class="form-text mt-1"></div>
                         </div>
 
                         <!-- Champ caché qui contiendra le mot de passe final -->
@@ -203,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" onclick="setFinalPassword()">
+                            <button type="submit" class="btn btn-primary btn-lg" onclick="return setFinalPassword()">
                                 <i class="bi bi-rocket-takeoff me-2"></i>Lancer l'installation
                             </button>
                         </div>
@@ -294,11 +304,34 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             label.className   = val ? c.cls  : 'text-muted';
         }
 
+        function checkConfirm() {
+            const pass    = document.getElementById('customPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const fb      = document.getElementById('confirmFeedback');
+            if (!confirm) { fb.textContent = ''; return; }
+            if (pass === confirm) {
+                fb.innerHTML = '<span class="text-success">✓ Les mots de passe correspondent</span>';
+            } else {
+                fb.innerHTML = '<span class="text-danger">✗ Les mots de passe ne correspondent pas</span>';
+            }
+        }
+
         function setFinalPassword() {
             const useCustom = document.getElementById('useCustom').checked;
             const custom    = document.getElementById('customPassword').value.trim();
+            const confirm   = document.getElementById('confirmPassword').value.trim();
             const generated = document.getElementById('generatedPassphrase').textContent.trim();
-            document.getElementById('finalPassword').value = useCustom && custom ? custom : generated;
+
+            if (useCustom && custom) {
+                if (custom !== confirm) {
+                    alert('Les mots de passe ne correspondent pas.');
+                    return false;
+                }
+                document.getElementById('finalPassword').value = custom;
+            } else {
+                document.getElementById('finalPassword').value = generated;
+            }
+            return true;
         }
 
         // Clic sur la passphrase pour copier
