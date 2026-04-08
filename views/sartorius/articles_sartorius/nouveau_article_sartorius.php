@@ -19,6 +19,7 @@ $retourUrl = ($from === 'nouvelle')
 $formData = $_SESSION['form_data'] ?? [];
 $savedReference = htmlspecialchars($formData['reference'] ?? '');
 $savedDesignation = htmlspecialchars($formData['designation'] ?? '');
+$savedQPC = htmlspecialchars($formData['quantite_par_carton'] ?? '');
 
 // Charger les références
 require_once 'config/database.php';
@@ -58,19 +59,26 @@ $hasReferences = !empty($referencesArray);
                 <?php echo CsrfToken::field(); ?>
                 <input type="hidden" name="from" value="<?php echo htmlspecialchars($from); ?>">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <i class="bi bi-hash blue icons"></i>
                         <label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="reference" name="reference" required
                                value="<?php echo $savedReference; ?>"
                                placeholder="Entrez la référence">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <i class="bi bi-bookmarks blue icons"></i>
                         <label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="designation" name="designation" required
                                value="<?php echo $savedDesignation; ?>"
                                placeholder="Entrez la désignation">
+                    </div>
+                    <div class="col-md-4">
+                        <i class="bi bi-box-seam blue icons"></i>
+                        <label for="quantite_par_carton" class="form-label">Quantité par carton <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="quantite_par_carton" name="quantite_par_carton" required min="1"
+                               value="<?php echo $savedQPC; ?>"
+                               placeholder="Ex : 12">
                     </div>
                 </div>
                 <div class="text-end mt-4">
@@ -95,6 +103,7 @@ $hasReferences = !empty($referencesArray);
                         <tr>
                             <th>Référence</th>
                             <th>Désignation</th>
+                            <th class="text-center">Qté/carton</th>
                             <th width="120" class="text-center">Actions</th>
                             <th width="40" class="text-center">
                                 <input type="checkbox" class="form-check-input" id="checkAll" title="Tout sélectionner">
@@ -106,6 +115,11 @@ $hasReferences = !empty($referencesArray);
                             <tr>
                                 <td><?php echo htmlspecialchars($row['reference']); ?></td>
                                 <td><?php echo htmlspecialchars($row['designation']); ?></td>
+                                <td class="text-center">
+                                    <?php echo $row['quantite_par_carton'] !== null
+                                        ? htmlspecialchars($row['quantite_par_carton'])
+                                        : '<span class="text-muted">—</span>'; ?>
+                                </td>
                                 <td class="text-center">
                                     <a href="<?= BASE_URL ?>/sartorius/reference/<?php echo $row['id']; ?>/editer"
                                        class="btn btn-sm btn-outline-primary" title="Éditer">
@@ -119,7 +133,7 @@ $hasReferences = !empty($referencesArray);
                         <?php endforeach; ?>
                         <?php if(!$hasReferences): ?>
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-4">
+                                <td colspan="5" class="text-center text-muted py-4">
                                     <i class="bi bi-inbox fs-1"></i>
                                     <p class="mt-2">Aucune référence enregistrée</p>
                                 </td>

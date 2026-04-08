@@ -45,6 +45,7 @@ class ReferenceController {
             // Validation des données
             $reference = Validator::reference($_POST['reference'] ?? '');
             $designation = Validator::text($_POST['designation'] ?? '');
+            $quantite_par_carton = $_POST['quantite_par_carton'] ?? '';
             
             // Vérifier que les données sont valides
             if ($reference === false || Validator::isEmpty($_POST['reference'] ?? '')) {
@@ -58,10 +59,18 @@ class ReferenceController {
                 header("Location: " . $ajoutUrl . "&error=invalid_designation");
                 exit;
             }
+
+            // Validation quantite_par_carton (obligatoire, entier positif)
+            if ($quantite_par_carton === '' || !ctype_digit(strval($quantite_par_carton)) || (int)$quantite_par_carton < 1) {
+                $_SESSION['form_data'] = $_POST;
+                header("Location: " . $ajoutUrl . "&error=invalid_quantite_par_carton");
+                exit;
+            }
             
             // Assigner les données validées
             $this->reference->reference = $reference;
             $this->reference->designation = $designation;
+            $this->reference->quantite_par_carton = (int)$quantite_par_carton;
 
             try {
                 // Vérifier si la référence existe déjà
@@ -163,15 +172,23 @@ class ReferenceController {
             // Valider les données
             $reference = Validator::reference($_POST['reference'] ?? '');
             $designation = Validator::text($_POST['designation'] ?? '');
+            $quantite_par_carton = $_POST['quantite_par_carton'] ?? '';
             
             if ($reference === false || $designation === false) {
                 header("Location: " . BASE_URL . "/sartorius/reference/$id/editer?error=invalid_data");
+                exit;
+            }
+
+            // Validation quantite_par_carton (obligatoire, entier positif)
+            if ($quantite_par_carton === '' || !ctype_digit(strval($quantite_par_carton)) || (int)$quantite_par_carton < 1) {
+                header("Location: " . BASE_URL . "/sartorius/reference/$id/editer?error=invalid_quantite_par_carton");
                 exit;
             }
             
             $this->reference->id = $id;
             $this->reference->reference = $reference;
             $this->reference->designation = $designation;
+            $this->reference->quantite_par_carton = (int)$quantite_par_carton;
 
             try {
                 // Vérifier si la référence existe déjà (en excluant l'ID actuel)

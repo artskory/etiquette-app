@@ -121,6 +121,117 @@ class SartoriusPdfGenerator extends FPDF {
         }
     }
 
+    /**
+     * Générer un PDF combiné à partir de plusieurs commandes (sans case vide entre commandes)
+     */
+    public function genererCombine(array $commandesDatas) {
+        try {
+            $this->AddPage('P', 'A4');
+            $this->SetAutoPageBreak(false);
+
+            $etiquetteWidth    = 105;
+            $etiquetteHeight   = 74;
+            $marginLeft        = 2.5;
+            $marginTop         = 0.5;
+            $espaceEntreLignes = 0.25;
+
+            $col = 0;
+            $row = 0;
+
+            // ── Fusionner tous les blocs de toutes les commandes ──────────────
+            $allBlocs = [];
+            foreach ($commandesDatas as $commandeData) {
+                $blocs = json_decode($commandeData['etiquettes'] ?? 'null', true);
+                if (!$blocs || !is_array($blocs)) {
+                    $quantites = json_decode($commandeData['quantites'] ?? '[]', true);
+                    if (!$quantites || empty($quantites)) continue;
+                    $blocs = [[
+                        'reference'       => $commandeData['reference']       ?? '',
+                        'designation'     => $commandeData['designation']     ?? '',
+                        'date_production' => $commandeData['date_production'] ?? '',
+                        'numero_commande' => $commandeData['numero_commande'] ?? '',
+                        'numero_lot'      => $commandeData['numero_lot']      ?? '',
+                        'quantites'       => $quantites,
+                    ]];
+                }
+                foreach ($blocs as $bloc) {
+                    $allBlocs[] = $bloc;
+                }
+            }
+
+            // ── Compter le total d'étiquettes ─────────────────────────────────
+            $totalEtiquettes = 0;
+            foreach ($allBlocs as $bloc) {
+                foreach (($bloc['quantites'] ?? []) as $qty) {
+                    $totalEtiquettes += (int)($qty['quantite_etiquettes'] ?? 0);
+                }
+            }
+
+            if ($totalEtiquettes === 0) {
+                throw new Exception("Aucune étiquette à générer dans la sélection.");
+            }
+
+            $etiquettesGenerees = 0;
+
+            // ── Générer en continu : pas de case vide entre commandes ─────────
+            foreach ($allBlocs as $bloc) {
+                foreach (($bloc['quantites'] ?? []) as $qty) {
+                    $qpc      = (int)$qty['quantite_par_carton'];
+                    $nbLabels = (int)$qty['quantite_etiquettes'];
+
+                    $dataLabel = [
+                        'reference'           => $bloc['reference'],
+                        'designation'         => $bloc['designation'],
+                        'date_production'     => $bloc['date_production'],
+                        'numero_commande'     => $bloc['numero_commande'],
+                        'numero_lot'          => $bloc['numero_lot'],
+                        'quantite_par_carton' => $qpc,
+                    ];
+
+                    for ($i = 0; $i < $nbLabels; $i++) {
+                        $etiquettesGenerees++;
+                        $posX = $marginLeft + ($col * $etiquetteWidth);
+                        $posY = $marginTop  + ($row * ($etiquetteHeight + $espaceEntreLignes));
+                        $this->dessinerEtiquette($posX, $posY, $etiquetteWidth, $etiquetteHeight, $dataLabel);
+
+                        $col++;
+                        if ($col >= 2) {
+                            $col = 0;
+                            $row++;
+                            if ($row >= 4 && $etiquettesGenerees < $totalEtiquettes) {
+                                $this->AddPage('P', 'A4');
+                                $row = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Sauvegarder dans un fichier temporaire ────────────────────────
+            $pdfDir = dirname(__FILE__) . '/../pdfs_sartorius/';
+            if (!is_dir($pdfDir)) {
+                mkdir($pdfDir, 0777, true);
+                chmod($pdfDir, 0777);
+            }
+
+            $tmpName  = 'combine_' . date('Ymd_His') . '_' . uniqid() . '.pdf';
+            $filename = $pdfDir . $tmpName;
+
+            $this->Output('F', $filename);
+
+            if (!file_exists($filename)) {
+                throw new Exception("Le fichier PDF combiné n'a pas été créé.");
+            }
+            chmod($filename, 0666);
+
+            return $filename;
+
+        } catch (Exception $e) {
+            error_log("Erreur PdfGenerator (combine): " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     private function dessinerEtiquette($x, $y, $width, $height, $data) {
         $currentY = $y + 8;
 

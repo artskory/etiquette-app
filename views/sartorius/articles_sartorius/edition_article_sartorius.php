@@ -17,18 +17,25 @@
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($referenceData['id']); ?>">
                 
                 <div class="row">    
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <i class="bi bi-hash blue icons"></i><label for="reference" class="form-label">Référence <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="reference" name="reference" required 
                                value="<?php echo htmlspecialchars($referenceData['reference']); ?>"
                                placeholder="Entrez la référence">
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <i class="bi bi-bookmarks blue icons"></i></i><label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-bookmarks blue icons"></i><label for="designation" class="form-label">Désignation <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="designation" name="designation" required 
                                value="<?php echo htmlspecialchars($referenceData['designation']); ?>"
                                placeholder="Entrez la désignation">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-box-seam blue icons"></i><label for="quantite_par_carton" class="form-label">Quantité par carton <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="quantite_par_carton" name="quantite_par_carton" required min="1"
+                               value="<?php echo htmlspecialchars($referenceData['quantite_par_carton'] ?? ''); ?>"
+                               placeholder="Ex : 12">
                     </div>
                 </div>
                 <div class="text-end">

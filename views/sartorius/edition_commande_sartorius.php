@@ -367,6 +367,8 @@ function ajouterBloc() {
             </div>
         </div>`;
     container.appendChild(bloc);
+    const newSelect = bloc.querySelector(`select[name="commandes[${idx}][reference_id]"]`);
+    if (newSelect) attachRefChangeListener(newSelect);
     qtyPerBloc[idx] = 1;
     blocCounter++;
     rafraichirBoutons();
@@ -376,8 +378,26 @@ function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Auto-remplissage Quantité par carton selon la référence sélectionnée ─────
+function attachRefChangeListener(selectEl) {
+    selectEl.addEventListener('change', function() {
+        const selectedId = parseInt(this.value);
+        const ref = REFS.find(r => parseInt(r.id) === selectedId);
+        const bloc = this.closest('.bloc-commande');
+        const qpcInput = bloc ? bloc.querySelector('input[name*="[quantite_par_carton]"]') : null;
+        if (qpcInput && ref && ref.quantite_par_carton !== null) {
+            qpcInput.value = ref.quantite_par_carton;
+        } else if (qpcInput) {
+            qpcInput.value = '';
+        }
+    });
+}
+
 // Initialiser les boutons au chargement
 rafraichirBoutons();
+
+// Attacher le listener sur tous les selects de référence existants
+document.querySelectorAll('.bloc-commande select[name*="[reference_id]"]').forEach(attachRefChangeListener);
 </script>
 
 <?php require_once 'views/layouts/footer.php'; ?>

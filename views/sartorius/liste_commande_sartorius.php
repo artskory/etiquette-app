@@ -18,14 +18,25 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     <i class="bi bi-plus-circle me-1"></i><span class="btn-text">Nouveau</span>
                 </a>
                 <?php if($hasCommandes): ?>
+                <button type="button" id="btnCombiner" class="btn btn-info me-2"
+                        style="display:none;">
+                    <i class="bi bi-collection me-1"></i><span class="btn-text">Combiner (<span id="selectionCount">0</span>)</span>
+                </button>
                 <button type="button" id="btnSupprimerSelection" class="btn btn-danger"
                         style="display:none;"
                         data-bs-toggle="modal" data-bs-target="#supprimerSelectionModal">
-                    <i class="bi bi-trash me-1"></i><span class="btn-text">(<span id="selectionCount">0</span>)</span>
+                    <i class="bi bi-trash"></i>
                 </button>
                 <?php endif; ?>
             </div>
         </div>
+
+        <?php if($hasCommandes): ?>
+        <form id="formCombiner" action="<?= BASE_URL ?>/sartorius/combiner" method="POST" style="display:none;">
+            <?php echo CsrfToken::field(); ?>
+            <div id="combineInputs"></div>
+        </form>
+        <?php endif; ?>
 
         <div class="card mt-5">
             <div class="table-responsive">
@@ -43,10 +54,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     </thead>
                     <tbody>
                         <?php foreach($commandesArray as $row):
-                            // Décoder etiquettes (nouveau format) ou fallback
                             $etiquettes = json_decode($row['etiquettes'] ?? 'null', true);
                             if (!$etiquettes || !is_array($etiquettes)) {
-                                // Ancien format
                                 $quantites = json_decode($row['quantites'] ?? '[]', true);
                                 $etiquettes = [[
                                     'reference'       => $row['reference'] ?? '',
@@ -85,11 +94,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </td>
                                 <td><?php echo $total; ?></td>
                                 <td class="text-center">
-                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/editer" 
+                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/editer"
                                        class="btn btn-sm btn-outline-primary me-1" title="Éditer">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/telecharger" 
+                                    <a href="<?= BASE_URL ?>/sartorius/commande/<?php echo $row['id']; ?>/telecharger"
                                        class="btn btn-sm btn-outline-success" title="Télécharger PDF">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -101,7 +110,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         <?php endforeach; ?>
                         <?php if(!$hasCommandes): ?>
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
+                                <td colspan="5" class="text-center text-muted py-4">
                                     <i class="bi bi-inbox fs-1"></i>
                                     <p class="mt-2">Aucune commande enregistrée</p>
                                 </td>
@@ -202,39 +211,57 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </div>
 
 <script>
-(function() {
-    var checkAll  = document.getElementById('checkAll');
-    var rowChecks = document.querySelectorAll('.row-check');
-    var btnSel    = document.getElementById('btnSupprimerSelection');
-    var cntBadge  = document.getElementById('selectionCount');
-    var modalCnt  = document.getElementById('modalSelectionCount');
-    var inputsDiv = document.getElementById('selectionInputs');
+(function () {
+    var checkAll      = document.getElementById('checkAll');
+    var rowChecks     = document.querySelectorAll('.row-check');
+    var btnCombiner   = document.getElementById('btnCombiner');
+    var btnSupprimer  = document.getElementById('btnSupprimerSelection');
+    var cntBadge      = document.getElementById('selectionCount');
+    var modalCnt      = document.getElementById('modalSelectionCount');
+    var selInputs     = document.getElementById('selectionInputs');
+    var combInputs    = document.getElementById('combineInputs');
+    var formCombiner  = document.getElementById('formCombiner');
 
     function update() {
         var checked = document.querySelectorAll('.row-check:checked');
         var n = checked.length;
-        if(cntBadge) cntBadge.textContent = n;
-        if(modalCnt) modalCnt.textContent = n;
-        if(btnSel)   btnSel.style.display = n > 0 ? 'inline-block' : 'none';
-        if(checkAll) {
+
+        // Compteur affiché dans le bouton Combiner
+        if (cntBadge) cntBadge.textContent = n;
+        if (modalCnt) modalCnt.textContent = n;
+
+        // Afficher / masquer les deux boutons ensemble
+        var show = n > 0 ? 'inline-block' : 'none';
+        if (btnCombiner)  btnCombiner.style.display  = show;
+        if (btnSupprimer) btnSupprimer.style.display = show;
+
+        // Indeterminate sur le checkAll
+        if (checkAll) {
             checkAll.indeterminate = n > 0 && n < rowChecks.length;
             checkAll.checked = rowChecks.length > 0 && n === rowChecks.length;
         }
-        if(inputsDiv) {
-            inputsDiv.innerHTML = '';
-            checked.forEach(function(cb) {
+
+        // Synchroniser les deux formulaires avec les mêmes IDs
+        [selInputs, combInputs].forEach(function (div) {
+            if (!div) return;
+            div.innerHTML = '';
+            checked.forEach(function (cb) {
                 var inp = document.createElement('input');
                 inp.type = 'hidden'; inp.name = 'ids[]'; inp.value = cb.value;
-                inputsDiv.appendChild(inp);
+                div.appendChild(inp);
             });
-        }
+        });
     }
 
-    if(checkAll) checkAll.addEventListener('change', function() {
-        rowChecks.forEach(function(cb) { cb.checked = checkAll.checked; });
+    if (checkAll) checkAll.addEventListener('change', function () {
+        rowChecks.forEach(function (cb) { cb.checked = checkAll.checked; });
         update();
     });
-    rowChecks.forEach(function(cb) { cb.addEventListener('change', update); });
+    rowChecks.forEach(function (cb) { cb.addEventListener('change', update); });
+
+    if (btnCombiner) btnCombiner.addEventListener('click', function () {
+        if (formCombiner) formCombiner.submit();
+    });
 })();
 </script>
 

@@ -9,6 +9,7 @@ class Reference {
     public $id;
     public $reference;
     public $designation;
+    public $quantite_par_carton;
     public $created_at;
     public $updated_at;
 
@@ -24,15 +25,17 @@ class Reference {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET reference=:reference, designation=:designation";
+                  SET reference=:reference, designation=:designation, quantite_par_carton=:quantite_par_carton";
 
         $stmt = $this->conn->prepare($query);
 
         $this->reference = strip_tags($this->reference);
         $this->designation = strip_tags($this->designation);
+        $qpc = ($this->quantite_par_carton !== null && $this->quantite_par_carton !== '') ? (int)$this->quantite_par_carton : null;
 
         $stmt->bindParam(":reference", $this->reference);
         $stmt->bindParam(":designation", $this->designation);
+        $stmt->bindParam(":quantite_par_carton", $qpc, PDO::PARAM_INT);
 
         if($stmt->execute()) {
             return true;
@@ -66,9 +69,10 @@ class Reference {
         if($row) {
             $this->reference = $row['reference'];
             $this->designation = $row['designation'];
+            $this->quantite_par_carton = $row['quantite_par_carton'];
             $this->created_at = $row['created_at'];
             $this->updated_at = $row['updated_at'];
-            return $row; // Retourner le tableau au lieu de true
+            return $row;
         }
 
         return false;
@@ -79,7 +83,7 @@ class Reference {
      */
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET reference=:reference, designation=:designation 
+                  SET reference=:reference, designation=:designation, quantite_par_carton=:quantite_par_carton
                   WHERE id=:id";
 
         $stmt = $this->conn->prepare($query);
@@ -87,9 +91,11 @@ class Reference {
         $this->reference = strip_tags($this->reference);
         $this->designation = strip_tags($this->designation);
         $this->id = strip_tags($this->id);
+        $qpc = ($this->quantite_par_carton !== null && $this->quantite_par_carton !== '') ? (int)$this->quantite_par_carton : null;
 
         $stmt->bindParam(":reference", $this->reference);
         $stmt->bindParam(":designation", $this->designation);
+        $stmt->bindParam(":quantite_par_carton", $qpc, PDO::PARAM_INT);
         $stmt->bindParam(":id", $this->id);
 
         if($stmt->execute()) {

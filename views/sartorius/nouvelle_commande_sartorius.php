@@ -122,10 +122,8 @@ $savedQuantites = $bloc0['quantites'] ?? [['quantite_par_carton' => '', 'quantit
                     $quantitesRestore = !empty($savedQuantites) ? array_values($savedQuantites) : [['quantite_par_carton'=>'','quantite_etiquettes'=>'']];
                     $totalRows = count($quantitesRestore);
                     foreach($quantitesRestore as $idx => $q):
-                        $qpc      = htmlspecialchars($q['quantite_par_carton'] ?? '');
-                        $qe       = htmlspecialchars($q['quantite_etiquettes'] ?? '');
-                        $isOnly   = ($totalRows === 1);
-                        $isFirst  = ($idx === 0);
+                        $qpc = htmlspecialchars($q['quantite_par_carton'] ?? '');
+                        $qe  = htmlspecialchars($q['quantite_etiquettes'] ?? '');
                     ?>
                         <div class="quantite-row mb-3" data-row-index="<?php echo $idx; ?>">
                             <div class="row align-items-end">
@@ -141,23 +139,7 @@ $savedQuantites = $bloc0['quantites'] ?? [['quantite_par_carton' => '', 'quantit
                                     </label>
                                     <input type="number" class="form-control" name="commandes[0][quantites][<?php echo $idx; ?>][quantite_etiquettes]" required min="1" value="<?php echo $qe; ?>">
                                 </div>
-                                <div class="col-md-2">
-                                    <?php if ($isOnly): ?>
-                                        <div class="d-flex gap-1">
-                                            <button type="button" class="btn btn-primary flex-fill btn-add-first" onclick="ajouterLigneQuantite(this)" title="Ajouter une ligne">
-                                                <i class="bi bi-plus-lg"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire">
-                                                <i class="bi bi-file-earmark-plus"></i>
-                                            </button>
-                                        </div>
-                                    <?php elseif ($isFirst): ?>
-                                    <?php else: ?>
-                                        <button type="button" class="btn btn-danger w-100" onclick="supprimerLigneQuantite(this)">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
+                                <div class="col-md-2"></div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -233,21 +215,79 @@ foreach($months as $num => $name) {
     $dateOpts[] = ['value' => "$num/$limitYear", 'label' => "$name $limitYear"];
 }
 ?>
-const REFS       = <?php echo json_encode($referencesArray); ?>;
+const REFS       = <?php echo json_encode(array_map(function($r) {
+    return [
+        'id'                  => $r['id'],
+        'reference'           => $r['reference'],
+        'designation'         => $r['designation'],
+        'quantite_par_carton' => $r['quantite_par_carton'] ?? null,
+    ];
+}, $referencesArray)); ?>;
 const DATE_OPTS  = <?php echo json_encode($dateOpts); ?>;
 const qtyPerBloc = { 0: <?php echo count($quantitesRestore); ?> };
 let blocCounter  = 1;
 
-// ── Ajouter une ligne de quantité dans un bloc ────────────────────────────────
+// ── Auto-remplissage Quantité par carton selon la référence sélectionnée ─────
+function attachRefChangeListener(selectEl) {
+    selectEl.addEventListener('change', function() {
+        const selectedId = parseInt(this.value);
+        const ref = REFS.find(r => parseInt(r.id) === selectedId);
+        const bloc = this.closest('.bloc-commande');
+        const qpcInput = bloc ? bloc.querySelector('input[name*="[quantite_par_carton]"]') : null;
+        if (qpcInput && ref && ref.quantite_par_carton !== null) {
+            qpcInput.value = ref.quantite_par_carton;
+        } else if (qpcInput) {
+            qpcInput.value = '';
+        }
+    });
+}
+
+// ── Règle unique : recalcule les boutons de tous les blocs ────────────────────
+// Ligne seule + dernier bloc  → [+] [⊞]
+// Ligne seule + autre bloc    → [+] pleine largeur
+// Première ligne (multi)      → vide
+// Dernière ligne + dernier bloc → [🗑] [⊞]
+// Toutes les autres           → [🗑] pleine largeur
+function rafraichirBoutons() {
+    const blocs = document.querySelectorAll('#blocs-container .bloc-commande');
+    blocs.forEach((bloc, blocIdx) => {
+        const isLastBloc = (blocIdx === blocs.length - 1);
+        const rows       = bloc.querySelectorAll('.quantites-container .quantite-row');
+        const nbRows     = rows.length;
+
+        rows.forEach((row, rowIdx) => {
+            const col       = row.querySelector('.col-md-2');
+            const isFirst   = (rowIdx === 0);
+            const isLastRow = (rowIdx === nbRows - 1);
+
+            if (nbRows === 1) {
+                col.innerHTML = isLastBloc
+                    ? `<div class="d-flex gap-1">
+                           <button type="button" class="btn btn-primary flex-fill" onclick="ajouterLigneQuantite(this)" title="Ajouter une ligne"><i class="bi bi-plus-lg"></i></button>
+                           <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire"><i class="bi bi-file-earmark-plus"></i></button>
+                       </div>`
+                    : `<button type="button" class="btn btn-primary w-100" onclick="ajouterLigneQuantite(this)" title="Ajouter une ligne"><i class="bi bi-plus-lg"></i></button>`;
+            } else if (isFirst) {
+                col.innerHTML = '';
+            } else if (isLastRow && isLastBloc) {
+                col.innerHTML = `
+                    <div class="d-flex gap-1">
+                        <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneQuantite(this)"><i class="bi bi-trash"></i></button>
+                        <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire"><i class="bi bi-file-earmark-plus"></i></button>
+                    </div>`;
+            } else {
+                col.innerHTML = `<button type="button" class="btn btn-danger w-100" onclick="supprimerLigneQuantite(this)"><i class="bi bi-trash"></i></button>`;
+            }
+        });
+    });
+}
+
 function ajouterLigneQuantite(btn) {
     const bloc      = btn.closest('.bloc-commande');
     const blocIdx   = parseInt(bloc.dataset.blocIndex);
     const container = bloc.querySelector('.quantites-container');
+    const qIdx      = qtyPerBloc[blocIdx] ?? 1;
 
-    // Vider les boutons de la première ligne
-    container.querySelector('.quantite-row:first-child .col-md-2').innerHTML = '';
-
-    const qIdx = qtyPerBloc[blocIdx] ?? 1;
     const newRow = document.createElement('div');
     newRow.className = 'quantite-row mb-3';
     newRow.dataset.rowIndex = qIdx;
@@ -261,35 +301,19 @@ function ajouterLigneQuantite(btn) {
                 <label class="form-label"><i class="bi bi-boxes blue icons"></i>Nombre de cartons <span class="text-danger">*</span></label>
                 <input type="number" class="form-control" name="commandes[${blocIdx}][quantites][${qIdx}][quantite_etiquettes]" required min="1">
             </div>
-            <div class="col-md-2">
-                <div class="d-flex gap-1">
-                    <button type="button" class="btn btn-danger flex-fill" onclick="supprimerLigneQuantite(this)"><i class="bi bi-trash"></i></button>
-                    <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire"><i class="bi bi-file-earmark-plus"></i></button>
-                </div>
-            </div>
+            <div class="col-md-2"></div>
         </div>`;
     container.appendChild(newRow);
     qtyPerBloc[blocIdx] = qIdx + 1;
+    rafraichirBoutons();
 }
 
-// ── Supprimer une ligne de quantité ──────────────────────────────────────────
-function supprimerLigneQuantite(button) {
-    const row       = button.closest('.quantite-row');
-    const container = row.closest('.quantites-container');
+function supprimerLigneQuantite(btn) {
+    const row = btn.closest('.quantite-row');
     row.classList.add('removing');
-    setTimeout(() => {
-        row.remove();
-        if (container.querySelectorAll('.quantite-row').length === 1) {
-            container.querySelector('.quantite-row:first-child .col-md-2').innerHTML = `
-                <div class="d-flex gap-1">
-                    <button type="button" class="btn btn-primary flex-fill btn-add-first" onclick="ajouterLigneQuantite(this)" title="Ajouter une ligne"><i class="bi bi-plus-lg"></i></button>
-                    <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire"><i class="bi bi-file-earmark-plus"></i></button>
-                </div>`;
-        }
-    }, 300);
+    setTimeout(() => { row.remove(); rafraichirBoutons(); }, 300);
 }
 
-// ── Supprimer un bloc entier ──────────────────────────────────────────────────
 function supprimerBloc(btn) {
     const bloc = btn.closest('.bloc-commande');
     bloc.classList.add('removing');
@@ -307,13 +331,12 @@ function renommerBlocs() {
         const btnDel = bloc.querySelector('.btn-supprimer-bloc');
         if (btnDel) btnDel.style.display = (idx === 0) ? 'none' : '';
     });
+    rafraichirBoutons();
 }
 
-// ── Ajouter un nouveau bloc complet ──────────────────────────────────────────
 function ajouterBloc() {
     const idx       = blocCounter;
     const container = document.getElementById('blocs-container');
-
     const refsOpts  = REFS.map(r => `<option value="${r.id}">${escHtml(r.reference)} - ${escHtml(r.designation)}</option>`).join('');
     const dateOpts  = DATE_OPTS.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
 
@@ -359,24 +382,29 @@ function ajouterBloc() {
                             <label class="form-label"><i class="bi bi-boxes blue icons"></i>Nombre de cartons <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" name="commandes[${idx}][quantites][0][quantite_etiquettes]" required min="1">
                         </div>
-                        <div class="col-md-2">
-                            <div class="d-flex gap-1">
-                                <button type="button" class="btn btn-primary flex-fill btn-add-first" onclick="ajouterLigneQuantite(this)" title="Ajouter une ligne"><i class="bi bi-plus-lg"></i></button>
-                                <button type="button" class="btn btn-success flex-fill" onclick="ajouterBloc()" title="Ajouter un formulaire"><i class="bi bi-file-earmark-plus"></i></button>
-                            </div>
-                        </div>
+                        <div class="col-md-2"></div>
                     </div>
                 </div>
             </div>
         </div>`;
     container.appendChild(bloc);
+    const newSelect = bloc.querySelector(`select[name="commandes[${idx}][reference_id]"]`);
+    if (newSelect) attachRefChangeListener(newSelect);
     qtyPerBloc[idx] = 1;
     blocCounter++;
+    rafraichirBoutons();
 }
 
 function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// Initialiser les boutons et les listeners au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    rafraichirBoutons();
+    const bloc0Select = document.querySelector('#bloc-0 select[name="commandes[0][reference_id]"]');
+    if (bloc0Select) attachRefChangeListener(bloc0Select);
+});
 </script>
 
 

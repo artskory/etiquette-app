@@ -226,6 +226,63 @@ class CommandeController {
         }
     }
 
+    // ── Combiner sélection → PDF unique ─────────────────────────────────────
+    public function combiner() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/sartorius"); exit;
+        }
+
+        $token = $_POST['csrf_token'] ?? null;
+        if (!CsrfToken::validate($token)) {
+            header("Location: " . BASE_URL . "/sartorius?error=csrf_invalid"); exit;
+        }
+
+        $ids = Validator::arrayOfIds($_POST['ids'] ?? []);
+        if ($ids === false || count($ids) < 1) {
+            header("Location: " . BASE_URL . "/sartorius?error=no_selection"); exit;
+        }
+
+        require_once 'lib/SartoriusPdfGenerator.php';
+
+        try {
+            // Charger toutes les commandes sélectionnées (dans l'ordre des IDs soumis)
+            $commandesDatas = [];
+            foreach ($ids as $id) {
+                $query = "SELECT c.*, r.reference, r.designation
+                          FROM commandes c
+                          LEFT JOIN `references` r ON c.reference_id = r.id
+                          WHERE c.id = ?";
+                $stmt = $this->db->prepare($query);
+                $stmt->execute([$id]);
+                $data = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($data) {
+                    $commandesDatas[] = $data;
+                }
+            }
+
+            if (empty($commandesDatas)) {
+                header("Location: " . BASE_URL . "/sartorius?error=not_found"); exit;
+            }
+
+            $pdfGen   = new SartoriusPdfGenerator();
+            $filePath = $pdfGen->genererCombine($commandesDatas);
+
+            // Nom du fichier = numéros de commandes séparés par _
+            $numeros      = array_map(fn($d) => preg_replace('/[^a-zA-Z0-9_-]/', '_', $d['numero_commande']), $commandesDatas);
+            $downloadName = implode('_', $numeros) . '.pdf';
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $downloadName . '"');
+            header('Content-Length: ' . filesize($filePath));
+            readfile($filePath);
+            @unlink($filePath);
+            exit;
+
+        } catch (Exception $e) {
+            error_log("Erreur combinaison PDF: " . $e->getMessage());
+            header("Location: " . BASE_URL . "/sartorius?error=pdf_generation_failed"); exit;
+        }
+    }
+
     // ── Helpers privés ───────────────────────────────────────────────────────
 
     /**

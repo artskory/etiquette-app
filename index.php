@@ -173,6 +173,7 @@ switch ($module) {
                     case 'liste':              $controller->liste();              break;
                     case 'nouvelle':           $controller->nouvelle();           break;
                     case 'creer':              $controller->creer();              break;
+                    case 'combiner':           $controller->combiner();           break;
                     case 'supprimer-selection': $controller->supprimerSelection(); break;
                     default:                   render404();                       break;
                 }

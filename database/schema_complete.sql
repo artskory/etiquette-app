@@ -1,12 +1,13 @@
 -- ============================================================================
 -- BASE DE DONNÉES UNIFIÉE - APPLICATION ÉTIQUETTES
--- Version 2.0.0
+-- Version 2.1.0
 -- ============================================================================
 --
 -- Historique des modifications :
 -- v1.0.0 : Structure initiale
 -- v2.0.0 : Ajout colonne etiquettes JSON (Option A multi-blocs),
 --          reference_id nullable, suppression batch_id et colonnes obsolètes
+-- v2.1.0 : Ajout colonne quantite_par_carton dans references
 --
 -- ============================================================================
 
@@ -16,11 +17,12 @@
 
 -- Table des références Sartorius
 CREATE TABLE IF NOT EXISTS `references` (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    reference   VARCHAR(100) NOT NULL,
-    designation VARCHAR(255) NOT NULL,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                   INT AUTO_INCREMENT PRIMARY KEY,
+    reference            VARCHAR(100) NOT NULL,
+    designation          VARCHAR(255) NOT NULL,
+    quantite_par_carton  INT UNSIGNED DEFAULT NULL COMMENT 'Quantité par carton (prérempli dans Nouvelle étiquette)',
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_reference_designation (reference, designation),
     INDEX idx_reference   (reference),
     INDEX idx_designation (designation)
